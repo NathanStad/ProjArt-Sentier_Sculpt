@@ -9,6 +9,14 @@ use App\Models\PointInteret;
 
 class EtapePointInteretSeeder extends Seeder {
     public function run(): void {
+        
+        $etape = Etape::first();
+        $pointInteret = PointInteret::first();
+
+        if ($etape && $pointInteret) {
+            $etape->pointsInteret()->attach($pointInteret->id);
+        }
+        
         $etapes = Etape::all();
         $pointsInteret = PointInteret::all();
 

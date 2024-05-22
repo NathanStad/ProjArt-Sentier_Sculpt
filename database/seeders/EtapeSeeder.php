@@ -10,6 +10,20 @@ use Faker\Factory as Faker;
 
 class EtapeSeeder extends Seeder {
     public function run(): void {
+
+        $sentier = Sentier::first();
+
+        if ($sentier) {
+            Etape::create([
+                'sentier_id' => $sentier->id,
+                'nom' => 'Étape Typique',
+                'description' => 'Une étape typique pour les tests.',
+                'latitude' => 46.5,
+                'longitude' => 6.5,
+                'ordre' => 1,
+            ]);
+        }
+        
         $faker = Faker::create();
 
         if (Sentier::count() > 0) {

@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder {
             MotCleSeeder::class,
             PointInteretSeeder::class,
             EtapeSeeder::class,
-            SentierThemeSeeder::class,
+            MotCleSentierSeeder::class,
             EtapePointInteretSeeder::class,
         ]);
     }
