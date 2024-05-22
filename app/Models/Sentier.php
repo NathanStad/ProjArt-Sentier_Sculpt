@@ -14,7 +14,7 @@ class Sentier extends Model
 
     protected $fillable = ['nom', 'description', 'duree', 'longueur', 'point_depart', 'point_arrive', 'photo'];
 
-    public function themes() {
+    public function motcles() {
         return $this->belongsToMany(MotCle::class, 'motcle_sentier');
     }
 
