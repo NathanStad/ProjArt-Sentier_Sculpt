@@ -5,12 +5,12 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Sentier;
-use App\Models\Theme;
+use App\Models\MotCle;
 
 class SentierThemeSeeder extends Seeder {
     public function run(): void {
         $sentiers = Sentier::all();
-        $themes = Theme::all();
+        $themes = MotCle::all();
 
         $sentiers->each(function ($sentier) use ($themes) {
             $sentier->themes()->attach(

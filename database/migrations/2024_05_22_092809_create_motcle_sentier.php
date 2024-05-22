@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('themes', function (Blueprint $table) {
+        Schema::create('motcle_sentier', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 50);
+            $table->foreignId('sentier_id')->constrained('sentiers')->onDelete('cascade');
+            $table->foreignId('mot_cle_id')->constrained('mot-cles')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('themes');
+        Schema::dropIfExists('motcle_sentier');
     }
 };

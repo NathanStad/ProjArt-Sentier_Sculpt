@@ -4,15 +4,17 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Sentier;
 
-class Theme extends Model
+
+class MotCle extends Model
 {
     use HasFactory;
-    protected $table = 'themes';
+    protected $table = 'mot-cles';
 
     protected $fillable = ['name'];
 
     public function sentiers() {
-        return $this->belongsToMany(Sentier::class, 'sentier_theme');
+        return $this->belongsToMany(Sentier::class, 'motcle_sentier');
     }
 }

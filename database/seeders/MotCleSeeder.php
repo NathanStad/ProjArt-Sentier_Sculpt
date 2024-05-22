@@ -4,11 +4,11 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Theme;
+use App\Models\MotCle;
 
-class ThemeSeeder extends Seeder {
+class MotCleSeeder extends Seeder {
 
     public function run(): void {
-        Theme::factory()->count(10)->create();
+        MotCle::factory()->count(10)->create();
     }
 }

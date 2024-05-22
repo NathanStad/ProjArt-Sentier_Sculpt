@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ThemeFactory extends Factory {
+class MotCleFactory extends Factory {
 
     public function definition(): array
     {
