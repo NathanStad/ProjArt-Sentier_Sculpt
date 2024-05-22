@@ -6,30 +6,54 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Etape;
 use App\Models\Sentier;
+use Faker\Factory as Faker;
 
 class EtapeSeeder extends Seeder {
     public function run(): void {
+        $faker = Faker::create();
+
         if (Sentier::count() > 0) {
             $sentiers = Sentier::all();
-            
-            $sentiers->each(function ($sentier) {
-                foreach (range(1, 5) as $i) {
+
+            $sentiers->each(function ($sentier) use ($faker) {
+                $latitude = $faker->latitude(46.2, 46.6);
+                $longitude = $faker->longitude(6.0, 7.1);
+
+                $firstEtape = Etape::factory()->create([
+                    'sentier_id' => $sentier->id,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'ordre' => 1,
+                ]);
+                
+                foreach (range(2, 5) as $i) {
                     Etape::factory()->create([
                         'sentier_id' => $sentier->id,
-                        'ordre' => $i
+                        'latitude' => $faker->latitude($firstEtape->latitude - 0.05, $firstEtape->latitude + 0.05),
+                        'longitude' => $faker->longitude($firstEtape->longitude - 0.05, $firstEtape->longitude + 0.05),
+                        'ordre' => $i,
                     ]);
                 }
             });
         } else {
-            // Créer des sentiers si aucun n'existe
             $sentiers = Sentier::factory()->count(10)->create();
+            $sentiers->each(function ($sentier) use ($faker) {
+                $latitude = $faker->latitude(46.2, 46.6);
+                $longitude = $faker->longitude(6.0, 7.1);
 
-            // Créer des étapes pour ces sentiers
-            $sentiers->each(function ($sentier) {
-                foreach (range(1, 5) as $i) {
+                $firstEtape = Etape::factory()->create([
+                    'sentier_id' => $sentier->id,
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
+                    'ordre' => 1,
+                ]);
+                
+                foreach (range(2, 5) as $i) {
                     Etape::factory()->create([
                         'sentier_id' => $sentier->id,
-                        'ordre' => $i
+                        'latitude' => $faker->latitude($firstEtape->latitude - 0.05, $firstEtape->latitude + 0.05),
+                        'longitude' => $faker->longitude($firstEtape->longitude - 0.05, $firstEtape->longitude + 0.05),
+                        'ordre' => $i,
                     ]);
                 }
             });

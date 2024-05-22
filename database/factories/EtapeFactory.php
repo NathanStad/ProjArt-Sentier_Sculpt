@@ -9,16 +9,16 @@ use App\Models\Etape;
 class EtapeFactory extends Factory {
 
     public function definition(): array {
-        $latitude = $this->faker->latitude(45.8, 47.8);
-        $longitude = $this->faker->longitude(5.9, 10.5);
+        $latitude = $this->faker->latitude(46.2, 46.6);
+        $longitude = $this->faker->longitude(6.0, 7.1);
 
         return [
+            'sentier_id' => Sentier::factory(),
             'nom' => $this->faker->word(),
             'description' => $this->faker->paragraph(),
             'latitude' => $latitude,
             'longitude' => $longitude,
-            'ordre' => Etape::where('sentier_id', $this->faker->randomDigitNotNull)->count() + 1,
-            'sentier_id' => Sentier::factory(),
+            'ordre' => 1,
         ];
     }
 }
