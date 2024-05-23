@@ -1,4 +1,4 @@
-<p align="center"><img src="public/imgs/CaMarcheLogo.svg" width="400" alt="Logo CaMarche"></p>
+<p align="center"><img src="resources/imgs/CaMarcheLogo.svg" width="400" alt="Logo CaMarche"></p>
 
 # 🥾 - Ca marche
 
