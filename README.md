@@ -1,66 +1,61 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<p align="center"><img src="public/imgs/CaMarcheLogo.svg" width="400" alt="Logo CaMarche"></p>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# 🥾 - Ca marche
 
-## About Laravel
+## Table des Matières
+- [🌐 - Contexte](#contexte--)
+- [📊 - Description des Données](#description-des-données--)
+- [🎯 - But du Projet](#but-du-projet--)
+- [🔧 - Technologies Utilisées](#technologies-utilisées--)
+- [📚 - Références](#références--)
+- [📎 - Wireframe & Maquette](#wireframe--maquette--)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Contexte - 🌐
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+"Ca marche" est une web-application conçue pour découvrir les patrimoines culturels du canton de Vaud en Suisse. À travers cette application, les utilisateurs peuvent explorer des sentiers thématiques, découvrir des points d'intérêt et obtenir des informations pratiques sur les balades. L'objectif est de promouvoir le patrimoine local et d'encourager les résidents à découvrir la richesse culturelle de la région vaudoise.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Description des Données - 📊
 
-## Learning Laravel
+Les données utilisées dans cette application sont directement disponibles dans Laravel à travers des Seeders. Les Seeders peuplent la base de données avec les informations nécessaires pour faire fonctionner l'application. Voici les principales tables disponibles :
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Users** : Contient les informations sur les utilisateurs de l'application, y compris leur nom, email, mot de passe, rôle et photo de profil.
+- **Sentiers** : Stocke les informations sur les sentiers disponibles, comme le nom, la description, la durée, la longueur, le point de départ, le point d'arrivée, la photo et le thème associé.
+- **Etapes** : Contient les informations sur les différentes étapes d'un sentier, telles que le nom, la description, la latitude, la longitude et l'ordre de l'étape.
+- **Points d'intérêts** : Enregistre les points d'intérêt que les utilisateurs peuvent découvrir le long des étapes, incluant le nom, la description, la latitude, la longitude et la photo.
+- **Themes** : Contient les thèmes prédominants associés aux sentiers, tels que "Nature", "Historique", etc.
+- **Critères** : Stocke les critères spécifiques que les sentiers peuvent satisfaire, comme "Parking disponible" ou "Mobilité réduite".
+- **Mots-clés** : Gère les mots-clés associés aux sentiers pour faciliter la recherche et la classification.
+- **Commentaires** : Permet aux utilisateurs de laisser des avis sur les sentiers, chaque commentaire étant associé à un sentier spécifique.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## But du Projet - 🎯
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Le but de ce projet est de développer une web-application fonctionnelle qui permet de cartographier les sentiers disponibles dans la région vaudoise. Cette application vise à offrir aux utilisateurs une expérience interactive et informative, les invitant à se balader et à découvrir des points d'intérêt culturels. En facilitant l'accès à ces informations, "Ca marche" contribue à promouvoir le patrimoine local et à encourager les activités de plein air.
 
-## Laravel Sponsors
+## Technologies Utilisées - 🔧
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+#### Vue
+Vue.js est utilisé pour créer une interface utilisateur réactive et interactive. Il permet de développer des composants modulaires et réutilisables pour gérer les sentiers, les étapes, et les points d'intérêt.
 
-### Premium Partners
+#### Laravel
+Laravel sert de back-end robuste et sécurisé. Il gère l'authentification des utilisateurs, les opérations CRUD sur les données, et les interactions avec la base de données via Eloquent ORM.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+#### Mapbox
+Mapbox est utilisé pour afficher les sentiers et les points d'intérêt sur une carte interactive. Il permet de créer des visualisations cartographiques attrayantes et informatives, améliorant ainsi l'expérience utilisateur.
 
-## Contributing
+#### Deck.gl
+Deck.gl est utilisé en combinaison avec Mapbox pour créer des visualisations interactives avancées des sentiers et des points d'intérêt. Il offre des capacités de rendu performantes pour manipuler et afficher de grandes quantités de données géographiques en temps réel.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Références - 📚
 
-## Code of Conduct
+Les données utilisées dans ce projet sont principalement issues de sources locales et sont intégrées directement via les Seeders Laravel. Voici quelques ressources utilisées pour obtenir des informations supplémentaires :
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- [Office du Tourisme du Canton de Vaud](https://www.region-du-leman.ch/fr/)
+- [OpenStreetMap](https://www.openstreetmap.org/)
+- [Wikipedia - Canton de Vaud](https://fr.wikipedia.org/wiki/Canton_de_Vaud)
 
-## Security Vulnerabilities
+## Wireframe & Maquette - 📎
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+La maquette du projet est disponible via le lien Figma ci-dessous. Divisée en plusieurs sections principales, la maquette présente la structure de l'application, incluant les cartes des sentiers, les détails des points d'intérêt, et les interfaces utilisateur pour la gestion des commentaires et des profils.
 
-## License
+- [**Lien Figma - Ca marche**](https://www.figma.com/design/Ikt1KFCIzn1lloJM6sibUl/Wireframes?node-id=0%3A1&t=nbNG3kcRSLrpHLT9-1)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
