@@ -12,11 +12,15 @@ class DatabaseSeeder extends Seeder {
     {
         $this->call([
             UserSeeder::class,
+            ThemeSeeder::class,
             SentierSeeder::class,
+            CommentaireSeeder::class,
             MotCleSeeder::class,
+            CritereSeeder::class,
             PointInteretSeeder::class,
             EtapeSeeder::class,
             MotCleSentierSeeder::class,
+            CritereSentierSeeder::class,
             EtapePointInteretSeeder::class,
         ]);
     }

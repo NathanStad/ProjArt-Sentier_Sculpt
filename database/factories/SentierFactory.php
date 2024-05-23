@@ -13,7 +13,8 @@ class SentierFactory extends Factory {
             'longueur' => $this->faker->randomFloat(2, 1, 50), // longueur en kilomètres
             'point_depart' => $this->faker->city(),
             'point_arrive' => $this->faker->city(),
-            'photo' => $this->faker->imageUrl(), // URL d'image fictive
+            'photo' => $this->faker->imageUrl(),
+            'theme_id' => $this->faker->numberBetween(1,20),
         ];
     }
 }

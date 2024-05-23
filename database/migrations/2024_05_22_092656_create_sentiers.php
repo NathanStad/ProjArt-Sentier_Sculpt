@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('point_depart', 50);
             $table->string('point_arrive', 50);
             $table->longText('photo')->nullable();
+            $table->foreignId('theme_id')->constrained('themes')->onDelete('cascade');
             $table->timestamps();
         });
     }
