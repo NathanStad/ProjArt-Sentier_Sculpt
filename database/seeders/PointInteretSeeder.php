@@ -12,9 +12,6 @@ class PointInteretSeeder extends Seeder {
         
         PointInteret::create([
             'nom' => 'Château de Chillon',
-            'description' => 'Un magnifique château.',
-            'latitude' => 46.4,
-            'longitude' => 6.8,
             'photo' => 'https://example.com/poi1',
         ]);
         

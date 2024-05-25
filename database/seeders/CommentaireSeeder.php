@@ -16,6 +16,6 @@ class CommentaireSeeder extends Seeder {
             'message' => 'Un commentaire typique pour le sentier.',
         ]);
 
-        Commentaire::factory()->count(50)->create();
+        Commentaire::factory()->count(30)->create();
     }
 }
