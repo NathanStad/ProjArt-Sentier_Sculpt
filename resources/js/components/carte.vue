@@ -1,7 +1,6 @@
 <template lang="">
-    <div>
-        
-    </div>
+    <!-- Map -->
+    <div></div>
 </template>
 <script>
 export default {
