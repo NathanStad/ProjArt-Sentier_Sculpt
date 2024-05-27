@@ -13,6 +13,7 @@ class CommentaireSeeder extends Seeder {
         Commentaire::create([
             'sentier_id' => 1,
             'email' => 'example@example.com',
+            'name' => 'MichaelScott',
             'message' => 'Un commentaire typique pour le sentier.',
         ]);
 

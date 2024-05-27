@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('commentaires', function (Blueprint $table) {
             $table->id();
             $table->string('email', 255);
+            $table->string('name', 100);
             $table->longText('message');
             $table->foreignId('sentier_id')->constrained('sentiers')->onDelete('cascade');
             $table->timestamps();
