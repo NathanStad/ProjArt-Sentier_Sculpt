@@ -8,6 +8,7 @@
 - [🎯 - But du Projet](#but-du-projet--)
 - [🔧 - Technologies Utilisées](#technologies-utilisées--)
 - [📚 - Références](#références--)
+- [⚙️ - Procédure d'installation](#procédure-d-installation--)
 - [📎 - Wireframe & Maquette](#wireframe--maquette--)
 
 ## Contexte - 🌐
@@ -26,6 +27,7 @@ Les données utilisées dans cette application sont directement disponibles dans
 - **Critères** : Stocke les critères spécifiques que les sentiers peuvent satisfaire, comme "Parking disponible" ou "Mobilité réduite".
 - **Mots-clés** : Gère les mots-clés associés aux sentiers pour faciliter la recherche et la classification.
 - **Commentaires** : Permet aux utilisateurs de laisser des avis sur les sentiers, chaque commentaire étant associé à un sentier spécifique.
+- **Difficultes** : Permet de connaître le niveau de difficulté d'un sentier, pouvant aller du niveau facile au niveau difficile sous forme de graduation (1 ; 2 ; 3).
 
 ## But du Projet - 🎯
 
@@ -39,12 +41,6 @@ Vue.js est utilisé pour créer une interface utilisateur réactive et interacti
 #### Laravel
 Laravel sert de back-end robuste et sécurisé. Il gère l'authentification des utilisateurs, les opérations CRUD sur les données, et les interactions avec la base de données via Eloquent ORM.
 
-#### Mapbox
-Mapbox est utilisé pour afficher les sentiers et les points d'intérêt sur une carte interactive. Il permet de créer des visualisations cartographiques attrayantes et informatives, améliorant ainsi l'expérience utilisateur.
-
-#### Deck.gl
-Deck.gl est utilisé en combinaison avec Mapbox pour créer des visualisations interactives avancées des sentiers et des points d'intérêt. Il offre des capacités de rendu performantes pour manipuler et afficher de grandes quantités de données géographiques en temps réel.
-
 ## Références - 📚
 
 Les données utilisées dans ce projet sont principalement issues de sources locales et sont intégrées directement via les Seeders Laravel. Voici quelques ressources utilisées pour obtenir des informations supplémentaires :
@@ -52,6 +48,28 @@ Les données utilisées dans ce projet sont principalement issues de sources loc
 - [Office du Tourisme du Canton de Vaud](https://www.region-du-leman.ch/fr/)
 - [OpenStreetMap](https://www.openstreetmap.org/)
 - [Wikipedia - Canton de Vaud](https://fr.wikipedia.org/wiki/Canton_de_Vaud)
+
+## Procédure d'installation - ⚙️
+
+### Prérequis
+
+Assurez-vous d'avoir les éléments suivants installés sur votre machine :
+
+- PHP 8.3.3
+- Composer
+- MySQL 8.0
+- MySQL Workbench
+- Node.js
+- NPM
+
+#### A – Cloner le Repository GitHub
+
+1. Ouvrez votre terminal ou ligne de commande.
+2. Clonez le repository GitHub en utilisant la commande suivante :
+
+   ```bash
+   git clone https://github.com/NathanStad/ProjArt-Sentier_Sculpt.git
+   ```
 
 ## Wireframe & Maquette - 📎
 
