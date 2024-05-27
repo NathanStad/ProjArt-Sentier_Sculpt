@@ -7,9 +7,9 @@
 - [📊 - Description des Données](#description-des-données--)
 - [🎯 - But du Projet](#but-du-projet--)
 - [🔧 - Technologies Utilisées](#technologies-utilisées--)
-- [📚 - Références](#références--)
 - [⚙️ - Procédure d'installation](#procédure-d-installation--)
 - [📎 - Wireframe & Maquette](#wireframe--maquette--)
+- [📚 - Références](#références--)
 
 ## Contexte - 🌐
 
@@ -41,14 +41,6 @@ Vue.js est utilisé pour créer une interface utilisateur réactive et interacti
 #### Laravel
 Laravel sert de back-end robuste et sécurisé. Il gère l'authentification des utilisateurs, les opérations CRUD sur les données, et les interactions avec la base de données via Eloquent ORM.
 
-## Références - 📚
-
-Les données utilisées dans ce projet sont principalement issues de sources locales et sont intégrées directement via les Seeders Laravel. Voici quelques ressources utilisées pour obtenir des informations supplémentaires :
-
-- [Office du Tourisme du Canton de Vaud](https://www.region-du-leman.ch/fr/)
-- [OpenStreetMap](https://www.openstreetmap.org/)
-- [Wikipedia - Canton de Vaud](https://fr.wikipedia.org/wiki/Canton_de_Vaud)
-
 ## Procédure d'installation - ⚙️
 
 ### Prérequis
@@ -62,6 +54,8 @@ Assurez-vous d'avoir les éléments suivants installés sur votre machine :
 - Node.js
 - NPM
 
+### Installation de la Web-App sur votre machine locale 
+
 #### A – Cloner le Repository GitHub
 
 1. Ouvrez votre terminal ou ligne de commande.
@@ -71,9 +65,89 @@ Assurez-vous d'avoir les éléments suivants installés sur votre machine :
    git clone https://github.com/NathanStad/ProjArt-Sentier_Sculpt.git
    ```
 
+#### B – Installation des dépendances PHP
+
+1. Assurez-vous que Composer est installé sur votre machine.
+2. Installez les dépendances PHP en exécutant la commande suivante dans le répertoire du projet :
+
+   ```bash
+   composer install
+   ```
+
+#### C – Configuration de la base de données dans le fichier d'environnement
+
+1.	Ouvrez le fichier .env dans un éditeur de texte et configurez les paramètres de la base de données :
+
+   ```bash
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=nom_de_votre_base_de_donnees
+   DB_USERNAME=nom_utilisateur_mysql
+   DB_PASSWORD=mot_de_passe_mysql
+   ```
+
+#### D – Configurer & Démarrer MySQL
+
+1.	Assurez-vous que MySQL est installé et en cours d'exécution sur votre machine.
+2.	Créez un profil utilisateur pour l’application, avec nom d’utilisateur & mot de passe, en utilisant MySQL Workbench ou la ligne de commande MySQL :
+
+   ```bash
+   CREATE USER 'sculpt'@'localhost';   
+   ALTER USER 'sculpt'@'localhost' IDENTIFIED WITH mysql_native_password BY 'samiLeBoGoss';  
+   ```
+
+3.	Créez une nouvelle base de données pour l'application, puis donner tous les droits à votre profil utilisateur sur cette nouvelle base de donnée. Vous pouvez utiliser MySQL Workbench ou la ligne de commande MySQL pour cela :
+
+   ```bash
+   CREATE DATABASE nom_de_votre_base_de_donnees;
+   GRANT ALL PRIVILEGES ON projart.* TO 'sculpt'@'localhost';   
+   ```
+
+### Installation des dépendances & Peuplement de la BDD
+
+#### A – Exécuter les Migrations & Seeders 
+
+1. Exécutez les migrations pour créer les tables nécessaires dans la base de données :
+
+   ```bash
+   php artisan migrate 
+   ```
+
+2.	Exécutez les seeders pour peupler la base de données avec les données initiales :
+
+   ```bash
+   php artisan db:seed
+   ```
+
+#### B – Installer les dépendances JavaScript
+
+1.	Assurez-vous que Node.js et npm sont installés sur votre machine.
+2.	Installez les dépendances JavaScript en exécutant la commande suivante dans le répertoire du projet :
+
+   ```bash
+   npm install
+   ```
+
+#### C – Démarrer le serveur de développement
+
+1. Démarrez le serveur de développement Laravel en exécutant la commande suivante :
+
+   ```bash
+   php artisan serve
+   ```
+
 ## Wireframe & Maquette - 📎
 
 La maquette du projet est disponible via le lien Figma ci-dessous. Divisée en plusieurs sections principales, la maquette présente la structure de l'application, incluant les cartes des sentiers, les détails des points d'intérêt, et les interfaces utilisateur pour la gestion des commentaires et des profils.
 
 - [**Lien Figma - Ca marche**](https://www.figma.com/design/Ikt1KFCIzn1lloJM6sibUl/Wireframes?node-id=0%3A1&t=nbNG3kcRSLrpHLT9-1)
+
+## Références - 📚
+
+Les données utilisées dans ce projet sont principalement issues de sources locales et sont intégrées directement via les Seeders Laravel. Voici quelques ressources utilisées pour obtenir des informations supplémentaires :
+
+- [Office du Tourisme du Canton de Vaud](https://www.region-du-leman.ch/fr/)
+- [OpenStreetMap](https://www.openstreetmap.org/)
+- [Wikipedia - Canton de Vaud](https://fr.wikipedia.org/wiki/Canton_de_Vaud)
 
