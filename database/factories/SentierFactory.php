@@ -16,6 +16,7 @@ class SentierFactory extends Factory {
             'photo' => $this->faker->imageUrl(),
             'theme_id' => $this->faker->numberBetween(1,20),
             'user_id' => $this->faker->numberBetween(1,11),
+            'difficulte_id' => $this->faker->numberBetween(1,3)
         ];
     }
 }
