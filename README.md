@@ -41,6 +41,15 @@ Vue.js est utilisé pour créer une interface utilisateur réactive et interacti
 #### Laravel
 Laravel sert de back-end robuste et sécurisé. Il gère l'authentification des utilisateurs, les opérations CRUD sur les données, et les interactions avec la base de données via Eloquent ORM.
 
+#### MapLibre
+MapLibre est une bibliothèque open-source pour les cartes vectorielles, permettant de créer des cartes interactives et personnalisées.
+
+#### MapTiler
+MapTiler fournit des tuiles de cartes personnalisées basées sur OpenStreetMap, assurant des cartes de haute qualité et constamment mises à jour.
+
+#### OpenRoute Service
+OpenRoute Service est une API de calcul d'itinéraires, offrant des directions détaillées et optimisées pour différents modes de transport.
+
 ## Procédure d'installation - ⚙️
 
 ### Prérequis
