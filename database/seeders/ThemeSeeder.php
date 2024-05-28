@@ -12,6 +12,7 @@ class ThemeSeeder extends Seeder {
     {
         Theme::create([
             'name' => 'Architecture',
+            'icone' => 'https://example.com/cats/photo1',
         ]);
 
         Theme::factory()->count(20)->create();

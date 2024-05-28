@@ -19,6 +19,7 @@ class EtapeFactory extends Factory {
             'latitude' => $latitude,
             'longitude' => $longitude,
             'ordre' => 1,
+            'photo' => $this->faker->imageUrl(),
         ];
     }
 }

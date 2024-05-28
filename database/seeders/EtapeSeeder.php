@@ -21,6 +21,7 @@ class EtapeSeeder extends Seeder {
                 'latitude' => 46.5,
                 'longitude' => 6.5,
                 'ordre' => 1,
+                'photo' => 'https://example.com/photo1User'
             ]);
         }
         

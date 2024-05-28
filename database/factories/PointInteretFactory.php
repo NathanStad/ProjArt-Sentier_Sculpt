@@ -11,9 +11,6 @@ class PointInteretFactory extends Factory {
     {
         return [
             'nom' => $this->faker->word(),
-            'description' => $this->faker->paragraph(),
-            'latitude' => $this->faker->latitude(),
-            'longitude' => $this->faker->longitude(),
             'photo' => $this->faker->imageUrl(),
         ];
     }

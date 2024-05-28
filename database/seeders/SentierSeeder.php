@@ -16,7 +16,9 @@ class SentierSeeder extends Seeder {
             'point_depart' => 'Lausanne',
             'point_arrive' => 'Vevey',
             'photo' => 'https://example.com/sentier1',
-            'theme_id' => 1
+            'theme_id' => 1,
+            'user_id' => 1,
+            'difficulte_id' => 3
         ]);
         
         Sentier::factory(20)->create();

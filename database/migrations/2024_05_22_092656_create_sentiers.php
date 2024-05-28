@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->string('point_arrive', 50);
             $table->longText('photo')->nullable();
             $table->foreignId('theme_id')->constrained('themes')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('difficulte_id')->constrained('difficultes')->onDelete('cascade');
             $table->timestamps();
         });
     }

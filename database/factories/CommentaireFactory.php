@@ -12,6 +12,7 @@ class CommentaireFactory extends Factory {
         return [
             'sentier_id' => Sentier::factory(),
             'email' => $this->faker->unique()->safeEmail(),
+            'name' => $this->faker->userName(),
             'message' => $this->faker->paragraph(),
         ];
     }

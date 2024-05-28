@@ -4,14 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Sentier;
 
-class Theme extends Model
+class Difficulte extends Model
 {
     use HasFactory;
 
-    protected $table = 'themes';
+    protected $table = 'difficultes';
 
-    protected $fillable = ['name', 'icone'];
+    protected $fillable = ['graduation'];
 
     public function sentiers()
     {

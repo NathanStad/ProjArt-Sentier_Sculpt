@@ -11,7 +11,7 @@ class Commentaire extends Model
 
     protected $table = 'commentaires';
 
-    protected $fillable = ['sentier_id', 'email', 'message'];
+    protected $fillable = ['sentier_id', 'email', 'name', 'message'];
 
     public function sentier() {
         return $this->belongsTo(Sentier::class);

@@ -14,9 +14,6 @@ return new class extends Migration
         Schema::create('points_interet', function (Blueprint $table) {
             $table->id();
             $table->string('nom', 100);
-            $table->longText('description');
-            $table->float('latitude');
-            $table->float('longitude');
             $table->longText('photo')->nullable();
             $table->timestamps();
         });

@@ -21,6 +21,7 @@ class CommentaireController extends Controller {
         $commentaire = Commentaire::create([
             'sentier_id' => $request->sentier_id,
             'email' => $request->email,
+            'name' => $request->name,
             'message' => $request->message,
         ]);
 
