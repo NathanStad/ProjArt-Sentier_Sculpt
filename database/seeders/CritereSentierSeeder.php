@@ -15,8 +15,8 @@ class CritereSentierSeeder extends Seeder {
 
         $sentiers->each(function ($sentier) use ($criteres) {
             $sentier->criteres()->attach(
-                $criteres->random(rand(1, 3))->pluck('id')->toArray()
+                $criteres->random(3)->pluck('id')->toArray()
             );
-        });   
+        });
     }
 }

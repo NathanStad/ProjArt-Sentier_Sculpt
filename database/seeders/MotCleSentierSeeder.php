@@ -9,20 +9,29 @@ use App\Models\MotCle;
 
 class MotCleSentierSeeder extends Seeder {
     public function run(): void {
-        $sentier = Sentier::first();
-        $theme = MotCle::first();
+        // $sentier = Sentier::first();
+        // $theme = MotCle::first();
 
-        if ($sentier && $theme) {
-            $sentier->motcles()->attach($theme->id);
-        }
+        // if ($sentier && $theme) {
+        //     $sentier->motcles()->attach($theme->id);
+        // }
         
-        $sentiers = Sentier::all();
-        $themes = MotCle::all();
+        // $sentiers = Sentier::all();
+        // $themes = MotCle::all();
 
-        $sentiers->each(function ($sentier) use ($themes) {
+        // $sentiers->each(function ($sentier) use ($themes) {
+        //     $sentier->motcles()->attach(
+        //         $themes->random(rand(1, 3))->pluck('id')->toArray()
+        //     );
+        // }); 
+
+        $sentiers = Sentier::all();
+        $motCles = MotCle::all();
+
+        $sentiers->each(function ($sentier) use ($motCles) {
             $sentier->motcles()->attach(
-                $themes->random(rand(1, 3))->pluck('id')->toArray()
+                $motCles->random(3)->pluck('id')->toArray()
             );
-        }); 
+        });
     }
 }

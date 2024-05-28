@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('email', 255);
             $table->string('name', 100);
-            $table->longText('message');
+            $table->longText('message', 1000);
             $table->foreignId('sentier_id')->constrained('sentiers')->onDelete('cascade');
             $table->timestamps();
         });
