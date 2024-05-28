@@ -10,6 +10,7 @@ class ThemeFactory extends Factory {
     {
         return [
             'name' => $this->faker->word(),
+            'icone' => $this->faker->imageUrl(800, 800, 'cats', true, 'Faker'),
         ];
     }
 }

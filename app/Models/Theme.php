@@ -11,7 +11,7 @@ class Theme extends Model
 
     protected $table = 'themes';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'icone'];
 
     public function sentiers()
     {

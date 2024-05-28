@@ -13,13 +13,13 @@ use App\Http\Requests\SentierUpdateRequest;
 class SentierController extends Controller {
     
         public function index() {
-            $sentiers = Sentier::with(['etapes', 'commentaires', 'theme'])->get();
+            $sentiers = Sentier::with(['etapes', 'commentaires', 'theme', 'criteres', 'motcles', 'user', 'difficulte'])->get();
             
             return response()->json($sentiers);
         }
     
         public function show($id) {
-            $sentier = Sentier::with(['etapes', 'commentaires', 'theme'])->find($id);
+            $sentier = Sentier::with(['etapes', 'commentaires', 'theme', 'criteres', 'motcles', 'user', 'difficulte'])->find($id);
             
             if ($sentier) {
                 return response()->json($sentier);
@@ -32,7 +32,7 @@ class SentierController extends Controller {
             $user = Auth::user();
             
             if ($user && $user->role === 'institution') {
-    
+        
                 $sentier = Sentier::create([
                     'nom' => $request->nom,
                     'description' => $request->description,
@@ -42,8 +42,10 @@ class SentierController extends Controller {
                     'point_arrive' => $request->point_arrive,
                     'photo' => $request->photo,
                     'theme_id' => $request->theme_id,
+                    'user_id' => $request->user_id,
+                    'difficulte_id' => $request->difficulte_id,
                 ]);
-    
+        
                 foreach ($request->etapes as $etapeData) {
                     $etape = Etape::create([
                         'sentier_id' => $sentier->id,
@@ -53,21 +55,19 @@ class SentierController extends Controller {
                         'longitude' => $etapeData['longitude'],
                         'ordre' => $etapeData['ordre'],
                     ]);
-    
+        
                     if (isset($etapeData['points_interet'])) {
                         foreach ($etapeData['points_interet'] as $poiData) {
-                            PointInteret::create([
-                                'etape_id' => $etape->id,
+                            $pointInteret = PointInteret::create([
                                 'nom' => $poiData['nom'],
-                                'description' => $poiData['description'],
-                                'latitude' => $poiData['latitude'],
-                                'longitude' => $poiData['longitude'],
                                 'photo' => $poiData['photo'] ?? null,
                             ]);
+        
+                            $etape->pointsInteret()->attach($pointInteret->id);
                         }
                     }
                 }
-    
+        
                 return response()->json($sentier, 201);
             } else {
                 return response()->json(['message' => 'Unauthorized'], 403);
@@ -93,6 +93,8 @@ class SentierController extends Controller {
                     'point_arrive' => $request->point_arrive,
                     'photo' => $request->photo,
                     'theme_id' => $request->theme_id,
+                    'user_id' => $request->user_id,
+                    'difficulte_id' => $request->difficulte_id,
                 ]);
     
                 foreach ($request->etapes as $etapeData) {
@@ -125,9 +127,6 @@ class SentierController extends Controller {
                                 if ($poi) {
                                     $poi->update([
                                         'nom' => $poiData['nom'],
-                                        'description' => $poiData['description'],
-                                        'latitude' => $poiData['latitude'],
-                                        'longitude' => $poiData['longitude'],
                                         'photo' => $poiData['photo'] ?? null,
                                     ]);
                                 }
@@ -135,9 +134,6 @@ class SentierController extends Controller {
                                 PointInteret::create([
                                     'etape_id' => $etape->id,
                                     'nom' => $poiData['nom'],
-                                    'description' => $poiData['description'],
-                                    'latitude' => $poiData['latitude'],
-                                    'longitude' => $poiData['longitude'],
                                     'photo' => $poiData['photo'] ?? null,
                                 ]);
                             }
