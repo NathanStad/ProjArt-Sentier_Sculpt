@@ -43,7 +43,7 @@ class SentierSeeder extends Seeder {
             'longueur' => 12.0,
             'localisation' => 'Nyon',
             'compteur' => 0,
-            'photo' => '/imgs/sentiers/sentier1.jpg',
+            'photo' => '/imgs/sentiers/sentier2.jpg',
             'theme_id' => 2,
             'user_id' => 2,
             'difficulte_id' => 2
@@ -56,7 +56,7 @@ class SentierSeeder extends Seeder {
             'longueur' => 15.0,
             'localisation' => 'Montreux',
             'compteur' => 0,
-            'photo' => '/imgs/sentiers/sentier1.jpg',
+            'photo' => '/imgs/sentiers/sentier3.jpg',
             'theme_id' => 3,
             'user_id' => 3,
             'difficulte_id' => 1
