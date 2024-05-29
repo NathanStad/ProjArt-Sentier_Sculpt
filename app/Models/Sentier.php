@@ -14,7 +14,7 @@ class Sentier extends Model
     use HasFactory;
     protected $table = 'sentiers';
 
-    protected $fillable = ['nom', 'description', 'duree', 'longueur', 'localisation', 'compteur', 'photo', 'theme_id', 'user_id', 'difficulte_id'];
+    protected $fillable = ['nom', 'description', 'duree', 'longueur', 'localisation', 'compteur', 'archive', 'photo', 'theme_id', 'user_id', 'difficulte_id'];
 
     public function motcles() {
         return $this->belongsToMany(MotCle::class, 'motcle_sentier');

@@ -11,16 +11,6 @@ use Illuminate\Support\Str;
 class UserSeeder extends Seeder {
 
     public function run(): void {
-        // User::create([
-        //     'name' => 'michaelscott',
-        //     'email' => 'michael.scott@dunder.com',
-        //     'password' => Hash::make('password'), 
-        //     'role' => 'institution',
-        //     'photo' => 'https://example.com/photo1',
-        // ]);
-        
-        // User::factory(10)->create();
-
         User::create([
             'name' => 'michaelscott',
             'email' => 'michael.scott@dunder.com',
