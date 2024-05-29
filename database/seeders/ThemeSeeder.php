@@ -18,28 +18,38 @@ class ThemeSeeder extends Seeder {
         // Theme::factory()->count(20)->create();
 
         Theme::create([
-            'name' => 'Architecture',
-            'icone' => 'https://example.com/cats/photo1',
-        ]);
-
-        Theme::create([
-            'name' => 'Nature',
-            'icone' => 'https://example.com/cats/photo2',
+            'name' => 'Culinaire',
+            'icone' => '<span class="material-symbols-outlined">
+            lunch_dining
+            </span>',
         ]);
 
         Theme::create([
             'name' => 'Histoire',
-            'icone' => 'https://example.com/cats/photo3',
+            'icone' => '<span class="material-symbols-outlined">
+            castle
+            </span>',
         ]);
 
         Theme::create([
-            'name' => 'Art',
-            'icone' => 'https://example.com/cats/photo4',
+            'name' => 'Architecture',
+            'icone' => '<span class="material-symbols-outlined">
+            villa
+            </span>',
         ]);
 
         Theme::create([
-            'name' => 'Gastronomie',
-            'icone' => 'https://example.com/cats/photo5',
+            'name' => 'Faune & Flore',
+            'icone' => '<span class="material-symbols-outlined">
+            emoji_nature
+            </span>',
+        ]);
+
+        Theme::create([
+            'name' => 'Street Art',
+            'icone' => '<span class="material-symbols-outlined">
+            imagesearch_roller
+            </span>',
         ]);
     }
 }
