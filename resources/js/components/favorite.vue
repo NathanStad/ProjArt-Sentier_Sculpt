@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <h1></h1>
     <input type="text" value="Recherche" />
     <a href="">

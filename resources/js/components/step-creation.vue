@@ -1,5 +1,5 @@
-<template lang="">
-    <form action="">
+<template>
+    <form>
             <div>
                 <label><h3>Nom étape</h3><input type="text"></label>
             </div>

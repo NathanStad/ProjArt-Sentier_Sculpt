@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div>
         <div><img src="" alt="" />lieu</div>
         <div>

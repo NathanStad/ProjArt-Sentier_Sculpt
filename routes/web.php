@@ -1,11 +1,20 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SentierController;
+use App\Http\Controllers\ThemeController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/data-sentiers', [SentierController::class, 'index']);
+Route::get('/data-sentier-{$n}', [SentierController::class, 'show']);
+Route::get('/data-sentier/prefere-incr', [SentierController::class, 'incrCompteur']);
+Route::get('/data-sentiers/prefere', [SentierController::class, 'topClickedSentiers']);
+Route::get('/data-theme', [ThemeController::class, 'index']);
+Route::get('/data-sentier', [SentierController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

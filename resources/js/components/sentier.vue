@@ -1,4 +1,4 @@
-<template lang="">
+<template>
     <div>
         <div><img src="" alt="" />lieu</div>
         <div><img src="" alt="" /></div>
@@ -64,6 +64,43 @@
     </div>
 </template>
 <script>
-export default {};
+import axios from 'axios';
+
+
+
+export default {
+  data() {
+    return {
+      message: '',
+      sentier: [],
+      sentierId: ''
+    };
+  },
+  methods: {
+    incrementCompteur() {
+      axios.post(`/api/incr-compteur/${sentierId}`)
+        .then(response => {
+          this.message = response.data.message;
+        })
+        .catch(error => {
+          if (error.response) {
+            this.message = error.response.data.message;
+          } else {
+            this.message = 'An error occurred';
+          }
+          console.error('There was an error!', error);
+        });
+    },
+    async fetchSentiers() {
+        try {
+          const response = await axios.get('/data-sentier');
+          this.sentiers = response.data;
+        } catch (error) {
+          console.error('Error fetching sentiers:', error);
+        }
+      },
+
+  }
+};
 </script>
 <style lang=""></style>

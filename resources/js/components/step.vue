@@ -1,4 +1,4 @@
-<template lang="">
+<template>
             <!-- Bouton retour -->
             <a href=""></a>
         <!-- Maps -->
