@@ -178,7 +178,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude2,
             'longitude' => $longitude2,
             'ordre' => 2,
-            'photo' => '/imgs/etapes/photo9.jpg',
+            'photo' => '/imgs/etapes/photo8.jpg',
             'distance' => $distance2,
             'duree' => $duree2,
         ]);
