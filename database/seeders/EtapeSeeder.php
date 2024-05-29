@@ -10,86 +10,65 @@ use Faker\Factory as Faker;
 
 class EtapeSeeder extends Seeder {
     public function run(): void {
-        // $sentier = Sentier::first();
-
-        // if ($sentier) {
-        //     Etape::create([
-        //         'sentier_id' => $sentier->id,
-        //         'nom' => 'Étape Typique',
-        //         'description' => 'Une étape typique pour les tests.',
-        //         'latitude' => 46.5,
-        //         'longitude' => 6.5,
-        //         'ordre' => 1,
-        //         'photo' => 'https://example.com/photo1User'
-        //     ]);
-        // }
-        
-        // $faker = Faker::create();
-
-        // if (Sentier::count() > 0) {
-        //     $sentiers = Sentier::all();
-
-        //     $sentiers->each(function ($sentier) use ($faker) {
-        //         $latitude = $faker->latitude(46.2, 46.6);
-        //         $longitude = $faker->longitude(6.0, 7.1);
-
-        //         $firstEtape = Etape::factory()->create([
-        //             'sentier_id' => $sentier->id,
-        //             'latitude' => $latitude,
-        //             'longitude' => $longitude,
-        //             'ordre' => 1,
-        //         ]);
-                
-        //         foreach (range(2, 5) as $i) {
-        //             Etape::factory()->create([
-        //                 'sentier_id' => $sentier->id,
-        //                 'latitude' => $faker->latitude($firstEtape->latitude - 0.05, $firstEtape->latitude + 0.05),
-        //                 'longitude' => $faker->longitude($firstEtape->longitude - 0.05, $firstEtape->longitude + 0.05),
-        //                 'ordre' => $i,
-        //             ]);
-        //         }
-        //     });
-        // } else {
-        //     $sentiers = Sentier::factory()->count(10)->create();
-        //     $sentiers->each(function ($sentier) use ($faker) {
-        //         $latitude = $faker->latitude(46.2, 46.6);
-        //         $longitude = $faker->longitude(6.0, 7.1);
-
-        //         $firstEtape = Etape::factory()->create([
-        //             'sentier_id' => $sentier->id,
-        //             'latitude' => $latitude,
-        //             'longitude' => $longitude,
-        //             'ordre' => 1,
-        //         ]);
-                
-        //         foreach (range(2, 5) as $i) {
-        //             Etape::factory()->create([
-        //                 'sentier_id' => $sentier->id,
-        //                 'latitude' => $faker->latitude($firstEtape->latitude - 0.05, $firstEtape->latitude + 0.05),
-        //                 'longitude' => $faker->longitude($firstEtape->longitude - 0.05, $firstEtape->longitude + 0.05),
-        //                 'ordre' => $i,
-        //             ]);
-        //         }
-        //     });
-        // }
-
         $sentiers = Sentier::all();
-
+    
         foreach ($sentiers as $sentier) {
-            $baseLatitude = rand(46000000, 46700000) / 1000000;
-            $baseLongitude = rand(6000000, 7100000) / 1000000;
-        
+            $baseLatitude = 46.5617;
+            $baseLongitude = 6.5360;
+            $previousLatitude = $baseLatitude;
+            $previousLongitude = $baseLongitude;
+    
             for ($i = 1; $i <= 3; $i++) {
+                if ($i === 1) {
+                    $latitude = $baseLatitude + (rand(-5000, 5000) / 1000000);
+                    $longitude = $baseLongitude + (rand(-5000, 5000) / 1000000);
+                } else {
+                    do {
+                        $latitude = $previousLatitude + (rand(-25000, 25000) / 1000000);
+                        $longitude = $previousLongitude + (rand(-25000, 25000) / 1000000);
+                        $distance = $this->haversineGreatCircleDistance($previousLatitude, $previousLongitude, $latitude, $longitude);
+                    } while ($distance < 1 || $distance > 2.5);
+    
+                   $duree = ($distance / 5) * 3600;
+                }
+    
+                if ($i === 3) {
+                    $distance = 0;
+                    $duree = 0;
+                } else {
+                   $distance = $this->haversineGreatCircleDistance($previousLatitude, $previousLongitude, $latitude, $longitude);
+                   $duree = ($distance / 5) * 3600;
+                }
+    
                 Etape::create([
                     'sentier_id' => $sentier->id,
                     'nom' => 'Étape ' . $i . ' du ' . $sentier->nom,
                     'description' => 'Description de l\'étape ' . $i . ' du sentier.',
-                    'latitude' => $baseLatitude + (rand(-5000, 5000) / 1000000),
-                    'longitude' => $baseLongitude + (rand(-5000, 5000) / 1000000),
+                    'latitude' => $latitude,
+                    'longitude' => $longitude,
                     'ordre' => $i,
-                    'photo' => '/imgs/etapes/photo' . $i . '.jpg' 
+                    'photo' => '/imgs/etapes/photo' . $i . '.jpg',
+                    'distance' => $distance,
+                    'duree' => $duree,
                 ]);
+    
+                $previousLatitude = $latitude;
+                $previousLongitude = $longitude;
             }
         }
-    }  
+    }
+
+    private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371) {
+        $latFrom = deg2rad($latitudeFrom);
+        $lonFrom = deg2rad($longitudeFrom);
+        $latTo = deg2rad($latitudeTo);
+        $lonTo = deg2rad($longitudeTo);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $angle = 2 * asin(sqrt(pow(sin($latDelta / 2), 2) +
+            cos($latFrom) * cos($latTo) * pow(sin($lonDelta / 2), 2)));
+        return $angle * $earthRadius;
+    }
 }

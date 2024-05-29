@@ -20,6 +20,8 @@ return new class extends Migration
             $table->float('longitude');
             $table->integer('ordre');
             $table->longText('photo')->nullable();
+            $table->float('distance')->default(0);
+            $table->integer('duree')->default(0);
             $table->timestamps();
         });
     }
