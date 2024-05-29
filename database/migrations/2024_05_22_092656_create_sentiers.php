@@ -14,8 +14,8 @@ return new class extends Migration {
             $table->longText('description');
             $table->integer('duree');
             $table->float('longueur');
-            $table->string('point_depart', 50);
-            $table->string('point_arrive', 50);
+            $table->string('localisation', 150);
+            $table->integer('compteur');
             $table->longText('photo')->nullable();
             $table->foreignId('theme_id')->constrained('themes')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');

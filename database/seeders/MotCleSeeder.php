@@ -13,6 +13,40 @@ class MotCleSeeder extends Seeder {
             'name' => 'Nature',
         ]);
 
-        MotCle::factory()->count(10)->create();
+        MotCle::create([
+            'name' => 'Histoire',
+        ]);
+
+        MotCle::create([
+            'name' => 'Culture',
+        ]);
+
+        MotCle::create([
+            'name' => 'Aventure',
+        ]);
+
+        MotCle::create([
+            'name' => 'Sport',
+        ]);
+
+        MotCle::create([
+            'name' => 'Gastronomie',
+        ]);
+
+        MotCle::create([
+            'name' => 'Architecture',
+        ]);
+
+        MotCle::create([
+            'name' => 'Faune',
+        ]);
+
+        MotCle::create([
+            'name' => 'Flore',
+        ]);
+
+        MotCle::create([
+            'name' => 'Panorama',
+        ]);
     }
 }

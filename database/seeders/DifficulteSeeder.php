@@ -14,7 +14,7 @@ class DifficulteSeeder extends Seeder {
             '2',
             '3',
         ];
-
+        
         foreach ($difficultes as $difficulte) {
             Difficulte::create(['graduation' => $difficulte]);
         }
