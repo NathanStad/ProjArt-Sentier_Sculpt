@@ -26,7 +26,7 @@ class UserSeeder extends Seeder {
             'email' => 'michael.scott@dunder.com',
             'password' => Hash::make('password'),
             'role' => 'institution',
-            'photo' => 'https://example.com/photo1',
+            'photo' => '/imgs/users/michaelscott.jpg',
         ]);
 
         User::create([
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder {
             'email' => 'pam.halpert@dunder.com',
             'password' => Hash::make('password'),
             'role' => 'user',
-            'photo' => 'https://example.com/photo2',
+            'photo' => '/imgs/users/jimhalpert.jpg',
         ]);
 
         User::create([
@@ -42,7 +42,7 @@ class UserSeeder extends Seeder {
             'email' => 'jim.d@dunder.com',
             'password' => Hash::make('password'),
             'role' => 'user',
-            'photo' => 'https://example.com/photo3',
+            'photo' => '/imgs/users/pambeesly.jpg',
         ]);
     }
 }

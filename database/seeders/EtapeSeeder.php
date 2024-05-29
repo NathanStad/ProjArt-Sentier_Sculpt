@@ -87,7 +87,7 @@ class EtapeSeeder extends Seeder {
                     'latitude' => $baseLatitude + (rand(-5000, 5000) / 1000000),
                     'longitude' => $baseLongitude + (rand(-5000, 5000) / 1000000),
                     'ordre' => $i,
-                    'photo' => 'https://example.com/photo' . $i
+                    'photo' => '/imgs/etapes/photo' . $i . '.jpg' 
                 ]);
             }
         }

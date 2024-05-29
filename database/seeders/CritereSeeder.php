@@ -10,54 +10,61 @@ class CritereSeeder extends Seeder {
 
     public function run(): void
     {
-        // Critere::create([
-        //     'name' => 'Parking disponible',
-        // ]);
-
-        // Critere::create([
-        //     'name' => 'Mobilité réduite',
-        // ]);
-
-        // Critere::factory()->count(10)->create();
 
         Critere::create([
-            'name' => 'Parking disponible',
+            'name' => 'Parking',
+            'icone' => '<span class="material-symbols-outlined">
+            local_parking
+            </span>'
         ]);
 
         Critere::create([
-            'name' => 'Mobilité réduite',
-        ]);
-
-        Critere::create([
-            'name' => 'Adapté aux enfants/poussettes',
+            'name' => 'Adapté aux enfants',
+            'icone' => '<span class="material-symbols-outlined">
+            child_friendly
+            </span>'
         ]);
 
         Critere::create([
             'name' => 'Animaux de compagnie autorisés',
+            'icone' => '<span class="material-symbols-outlined">
+            pets
+            </span>'
         ]);
 
         Critere::create([
-            'name' => 'Payant/gratuit',
+            'name' => 'Gratuit',
+            'icone' => '<span class="material-symbols-outlined">
+            money_off
+            </span>'
         ]);
 
         Critere::create([
-            'name' => 'Dénivelé',
+            'name' => 'Adapté aux personnes à mobilité réduite',
+            'icone' => '<span class="material-symbols-outlined">
+            accessible
+            </span>'
         ]);
 
         Critere::create([
-            'name' => 'Options pour manger (restaurant, pique-nique)',
-        ]);
-
-        Critere::create([
-            'name' => 'Type de terrain',
+            'name' => 'Restauration',
+            'icone' => '<span class="material-symbols-outlined">
+            restaurant
+            </span>'
         ]);
 
         Critere::create([
             'name' => 'Facilités sanitaires',
+            'icone' => '<span class="material-symbols-outlined">
+            wc
+            </span>'
         ]);
 
         Critere::create([
             'name' => 'Accès en transport public',
+            'icone' => '<span class="material-symbols-outlined">
+            directions_bus
+            </span>'
         ]);
     }
 }

@@ -11,7 +11,7 @@ class Critere extends Model
     
     protected $table = 'criteres';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'icone'];
 
     public function sentiers()
     {
