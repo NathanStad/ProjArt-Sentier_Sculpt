@@ -94,7 +94,18 @@ class EtapeController extends Controller {
             return $angle * $earthRadius;
         }
 
-        
-
+        public function destroy($id) {
+            $etape = Etape::find($id);
+            
+            if ($etape) {
+                $sentierId = $etape->sentier_id;
+                $etape->pointsInteret()->detach();
+                $etape->delete();
+                $this->updateDistancesAndDurations($sentierId);
+                return response()->json(['message' => 'Etape deleted'], 200);
+            } else {
+                return response()->json(['message' => 'Etape not found'], 404);
+            }
+        }
 
 }

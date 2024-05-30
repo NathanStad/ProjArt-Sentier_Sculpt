@@ -122,4 +122,21 @@ class SentierController extends Controller {
         
         return response()->json($sentiers);
     }
+    
+    public function destroy($id) {
+        $user = Auth::user();
+        
+        if ($user && $user->role === 'institution') {
+            $sentier = Sentier::find($id);
+            
+            if (!$sentier) {
+                return response()->json(['message' => 'Sentier not found'], 404);
+            }
+
+            $sentier->delete();
+            return response()->json(['message' => 'Sentier deleted'], 200);
+        } else {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+    }
 }

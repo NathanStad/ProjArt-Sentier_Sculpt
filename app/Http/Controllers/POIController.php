@@ -53,4 +53,16 @@ class POIController extends Controller {
     
             return response()->json($poi, 200);
         }
+
+        public function destroy($id) {
+            $poi = PointInteret::find($id);
+            
+            if ($poi) {
+                $poi->etapes()->detach();
+                $poi->delete();
+                return response()->json(['message' => 'Point of Interest deleted'], 200);
+            } else {
+                return response()->json(['message' => 'Point of Interest not found'], 404);
+            }
+        }
 }
