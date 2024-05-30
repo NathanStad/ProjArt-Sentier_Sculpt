@@ -60,13 +60,35 @@ export default {
                 const coordinate = [etape.longitude, etape.latitude];
                 //console.log("Coordinate:", coordinate);
 
-                const marker = new maplibregl.Marker({}).setLngLat(coordinate).addTo(map);
-                console.log("Marker:", marker._element);
+                const marker = new maplibregl.Marker({ color: couleur }).setLngLat(coordinate).addTo(map);
+                //console.log("Marker:", marker._element);
+
+
+                // Access the marker's DOM element
+                const markerElement = marker._element;
+                console.log("Marker Element:", markerElement);
+                // Find the <path> element inside the marker's SVG
+                const svgElement = markerElement.querySelector('svg');
+                if (svgElement) {
+                    // Clear the existing content
+                    svgElement.innerHTML = '';
+
+                    // Create a new circle element
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', '12'); // Adjust these values as needed
+                    circle.setAttribute('cy', '12'); // Adjust these values as needed
+                    circle.setAttribute('r', '12');  // Adjust this value as needed
+                    circle.setAttribute('fill', couleur);
+
+                    // Append the circle to the SVG
+                    svgElement.appendChild(circle);
+                }
+
 
                 // console.log("Marker:", marker._lngLat);
 
                 const popup = new maplibregl.Popup({
-                    offset: 0,
+                    offset: 25,
                     closeButton: false,
                     closeOnClick: true,
                 }).setText(`Étape ${index + 1}`);
