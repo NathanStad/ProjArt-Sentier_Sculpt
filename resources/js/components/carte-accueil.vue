@@ -13,7 +13,6 @@
 <script>
 import maplibregl from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
-import Sortable from "sortablejs";
 import axios from 'axios';
 import { ref } from 'vue';
 
@@ -55,12 +54,15 @@ export default {
                 map.removeLayer(routeLayerId);
                 map.removeSource(routeLayerId);
             }
+
             const couleur = this.randomVert();
             tour.etapes.forEach((etape, index) => {
                 const coordinate = [etape.longitude, etape.latitude];
                 //console.log("Coordinate:", coordinate);
 
                 const marker = new maplibregl.Marker({}).setLngLat(coordinate).addTo(map);
+                console.log("Marker:", marker._element);
+
                 // console.log("Marker:", marker._lngLat);
 
                 const popup = new maplibregl.Popup({
@@ -88,10 +90,6 @@ export default {
                     .then(response => response.json())
                     .then(responseData => {
                         const coordinates = responseData.features[0].geometry.coordinates;
-                        const duration = responseData.features[0].properties.segments.reduce(
-                            (total, segment) => total + segment.duration,
-                            0
-                        );
 
                         map.addLayer({
                             id: routeLayerId,
