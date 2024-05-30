@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EtapeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SentierController;
 use App\Http\Controllers\ThemeController;
@@ -10,11 +11,11 @@ Route::get('/', function () {
 });
 
 Route::get('/data-sentiers', [SentierController::class, 'index']);
-Route::get('/data-sentier-{$n}', [SentierController::class, 'show']);
-Route::get('/data-sentier/prefere-incr', [SentierController::class, 'incrCompteur']);
+Route::get("/data-sentier-{id}", [SentierController::class, 'show']);
+Route::get("/data-step-{id}", [EtapeController::class, 'show']);
+Route::get("/data-sentier/prefere-incr-{id}", [SentierController::class, 'incrCompteur']);
 Route::get('/data-sentiers/prefere', [SentierController::class, 'topClickedSentiers']);
 Route::get('/data-theme', [ThemeController::class, 'index']);
-Route::get('/data-sentier', [SentierController::class, 'index']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

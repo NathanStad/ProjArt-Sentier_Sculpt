@@ -1,12 +1,15 @@
 <template>
-    <h1></h1>
+    <h1>Favoris</h1>
     <input type="text" value="Recherche" />
-    <a href="">
-        <img src="" alt="" />
+    <a href="" v-for="">
+        <!-- Boutton Favoris -->
+        <div></div>
         <img src="" alt="" />
         <div>
-            <p></p>
-            <p></p>
+            <div>
+                <p></p>
+                <p></p>
+            </div>
         </div>
     </a>
 </template>

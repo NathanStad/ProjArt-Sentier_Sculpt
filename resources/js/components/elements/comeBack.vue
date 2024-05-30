@@ -1,4 +1,4 @@
-<template lang="">
+<template>
         <div v-if="">
             <a href=""></a>
             <p></p>
