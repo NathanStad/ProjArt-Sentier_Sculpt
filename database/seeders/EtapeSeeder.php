@@ -9,56 +9,178 @@ use App\Models\Sentier;
 use Faker\Factory as Faker;
 
 class EtapeSeeder extends Seeder {
-    public function run(): void {
-        $sentiers = Sentier::all();
-    
-        foreach ($sentiers as $sentier) {
-            $baseLatitude = 46.5617;
-            $baseLongitude = 6.5360;
-            $previousLatitude = $baseLatitude;
-            $previousLongitude = $baseLongitude;
-    
-            for ($i = 1; $i <= 3; $i++) {
-                if ($i === 1) {
-                    $latitude = $baseLatitude + (rand(-5000, 5000) / 1000000);
-                    $longitude = $baseLongitude + (rand(-5000, 5000) / 1000000);
-                } else {
-                    do {
-                        $latitude = $previousLatitude + (rand(-25000, 25000) / 1000000);
-                        $longitude = $previousLongitude + (rand(-25000, 25000) / 1000000);
-                        $distance = $this->haversineGreatCircleDistance($previousLatitude, $previousLongitude, $latitude, $longitude);
-                    } while ($distance < 1 || $distance > 2.5);
-    
-                   $duree = ($distance / 5) * 3600;
-                }
-    
-                if ($i === 3) {
-                    $distance = 0;
-                    $duree = 0;
-                } else {
-                   $distance = $this->haversineGreatCircleDistance($previousLatitude, $previousLongitude, $latitude, $longitude);
-                   $duree = ($distance / 5) * 3600;
-                }
-    
-                Etape::create([
-                    'sentier_id' => $sentier->id,
-                    'nom' => 'Étape ' . $i . ' du ' . $sentier->nom,
-                    'description' => 'Description de l\'étape ' . $i . ' du sentier.',
-                    'latitude' => $latitude,
-                    'longitude' => $longitude,
-                    'ordre' => $i,
-                    'photo' => '/imgs/etapes/photo' . $i . '.jpg',
-                    'distance' => $distance,
-                    'duree' => $duree,
-                ]);
-    
-                $previousLatitude = $latitude;
-                $previousLongitude = $longitude;
-            }
-        }
+    public function run(): void
+    {
+        $sentier1 = Sentier::find(1);
+        $this->createEtapesForSentier1($sentier1);
+
+        // Étapes pour le deuxième sentier
+        $sentier2 = Sentier::find(2);
+        $this->createEtapesForSentier2($sentier2);
+
+        // Étapes pour le troisième sentier
+        $sentier3 = Sentier::find(3);
+        $this->createEtapesForSentier3($sentier3);
     }
 
-    private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371) {
+    private function createEtapesForSentier1($sentier)
+    {
+        $latitude1 = 46.778091603482416;
+        $longitude1 = 6.634807457364027;
+
+        $latitude2 = 46.7845; 
+        $longitude2 = 6.6442;
+        $distance1 = $this->haversineGreatCircleDistance($latitude1, $longitude1, $latitude2, $longitude2);
+        $duree1 = ($distance1 / 5) * 3600;
+
+        $latitude3 = 46.77887821612798; 
+        $longitude3 = 6.64853209607303;
+        $distance2 = $this->haversineGreatCircleDistance($latitude2, $longitude2, $latitude3, $longitude3);
+        $duree2 = ($distance2 / 5) * 3600;
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 1 du Sentier Typique',
+            'description' => 'Description de l\'étape 1 du sentier.',
+            'latitude' => $latitude1,
+            'longitude' => $longitude1,
+            'ordre' => 1,
+            'photo' => '/imgs/etapes/photo1.jpg',
+            'distance' => $distance1,
+            'duree' => $duree1,
+        ]);
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 2 du Sentier Typique',
+            'description' => 'Description de l\'étape 2 du sentier.',
+            'latitude' => $latitude2,
+            'longitude' => $longitude2,
+            'ordre' => 2,
+            'photo' => '/imgs/etapes/photo2.jpg',
+            'distance' => $distance2,
+            'duree' => $duree2,
+        ]);
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 3 du Sentier Typique',
+            'description' => 'Description de l\'étape 3 du sentier.',
+            'latitude' => $latitude3,
+            'longitude' => $longitude3,
+            'ordre' => 3,
+            'photo' => '/imgs/etapes/photo3.jpg',
+            'distance' => 0,
+            'duree' => 0,
+        ]);
+    }
+
+    private function createEtapesForSentier2($sentier)
+    {
+        $latitude1 = 46.52700585711486;
+        $longitude1 = 6.6116923896493995;
+
+        $latitude2 = 46.5368; // Coordonnées ajustées
+        $longitude2 = 6.6257;
+        $distance1 = $this->haversineGreatCircleDistance($latitude1, $longitude1, $latitude2, $longitude2);
+        $duree1 = ($distance1 / 5) * 3600;
+
+        $latitude3 = 46.5412; // Coordonnées ajustées
+        $longitude3 = 6.6321;
+        $distance2 = $this->haversineGreatCircleDistance($latitude2, $longitude2, $latitude3, $longitude3);
+        $duree2 = ($distance2 / 5) * 3600;
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 1 du Sentier Historique',
+            'description' => 'Description de l\'étape 1 du sentier.',
+            'latitude' => $latitude1,
+            'longitude' => $longitude1,
+            'ordre' => 1,
+            'photo' => '/imgs/etapes/photo4.jpg',
+            'distance' => $distance1,
+            'duree' => $duree1,
+        ]);
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 2 du Sentier Historique',
+            'description' => 'Description de l\'étape 2 du sentier.',
+            'latitude' => $latitude2,
+            'longitude' => $longitude2,
+            'ordre' => 2,
+            'photo' => '/imgs/etapes/photo5.jpg',
+            'distance' => $distance2,
+            'duree' => $duree2,
+        ]);
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 3 du Sentier Historique',
+            'description' => 'Description de l\'étape 3 du sentier.',
+            'latitude' => $latitude3,
+            'longitude' => $longitude3,
+            'ordre' => 3,
+            'photo' => '/imgs/etapes/photo6.jpg',
+            'distance' => 0,
+            'duree' => 0,
+        ]);
+    }
+
+    private function createEtapesForSentier3($sentier)
+    {
+        $latitude1 = 46.60920005752568;
+        $longitude1 = 6.248820104351553;
+
+        $latitude2 = 46.619473;
+        $longitude2 = 6.265666;
+        $distance1 = $this->haversineGreatCircleDistance($latitude1, $longitude1, $latitude2, $longitude2);
+        $duree1 = ($distance1 / 5) * 3600;
+
+        $latitude3 = 46.625705;
+        $longitude3 = 6.279295;
+        $distance2 = $this->haversineGreatCircleDistance($latitude2, $longitude2, $latitude3, $longitude3);
+        $duree2 = ($distance2 / 5) * 3600;
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 1 du Sentier Nature',
+            'description' => 'Description de l\'étape 1 du sentier.',
+            'latitude' => $latitude1,
+            'longitude' => $longitude1,
+            'ordre' => 1,
+            'photo' => '/imgs/etapes/photo7.jpg',
+            'distance' => $distance1,
+            'duree' => $duree1,
+        ]);
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 2 du Sentier Nature',
+            'description' => 'Description de l\'étape 2 du sentier.',
+            'latitude' => $latitude2,
+            'longitude' => $longitude2,
+            'ordre' => 2,
+            'photo' => '/imgs/etapes/photo8.jpg',
+            'distance' => $distance2,
+            'duree' => $duree2,
+        ]);
+
+        Etape::create([
+            'sentier_id' => $sentier->id,
+            'nom' => 'Étape 3 du Sentier Nature',
+            'description' => 'Description de l\'étape 3 du sentier.',
+            'latitude' => $latitude3,
+            'longitude' => $longitude3,
+            'ordre' => 3,
+            'photo' => '/imgs/etapes/photo9.jpg',
+            'distance' => 0,
+            'duree' => 0,
+        ]);
+    }
+
+    private function haversineGreatCircleDistance($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $earthRadius = 6371)
+    {
         $latFrom = deg2rad($latitudeFrom);
         $lonFrom = deg2rad($longitudeFrom);
         $latTo = deg2rad($latitudeTo);
