@@ -73,7 +73,7 @@
         id="step"
         :class="{ content: true, active: currentContent === 'step' }"
     >
-        <a :href="`#steps-${sentierId.idSection}`" v-for="etape in etapes" :key="etape.id">
+        <a :href="`#steps-${sentierId}`" v-for="etape in etapes" :key="etape.id">
             <img :src="etape.photo" :alt="etape.description" />
             <div>
                 <p>{{ etape.nom }}</p>
