@@ -11,7 +11,7 @@
                                 <p v-if="index === etapes.length - 1">📍</p>
                                 <p v-else>🗺️</p>
                             </div>
-                            <div class="step" @click="clickEtape">
+                            <div class="step" @click="clickEtape(index)">
                                 <span class="step-name">{{ element.nom || 'Etape ' + (index + 1) }}</span>
                                 <div class="dragHandle">🔃</div>
                             </div>
@@ -48,11 +48,12 @@ export default {
         draggable,
         EtapeComponent,
     },
+
     data() {
         return {
             etapes: [
-                { nom: '', description: '', coordonnees: [], photo: '', pointInteret: [] },
-
+                { nom: 'nom 1', description: 'la description', coordonnees: { lat: null, long: null }, photo: null, pointInteret: [{ nom: '', photo: null }, { nom: '', photo: null }] },
+                { nom: 'nom 2', description: 'la descr', coordonnees: { lat: null, long: null }, photo: null, pointInteret: [{ nom: '', photo: null }, { nom: '', photo: null }] },
             ],
             oldIndex: '',
             newIndex: '',
@@ -207,15 +208,17 @@ export default {
             }
         },
         ajouteEtape() {
-            this.etapes.push({ nom: '', description: '', coordonnees: [], photo: '', pointInteret: [] });
+            this.etapes.push({ nom: '', description: '', coordonnees: { lat: null, long: null }, photo: null, pointInteret: [{ nom: '', photo: null }, { nom: '', photo: null }] },
+            );
         },
         onEnd(evt) {
             console.log(evt);
             this.oldIndex = evt.oldIndex;
             this.newIndex = evt.newIndex;
         },
-        clickEtape(etape) {
-            console.log(etape);
+        clickEtape(index) {
+            const hash = `etape-${index + 1}`;
+            window.location.hash = hash;
         },
         delEtape(etape) {
             this.etapes.pop(etape);
@@ -240,17 +243,17 @@ export default {
                 })
             );
         });
+
+        sessionStorage.setItem('etapes', JSON.stringify(this.etapes));
     },
     watch: {
         etapes: {
             handler() {
-                //console.log(this.etapes);
+                sessionStorage.setItem('etapes', JSON.stringify(this.etapes));
             },
             deep: true
         }
     },
-
-
 };
 </script>
 
@@ -395,7 +398,5 @@ body {
     #btnSuivant button {
         height: 50px;
     }
-
-
 }
 </style>

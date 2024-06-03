@@ -20,6 +20,7 @@
         "@mapbox/polyline": "^1.2.1",
         "@maplibre/maplibre-gl-directions": "^0.7.0",
         "maplibre-gl": "^4.3.2",
+        "normalize.css": "^8.0.1",
         "openrouteservice-js": "^0.3.2",
         "sortablejs": "^1.15.2",
         "swiper": "^11.1.4",

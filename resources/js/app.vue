@@ -47,7 +47,7 @@
 
     <!-- Création sentier -->
     <section>
-        <!-- <CarteCreation /> -->
+        <CarteCreation />
     </section>
 
     <!-- Création d'étape -->
@@ -81,6 +81,8 @@ import CarteAccueil from "@/components/carte-accueil.vue";
 import CarteSentier from "@/components/carte-sentier.vue";
 import CarteCreation from "@/components/carte-creation.vue";
 import CreationEtape from "@/components/etape-creation.vue";
+import 'normalize.css'
+
 
 // import DetailEtape from "@/components/details-step.vue";
 // import Favortie from "@/components/favorite.vue";
