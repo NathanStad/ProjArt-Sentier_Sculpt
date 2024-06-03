@@ -24,7 +24,7 @@ class SentierSeeder extends Seeder {
         // Sentier::factory(20)->create();
 
         Sentier::create([
-            'nom' => 'Sentier Typique',
+            'nom' => 'La ville qui dure',
             'description' => 'Un sentier typique pour les tests.',
             'duree' => 120,
             'longueur' => 10.5,
@@ -38,7 +38,7 @@ class SentierSeeder extends Seeder {
         ]);
 
         Sentier::create([
-            'nom' => 'Sentier Historique',
+            'nom' => 'La marche Olympique',
             'description' => 'Un sentier qui vous fait découvrir l\'histoire de la région.',
             'duree' => 150,
             'longueur' => 12.0,
@@ -52,7 +52,7 @@ class SentierSeeder extends Seeder {
         ]);
 
         Sentier::create([
-            'nom' => 'Sentier Nature',
+            'nom' => 'En pleine Nature',
             'description' => 'Un sentier qui traverse les plus beaux paysages naturels.',
             'duree' => 180,
             'longueur' => 15.0,

@@ -10,43 +10,47 @@ class MotCleSeeder extends Seeder {
 
     public function run(): void {
         MotCle::create([
-            'name' => 'Nature',
+            'name' => 'Technologie',
         ]);
 
         MotCle::create([
-            'name' => 'Histoire',
+            'name' => 'Vin',
         ]);
 
         MotCle::create([
-            'name' => 'Culture',
+            'name' => 'Mythes & Légendes',
         ]);
 
         MotCle::create([
-            'name' => 'Aventure',
+            'name' => 'Châteaux',
         ]);
 
         MotCle::create([
-            'name' => 'Sport',
+            'name' => 'Point de vue',
         ]);
 
         MotCle::create([
-            'name' => 'Gastronomie',
+            'name' => 'Parc',
         ]);
 
         MotCle::create([
-            'name' => 'Architecture',
+            'name' => 'Fôret',
         ]);
 
         MotCle::create([
-            'name' => 'Faune',
+            'name' => 'Jardins',
         ]);
 
         MotCle::create([
-            'name' => 'Flore',
+            'name' => 'Education',
         ]);
 
         MotCle::create([
-            'name' => 'Panorama',
+            'name' => 'Ruines',
+        ]);
+
+        MotCle::create([
+            'name' => 'Statues',
         ]);
     }
 }

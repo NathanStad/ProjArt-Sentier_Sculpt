@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller {
 
@@ -36,5 +38,21 @@ class UserController extends Controller {
             ]);
     
             return response()->json($user, 201);
+        }
+        
+        public function authenticate(Request $request)
+        {
+            $credentials = $request->validate([
+                'email' => ['required', 'email'],
+                'password' => ['required'],
+            ]);
+    
+            if (Auth::attempt($credentials)) {
+                $request->session()->regenerate();
+    
+                return response()->json(['message' => 'Authenticated', 'user' => Auth::user()], 200);
+            }
+    
+            return response()->json(['message' => 'Authentication failed'], 401);
         }
 }

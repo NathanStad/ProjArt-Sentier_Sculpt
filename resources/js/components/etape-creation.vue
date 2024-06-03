@@ -1,7 +1,8 @@
 <template>
     <div class="container">
         <h1 class="titreEtape">Étape {{ this.noEtape }}</h1>
-        <form @submit.prevent="submitForm"> <!-- Utilisation de @submit.prevent pour gérer la soumission -->
+        <form action="" v-if="etapes">
+            <!-- Utilisation de @submit.prevent pour gérer la soumission -->
             <div class="input-container">
                 <label for="nom">Nom de l'étape</label>
                 <input type="text" v-model="etapes.nom" id="nom" placeholder="Nom de l'étape" maxlength="100">
@@ -17,27 +18,43 @@
                 <label>Poiter le lieu de l'étape</label>
                 <div class="map"></div>
             </div>
-            <div class="input-container">
+
+
+
+
+
+            <div class="input-container" v-if="etapes.photo">
                 <label>Ajouter une photo</label>
                 <label for="photo">
-                    <span v-if="etapes.photo" class="material-symbols-outlined photoImported"> add_a_photo </span>
-                    <span v-else class="material-symbols-outlined"> add_a_photo </span>
+                    <img :src="etapes.photo" alt="image de l'etape">
+                    <span class="material-symbols-outlined editIcon">edit</span>
                 </label>
                 <input type="file" id="photo" @change="handleFileUpload" style="display: none;">
             </div>
-            <div class="input-container">
+            <div class="input-container" v-else>
+                <label>Ajouter une photo</label>
+                <label for="photo">
+                    <span class="material-symbols-outlined"> add_a_photo </span>
+                </label>
+                <input type="file" id="photo" @change="handleFileUpload" style="display: none;">
+            </div>
+
+
+
+
+
+            <div class="input-container" v-if="etapes.pointInteret">
                 <label>Point d'intérêts</label>
                 <div class="ptInteret">
-                    <input v-if="etapes.pointInteret" type="text" v-model="etapes.pointInteret[0].nom"
-                        placeholder="Nom du point d'intérêt">
+                    <input type="text" v-model="etapes.pointInteret[0].nom" placeholder="Nom du point d'intérêt">
                     <label for="photoInteret-1">
                         <span class="material-symbols-outlined"> add_a_photo </span>
                     </label>
                     <input type="file" id="photoInteret-1" @change="handleFileUpload" style="display: none;">
                 </div>
                 <div class="ptInteret">
-                    <input v-if="etapes.pointInteret" type="text" v-model="etapes.pointInteret[1].nom"
-                        placeholder="Nom du point d'intérêt"> <label for="photoInteret-2">
+                    <input type="text" v-model="etapes.pointInteret[1].nom" placeholder="Nom du point d'intérêt">
+                    <label for="photoInteret-2">
                         <span class="material-symbols-outlined"> add_a_photo </span>
                     </label>
                     <input type="file" id="photoInteret-2" @change="handleFileUpload" style="display: none;">
