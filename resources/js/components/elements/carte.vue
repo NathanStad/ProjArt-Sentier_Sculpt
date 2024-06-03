@@ -46,9 +46,9 @@ export default {
                     confirmationDiv.style.border = "2px solid black";
                     confirmationDiv.style.borderRadius = "10px";
                     confirmationDiv.innerHTML = `
-        <p>Voulez-vous ajouter une étape à cette position ?</p>
-        <button id="confirmYes">Oui</button>
-        <button id="confirmNo">Non</button>
+                <p>Voulez-vous ajouter une étape à cette position ?</p>
+                <button id="confirmYes">Oui</button>
+                <button id="confirmNo">Non</button>
       `;
 
                     document.body.appendChild(confirmationDiv);

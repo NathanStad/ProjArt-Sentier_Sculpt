@@ -11,9 +11,8 @@
     </section>
 
     <!-- Carte -->
-    <section class="active">
-        <!-- <Carte /> -->
-        <CarteAccueil />
+    <section>
+        <!-- <CarteAccueil /> -->
     </section>
 
     <!-- Accueil -->
@@ -23,7 +22,7 @@
 
     <!-- Sentier -->
     <section>
-
+        <!-- <CarteSentier /> -->
     </section>
 
     <!-- Étape -->
@@ -48,12 +47,12 @@
 
     <!-- Création sentier -->
     <section>
-
+        <!-- <CarteCreation /> -->
     </section>
 
     <!-- Création d'étape -->
-    <section>
-
+    <section class="active">
+        <CreationEtape />
     </section>
 
     <!-- Account -->
@@ -79,6 +78,10 @@ import axios from "axios";
 import Accueil from "@/components/accueil.vue";
 import Carte from "@/components/carte.vue";
 import CarteAccueil from "@/components/carte-accueil.vue";
+import CarteSentier from "@/components/carte-sentier.vue";
+import CarteCreation from "@/components/carte-creation.vue";
+import CreationEtape from "@/components/etape-creation.vue";
+
 // import DetailEtape from "@/components/details-step.vue";
 // import Favortie from "@/components/favorite.vue";
 // import SentierCreation from "@/components/sentier-creation.vue";
@@ -93,10 +96,12 @@ export default {
     components: {
         Accueil,
         Carte,
-        CarteAccueil
+        CarteAccueil,
+        CarteSentier,
+        CarteCreation,
+        CreationEtape,
     }
 };
-
 
 </script>
 

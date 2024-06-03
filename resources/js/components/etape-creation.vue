@@ -23,7 +23,12 @@
         <input type="file" name="" id="" />
     </form>
 </template>
+
 <script>
-export default {};
+
+export default {
+
+}
 </script>
-<style lang=""></style>
+
+<style></style>
