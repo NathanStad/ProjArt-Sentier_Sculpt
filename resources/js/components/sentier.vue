@@ -73,7 +73,7 @@
         id="step"
         :class="{ content: true, active: currentContent === 'step' }"
     >
-        <a :href="`#steps-${sentierId}`" v-for="etape in etapes" :key="etape.id">
+        <a :href="`#steps-${Id}`" v-for="etape in etapes" :key="etape.id">
             <img :src="etape.photo" :alt="etape.description" />
             <div>
                 <p>{{ etape.nom }}</p>
@@ -150,77 +150,78 @@
         </div>
     </div>
 </template>
-<script>
-import axios from "axios";
+<script setup>
+import { ref, onMounted, defineProps } from 'vue';
+import axios from 'axios';
 
-export default {
-    props: {
-        sentierId: "",
-    },
-    data() {
-        return {
-            message: "",
-            sentier: [],
-            etapes: [],
-            currentContent: "step",
-        };
-    },
-    created() {
-        this.incrementCompteur();
-        this.fetchSentier();
-    },
-    methods: {
-        incrementCompteur() {
-            console.log(this.sentierId.idSection);
-            if (this.sentierId != null) {
-                axios
-                    .get(
-                        `/data-sentier/prefere-incr-${this.sentierId.idSection}`
-                    )
-                    .then((response) => {
-                        this.message = response.data.message;
-                    })
-                    .catch((error) => {
-                        if (error.response) {
-                            this.message = error.response.data.message;
-                        } else {
-                            this.message = "An error occurred";
-                        }
-                        console.error("There was an error!", error);
-                    });
-            }
-        },
-        async fetchSentier() {
-            if (this.sentierId != null) {
-                try {
-                    const response = await axios.get(
-                        `/data-sentier-${this.sentierId.idSection}`
-                    );
-                    this.sentier = response.data;
-                    this.etapes = response.data.etapes;
-                } catch (error) {
-                    console.error("Error fetching sentiers:", error);
-                }
-            }
-        },
-        showContent(content) {
-            this.currentContent = content;
-        },
-        convertissorDate(date){
-            // Obtenir les composants de la date
-            const dateInitiale = new Date(date);
+// Définition des props
+const props = defineProps({
+  Id: {
+    type: Object,
+    required: true,
+  },
+});
+console.log(props.Id);
+// Data
+const message = ref('');
+const sentier = ref([]);
+const etapes = ref([]);
+const currentContent = ref('step');
 
-            const jour = dateInitiale.getDate();
-            const mois = dateInitiale.getMonth() + 1; // Les mois sont indexés à partir de 0, donc ajoutez 1
-            const annee = dateInitiale.getFullYear();
-
-            // Formater la date selon le format souhaité (JJ.MM.AAAA)
-            const dateFormatee = `${jour < 10 ? '0' : ''}${jour}.${mois < 10 ? '0' : ''}${mois}.${annee}`;
-
-            return dateFormatee
+// Methods
+const incrementCompteur = () => {
+  if (props.Id !== '') {
+    axios
+      .get(`/data-sentier/prefere-incr-${props.Id}`)
+      .then((response) => {
+        message.value = response.data.message;
+      })
+      .catch((error) => {
+        if (error.response) {
+          message.value = error.response.data.message;
+        } else {
+          message.value = 'An error occurred';
         }
-    },
+        console.error('There was an error!', error);
+      });
+  }
 };
+
+const fetchSentier = async () => {
+  if (props.Id !== '') {
+    try {
+      const response = await axios.get(`/data-sentier-${props.Id}`);
+      sentier.value = response.data;
+      etapes.value = response.data.etapes;
+    } catch (error) {
+      console.error('Error fetching sentiers:', error);
+    }
+  }
+};
+
+const showContent = (content) => {
+  currentContent.value = content;
+};
+
+const convertissorDate = (date) => {
+  // Obtenir les composants de la date
+  const dateInitiale = new Date(date);
+
+  const jour = dateInitiale.getDate();
+  const mois = dateInitiale.getMonth() + 1; // Les mois sont indexés à partir de 0, donc ajoutez 1
+  const annee = dateInitiale.getFullYear();
+
+  // Formater la date selon le format souhaité (JJ.MM.AAAA)
+  const dateFormatee = `${jour < 10 ? '0' : ''}${jour}.${mois < 10 ? '0' : ''}${mois}.${annee}`;
+
+  return dateFormatee;
+};
+
+// Lifecycle Hook
+onMounted(() => {
+  incrementCompteur();
+  fetchSentier();
+});
 </script>
 <style>
 svg {

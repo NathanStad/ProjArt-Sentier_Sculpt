@@ -10,17 +10,20 @@ use App\Models\PointInteret;
 use App\Http\Requests\SentierStoreRequest;
 use App\Http\Requests\SentierUpdateRequest;
 
-class SentierController extends Controller {
-    
-    public function index() {
+class SentierController extends Controller
+{
+
+    public function index()
+    {
         $sentiers = Sentier::with(['etapes', 'commentaires', 'theme', 'criteres', 'motcles', 'user', 'difficulte'])->get();
-        
+
         return response()->json($sentiers);
     }
 
-    public function show($id) {
+    public function show($id)
+    {
         $sentier = Sentier::with(['etapes', 'commentaires', 'theme', 'criteres', 'motcles', 'user', 'difficulte'])->find($id);
-        
+
         if ($sentier) {
             return response()->json($sentier);
         } else {
@@ -28,11 +31,12 @@ class SentierController extends Controller {
         }
     }
 
-    public function store(SentierStoreRequest $request) {
+    public function store(SentierStoreRequest $request)
+    {
         $user = Auth::user();
-        
+
         if ($user && $user->role === 'institution') {
-    
+
             $sentier = Sentier::create([
                 'nom' => $request->nom,
                 'description' => $request->description,
@@ -45,7 +49,7 @@ class SentierController extends Controller {
                 'user_id' => $user->id,
                 'difficulte_id' => $request->difficulte_id,
             ]);
-    
+
             foreach ($request->etapes as $etapeData) {
                 $etape = Etape::create([
                     'sentier_id' => $sentier->id,
@@ -55,28 +59,29 @@ class SentierController extends Controller {
                     'longitude' => $etapeData['longitude'],
                     'ordre' => $etapeData['ordre'],
                 ]);
-    
+
                 if (isset($etapeData['points_interet'])) {
                     foreach ($etapeData['points_interet'] as $poiData) {
                         $pointInteret = PointInteret::create([
                             'nom' => $poiData['nom'],
                             'photo' => $poiData['photo'] ?? null,
                         ]);
-    
+
                         $etape->pointsInteret()->attach($pointInteret->id);
                     }
                 }
             }
-    
+
             return response()->json($sentier, 201);
         } else {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
     }
 
-    public function update(SentierUpdateRequest $request, $id) {
+    public function update(SentierUpdateRequest $request, $id)
+    {
         $user = Auth::user();
-        
+
         if ($user && $user->role === 'institution') {
 
             $sentier = Sentier::find($id);
@@ -147,9 +152,22 @@ class SentierController extends Controller {
         }
     }
 
-    public function incrCompteur($id) {
+    public function destroy($id)
+    {
         $sentier = Sentier::find($id);
-        
+
+        if ($sentier) {
+            $sentier->delete();
+            return response()->json(['message' => 'Sentier deleted'], 200);
+        } else {
+            return response()->json(['message' => 'Sentier not found'], 404);
+        }
+    }
+
+    public function incrCompteur($id)
+    {
+        $sentier = Sentier::find($id);
+
         if ($sentier) {
             $sentier->increment('compteur');
             return response()->json(['message' => 'Compteur incremented'], 200);
@@ -158,9 +176,36 @@ class SentierController extends Controller {
         }
     }
 
-    public function topClickedSentiers() {
+    public function topClickedSentiers()
+    {
         $sentiers = Sentier::orderBy('compteur', 'desc')->take(3)->get();
-        
+
         return response()->json($sentiers);
+    }
+
+    public function showByUser($userId)
+    {
+        $sentiers = Sentier::with(['etapes', 'commentaires', 'theme', 'criteres', 'motcles', 'user', 'difficulte'])
+            ->where('user_id', $userId)
+            ->get();
+
+        if ($sentiers->isNotEmpty()) {
+            return response()->json($sentiers);
+        } else {
+            return response()->json(['message' => 'Aucun sentier trouvé pour cet utilisateur'], 404);
+        }
+    }
+
+    public function toggleArchive($id)
+    {
+        $sentier = Sentier::find($id);
+
+        if ($sentier) {
+            $sentier->archive = !$sentier->archive;
+            $sentier->save();
+            return response()->json(['message' => 'Archive status toggled', 'archive' => $sentier->archive], 200);
+        } else {
+            return response()->json(['message' => 'Sentier not found'], 404);
+        }
     }
 }

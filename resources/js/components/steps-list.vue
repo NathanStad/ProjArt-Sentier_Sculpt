@@ -1,6 +1,6 @@
 <template>
             <!-- Bouton retour -->
-            <a :href="`#sentier-${sentierId.idSection}`"></a>
+            <a :href="`#sentier-${Id}`">a</a>
         <!-- Maps -->
         <div id="app"></div>
         <div>            
@@ -28,39 +28,41 @@
         </div>
 </template>
 
-<script>
-import axios from "axios";
+<script setup>
+import axios from 'axios';
+import { defineProps, onMounted, ref } from 'vue';
 
-export default {
-    props: {
-        sentierId: "",
-    },
-    data() {
-        return {
-            sentier: [],
-            etapes: [],
-        };
-    },
-    created() {
-        this.fetchSentier();
-    },
-    methods: {
-        async fetchSentier() {
-            if (this.sentierId != null) {
-                try {
-                    const response = await axios.get(
-                        `/data-sentier-${this.sentierId.idSection}`
-                    );
-                    this.sentier = response.data;
-                    this.etapes = response.data.etapes;
-                } catch (error) {
-                    console.error("Error fetching sentiers:", error);
-                }
-            }
-        },
-    },
+// Définition des props
+const props = defineProps({
+  Id: {
+    type: Object,
+    required: true,
+  },
+});
+
+// Data
+const sentier = ref([]);
+const etapes = ref([]);
+
+// Methods
+const fetchSentier = async () => {
+  if (props.Id !== '') {
+    try {
+      const response = await axios.get(`/data-sentier-${props.Id}`);
+      sentier.value = response.data;
+      etapes.value = response.data.etapes;
+    } catch (error) {
+      console.error('Error fetching sentiers:', error);
+    }
+  }
 };
+
+// Lifecycle Hook
+onMounted(() => {
+  fetchSentier();
+});
 </script>
+
 <style lang="">
     
 </style>

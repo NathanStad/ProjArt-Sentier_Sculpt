@@ -9,6 +9,6 @@ class CritereController extends Controller {
     public function index() {
         $criteres = Critere::all();
             
-        return response()->json($themes);
+        return response()->json($criteres);
     }
 }

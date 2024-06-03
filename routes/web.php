@@ -1,33 +1,39 @@
 <?php
 
+use App\Http\Controllers\CritereController;
 use App\Http\Controllers\EtapeController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MotClesController;
+use App\Http\Controllers\POIController;
 use App\Http\Controllers\SentierController;
 use App\Http\Controllers\ThemeController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
+// Récupération de données
 Route::get('/data-sentiers', [SentierController::class, 'index']);
 Route::get("/data-sentier-{id}", [SentierController::class, 'show']);
 Route::get("/data-step-{id}", [EtapeController::class, 'show']);
 Route::get("/data-sentier/prefere-incr-{id}", [SentierController::class, 'incrCompteur']);
 Route::get('/data-sentiers/prefere', [SentierController::class, 'topClickedSentiers']);
 Route::get('/data-theme', [ThemeController::class, 'index']);
-Route::get('/checkdata-user', [UserController::class, 'authenticate']);
-Route::get('/insertdata-user', [UserController::class, 'store']);
+Route::get('/data-motcles', [MotClesController::class, 'index']);
+Route::get('/data-critere', [CritereController::class, 'index']);
+Route::get('/data-poi', [POIController::class, 'index']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Vérification de compte et login
+Route::get('/data-user-{id}', [UserController::class, 'show']);
+Route::get('/data-sentiers/by-user-{userId}', [SentierController::class, 'showByUser']);
+Route::post('/checkdata-user', [UserController::class, 'authenticate']);
+Route::post('/insertdata-user', [UserController::class, 'store']);
+Route::patch('/set-sentier/{id}/archive', [SentierController::class, 'toggleArchive']);
+Route::delete('/delete-sentier/{id}', [SentierController::class, 'destroy']);
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Insertion de données
 
-require __DIR__.'/auth.php';
+
+// Faire que tous les liens ammènes à l'application
+Route::get('/{any}', function () {
+    return view('welcome');
+})->where('any', '.*');
+
+

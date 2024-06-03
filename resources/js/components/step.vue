@@ -29,41 +29,43 @@
     </div>
     <div>
         <h3>Retour à la carte</h3>
-        <a ><img src="" alt=""></a>
+        <a :href="`#steps-${etape.sentier_id}`">a<img src="" alt=""></a>
     </div>
 </template>
-<script>
-import axios from "axios";
+<script setup>
+import axios from 'axios';
+import { defineProps, onMounted, ref } from 'vue';
 
-export default {
-    props: {
-        etapeId: ""
-    },
-    data() {
-        return {
-            etape: [],
-        };
-    },
-    created() {
-        this.fetchStep();
-    },
-    methods: {
-        async fetchStep() {
-            if (this.etapeId != null) {
-                try {
-                    const response = await axios.get(
-                        `/data-step-${this.etapeId.idSection}`
-                    );
-                    this.etape = response.data;
-                    console.log(response.data);
-                } catch (error) {
-                    console.error("Error fetching sentiers:", error);
-                }
-            }
-        },
+// Définition des props
+const props = defineProps({
+  Id: {
+    type: Object,
+    required: true,
+  },
+});
+
+// Data
+const etape = ref([]);
+
+// Methods
+const fetchStep = async () => {
+  if (props.Id !== '') {
+    try {
+      const response = await axios.get(`/data-step-${props.Id}`);
+      etape.value = response.data;
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching sentiers:', error);
     }
-}
+  }
+};
+
+// Lifecycle Hook
+onMounted(() => {
+  fetchStep();
+});
 </script>
+
 <style lang="">
     
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <form>
+    <form @submit.prevent="submitData">
             <div>
                 <label><h3>Nom étape</h3><input type="text"></label>
             </div>
@@ -20,9 +20,7 @@
         </form>
 </template>
 <script>
-export default {
-    
-}
+
 </script>
 <style lang="">
     
