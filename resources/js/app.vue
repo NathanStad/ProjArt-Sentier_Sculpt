@@ -12,7 +12,7 @@
 
     <!-- Carte -->
     <section>
-        <!-- <CarteAccueil /> -->
+        <CarteAccueil />
     </section>
 
     <!-- Accueil -->
@@ -22,7 +22,7 @@
 
     <!-- Sentier -->
     <section>
-        <!-- <CarteSentier /> -->
+        <CarteSentier />
     </section>
 
     <!-- Étape -->
@@ -46,12 +46,12 @@
     </section>
 
     <!-- Création sentier -->
-    <section>
+    <section class="active">
         <CarteCreation />
     </section>
 
     <!-- Création d'étape -->
-    <section class="active">
+    <section>
         <CreationEtape />
     </section>
 

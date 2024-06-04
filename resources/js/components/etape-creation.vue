@@ -2,46 +2,39 @@
     <div class="container">
         <h1 class="titreEtape">Étape {{ this.noEtape }}</h1>
         <form action="" v-if="etapes">
-            <!-- Utilisation de @submit.prevent pour gérer la soumission -->
             <div class="input-container">
                 <label for="nom">Nom de l'étape</label>
-                <input type="text" v-model="etapes.nom" id="nom" placeholder="Nom de l'étape" maxlength="100">
+                <input type="text" v-model="etapes.nom" id="nom" placeholder="Nom de l'étape" maxlength="100" required>
                 <span class="char-limit">max. 100 caractères</span>
             </div>
             <div class="input-container">
                 <label for="description">Description de l'étape</label>
                 <textarea v-model="etapes.description" id="description" placeholder="Description de l'étape"
-                    maxlength="2000"></textarea>
+                    maxlength="2000" required></textarea>
                 <span class="char-limit">max. 2000 caractères</span>
             </div>
             <div class="input-container">
-                <label>Poiter le lieu de l'étape</label>
-                <div class="map"></div>
+                <label>Pointer le lieu de l'étape</label>
+                <div class="map">
+                    <ChoixPosition :etapes="etapes" :updateCoordinates="updateCoordinates" />
+                </div>
             </div>
 
-
-
-
-
-            <div class="input-container" v-if="etapes.photo">
+            <div v-if="etapes.photo" class="input-container">
                 <label>Ajouter une photo</label>
                 <label for="photo">
                     <img :src="etapes.photo" alt="image de l'etape">
                     <span class="material-symbols-outlined editIcon">edit</span>
                 </label>
-                <input type="file" id="photo" @change="handleFileUpload" style="display: none;">
+                <input type="file" id="photo" @change="handleFileUpload" style="display: none; ">
             </div>
-            <div class="input-container" v-else>
+            <div v-else class="input-container">
                 <label>Ajouter une photo</label>
                 <label for="photo">
                     <span class="material-symbols-outlined"> add_a_photo </span>
                 </label>
                 <input type="file" id="photo" @change="handleFileUpload" style="display: none;">
             </div>
-
-
-
-
 
             <div class="input-container" v-if="etapes.pointInteret">
                 <label>Point d'intérêts</label>
@@ -68,7 +61,8 @@
 </template>
 
 <script>
-
+import axios from 'axios';
+import ChoixPosition from './elements/choixPosition.vue';
 export default {
     data() {
         return {
@@ -96,15 +90,28 @@ export default {
     },
     methods: {
         handleFileUpload(e) {
-            console.log("here");
-            const file = e.target.files[0];
-            if (e.target.id === 'photo') {
-                this.etapes.photo = file;
-            } else {
-                const index = e.target.id.split('-')[1] - 1
-                this.etapes.pointInteret[index].photo = file;
-            }
+            console.log("essai d'envoyer une image")
+            // const file = e.target.files[0];
+            // const formData = new FormData();
+            // formData.append('file', file);
+            // const config = {
+            //     headers: {
+            //         'Content-Type': 'multipart/form-data'
+            //     }
+            // };
+            // axios.post('/api/upload', formData, config).then(function (res) {
+            //     succes.value = res.data.success;
+            // }).catch(function (err) {
+            //     console.error(err);
+            // });
+        },
+        updateCoordinates(lngLat) {
+            this.etapes.coordonnees.long = lngLat.lng;
+            this.etapes.coordonnees.lat = lngLat.lat;
         }
+    },
+    components: {
+        ChoixPosition
     }
 }
 </script>
@@ -231,7 +238,7 @@ export default {
 .map {
     width: 100%;
     height: 340px;
-    background-color: blue;
     border-radius: 10px;
+    position: relative;
 }
 </style>

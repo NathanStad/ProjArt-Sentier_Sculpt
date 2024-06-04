@@ -1,7 +1,9 @@
 <template>
     <div>
-        <div id="map"></div>
-
+        <div id="mapCarteAccueil"></div>
+        <div id="recenterDiv">
+            <RecentrerBtnComponent @recenter="recenter" />
+        </div>
         <!-- <div v-if="sentiers.length > 0">
             <p v-for="sentier in sentiers" :key="sentier.id">{{ sentier }}</p>
         </div>
@@ -14,6 +16,7 @@
 <script>
 import maplibregl from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
+import RecentrerBtnComponent from './elements/recentrerBtnComponent.vue';
 import axios from 'axios';
 import { ref } from 'vue';
 
@@ -22,7 +25,8 @@ let map;
 export default {
     data() {
         return {
-            sentiers: []
+            sentiers: [],
+            coordonnesRecenter: [6.700021, 46.602693],
         };
     },
     created() {
@@ -128,13 +132,6 @@ export default {
                     }
                 }
 
-                const popup = new maplibregl.Popup({
-                    offset: 25,
-                    closeButton: false,
-                    closeOnClick: true,
-                }).setText(`${etape.nom}`);
-
-                marker.setPopup(popup);
                 marker.getElement().addEventListener("click", () => {
                     window.location.hash = `sentier-${tour.id}`;
                 });
@@ -189,20 +186,31 @@ export default {
                 this.afficheRoute(tour);
             });
         },
+        recenter() {
+            console.log('recenter');
+            map.flyTo({
+                center: this.coordonnesRecenter,
+                zoom: 8.5,
+                curve: 1,
+                easing(t) {
+                    return t;
+                },
+            });
+        },
     },
     mounted() {
         map = new maplibregl.Map({
-            container: "map",
+            container: "mapCarteAccueil",
             style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
             center: [6.700021, 46.602693],
-            zoom: 9.2,
+            zoom: 8.5,
         });
 
         map.on("load", () => {
             map.addControl(
                 new maplibregl.NavigationControl({
                     showCompass: false,
-                    showZoom: false,
+                    showZoom: true,
                 })
             );
         });
@@ -214,13 +222,16 @@ export default {
             },
             deep: true
         }
-    }
+    },
+    components: {
+        RecentrerBtnComponent,
+    },
 };
 
 </script>
 
 <style scoped>
-#map {
+#mapCarteAccueil {
     width: 100%;
     height: 100vh;
     flex: 1;
@@ -234,5 +245,16 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+}
+
+#recenterDiv {
+    position: absolute;
+    width: 60px;
+    height: 58px;
+    top: 10px;
+    right: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 </style>

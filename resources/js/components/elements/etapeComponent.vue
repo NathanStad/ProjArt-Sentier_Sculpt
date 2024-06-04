@@ -84,12 +84,12 @@ export default {
         },
         chargerEtape(etape) {
             console.log("etape click: ", etape.nom);
+            window.location.hash = `etape-${etape.id}`
         },
         onSlideTo(id) {
             const slideIndex = this.etapes.etapes.findIndex(etape => etape.id === id);
             this.swiper.slideTo(slideIndex)
         },
-
     }
 
 };
@@ -100,7 +100,10 @@ export default {
     --swiper-navigation-color: #40680c !important;
     --swiper-theme-color: #40680c !important;
 }
+</style>
 
+
+<style scoped>
 html,
 body {
     margin: 0;

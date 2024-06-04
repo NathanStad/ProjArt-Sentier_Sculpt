@@ -6,7 +6,7 @@
                 @active-slide-key-change="handleActiveSlideKeyChange"></EtapeComponent>
         </div>
         <div id="recenterDiv">
-            <button id="recenter">Recenter</button>
+            <RecentrerBtnComponent @recenter="recenter" />
         </div>
     </div>
 </template>
@@ -15,6 +15,8 @@
 import maplibregl from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import EtapeComponent from './elements/etapeComponent.vue';
+import RecentrerBtnComponent from './elements/recentrerBtnComponent.vue';
+
 
 import axios from 'axios';
 let map;
@@ -26,6 +28,7 @@ export default {
             hash: window.location.hash.split('-')[1] - 1,
             etapeActive: 0,
             markers: [],
+            coordonnesRecenter: [],
         };
     },
     created() {
@@ -56,8 +59,8 @@ export default {
             }
 
             etapesInversees.forEach((etape) => {
-                const coordinate = [etape.longitude, etape.latitude];
-                const marker = new maplibregl.Marker({ color: couleur }).setLngLat(coordinate).addTo(map);
+                this.coordonnesRecenter = [etape.longitude, etape.latitude];
+                const marker = new maplibregl.Marker({ color: couleur }).setLngLat(this.coordonnesRecenter).addTo(map);
                 marker.getElement().setAttribute('data-id', etape.id);
                 this.markers.push(marker);
 
@@ -119,6 +122,7 @@ export default {
                 marker.getElement().addEventListener("click", () => {
                     if (this.etapeActive == marker.getElement().getAttribute('data-id')) {
                         console.log(`etape click: `, etape.nom);
+                        window.location.hash = `etape-${etape.id}`
                     } else {
                         this.$refs.etapeComponent.onSlideTo(etape.id);
                     }
@@ -182,18 +186,15 @@ export default {
                     map.setMaxZoom(18);
                     map.setMinZoom(11);
                     this.afficheRoute(tour);
-                    document.querySelector('#recenter').addEventListener('click', () => {
-                        this.recenter(recenter);
-                    });
                 } else {
                     throw new Error('Sentier pas trouvé');
                 }
             }
         },
-        recenter(coordonnes) {
-            //map.setCenter(coordonnes);
+        recenter() {
+            console.log('recenter');
             map.flyTo({
-                center: coordonnes,
+                center: this.coordonnesRecenter,
                 zoom: 12,
                 curve: 1,
                 easing(t) {
@@ -232,7 +233,7 @@ export default {
             map.addControl(
                 new maplibregl.NavigationControl({
                     showCompass: false,
-                    showZoom: false,
+                    showZoom: true,
                 })
             );
         });
@@ -247,6 +248,7 @@ export default {
     },
     components: {
         EtapeComponent,
+        RecentrerBtnComponent,
     },
 };
 </script>
@@ -270,18 +272,13 @@ body {
 
 #recenterDiv {
     position: absolute;
+    width: 60px;
+    height: 58px;
     top: 10px;
-    right: 10px;
-}
-
-#recenter {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
+    right: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #overlayEtape {
