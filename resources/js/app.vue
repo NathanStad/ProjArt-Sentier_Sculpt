@@ -10,8 +10,9 @@
   </section>
 
   <!-- Footer / Nav -->
+  <main></main>
   <footer>
-    <Footer></Footer>
+    <Footer :site="currentPath"></Footer>
   </footer>
 </template>
 
@@ -34,7 +35,11 @@ import Header from "@/components/elements/header.vue";
 const routes = {
   '#': {
     component: Accueil,
-    label: 'Bookmarks',
+    label: 'Accueil',
+  },
+  '#accueil': {
+    component: Accueil,
+    label: 'Accueil',
   },
   '#sentier': {
     component: Sentier,
@@ -85,8 +90,21 @@ function updateCurrentPath() {
   const hashId = hashs[1];
   currentPath.value = routes[hashSection] ? hashSection : '#';
   currentPathId.value = hashId;
-  console.log(currentPath.value);
-  console.log(currentPathId.value);
+
+  // Redirection si l'utilisateur n'est pas connecté
+if (
+    !localStorage.getItem("userId") &&
+    currentPath.value == "#account"
+) {
+  currentPath.value = "#login";
+}
+  // Redirection si l'utilisateur est connecté
+if (
+    localStorage.getItem("userId") &&
+    currentPath.value == "#login"
+) {
+  currentPath.value = "#account";
+}
 }
 
 window.addEventListener('hashchange', updateCurrentPath);
@@ -97,8 +115,62 @@ const currentView = computed(() => {
 </script>
 
 <style>
+
+/* Css sur tout le site */
+
+/* Variables pour le site */
+
+:root {
+    /* Couleurs */
+    --primary: #40680C;
+    --secondary: #69C400;
+    --color-text: #1e1e1e;
+    --color-text-secondary: #9e9e9e;
+
+    /* Dimensions */
+    --border-radius-small: 12px;
+    --border-radius-medium: 20px;
+    --border-radius-large: 30px;
+    --border-radius-full: 100px;
+
+    --font-size-small: 1rem;
+    --font-size-medium: 1.4rem;
+    --font-size-large: 1.8rem;
+
+    --box-shadow-light: 0 0px 10px rgba(0, 0, 0, 0.3);
+    --box-shadow-light-bottom: 0 5px 10px rgba(0, 0, 0, 0.3);
+    --box-shadow-heavy: 0px 0px 20px rgba(0, 0, 0, 0.5);
+
+    /* Espacement */
+    --margin-small: 10px;
+    --margin-medium: 20px;
+    --margin-large: 30px;
+
+    --padding-small: 5px;
+    --padding-medium: 10px;
+    --padding-large: 20px;
+
+    /* Largeurs et hauteurs */
+    --width-full: 100%;
+    --height-full: 100%;
+    --width-85: 85%;
+    --width-fit: fit-content;
+    --height-15vh: 15vh;
+    --height-100vh: 100vh;
+
+    /* Divers */
+    --z-index-high: 5;
+    --z-index-medium: 2;
+}
+
+/* Éléments  */
+
 * {
   box-sizing: border-box;
+  font-family: "Rubik", sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #1e1e1e;
 }
 header {
   height: 10vh;
@@ -110,16 +182,48 @@ footer{
   height: 10vh;
   width: 100vw;
   position: fixed;
-  bottom: 0;
+  bottom: 0%;
   left: 0;
   background: white;
+  z-index: 10;
+}
+h2{
+  font-size: 1rem;
+  font-weight: 500;
+}
+img{
+  object-fit: cover;
 }
 body {
   overflow: hidden scroll;
   width: 100vw;
   margin: 0;
+  min-height: 100vh;
 }
 section{
-  padding: 10px;
+  padding: 15px;
+  min-height: 100vh;
+}
+p{
+  margin: 0;
+}
+.link{
+  color: var(--color-text-secondary);
+}
+.link.activated{
+  color: var(--primary);
+  font-weight:500 ;
+  text-decoration: underline;
+}
+main{
+  height: 10vh;
+}
+h1{
+  color: var(--primary);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--margin-large);
 }
 </style>

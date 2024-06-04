@@ -34,6 +34,7 @@ if (tableau) {
 isFavorite.value = favoris.value.includes(props.sentierId);
 
 const toggleFavorite = () => {
+    console.log('test des favoris');
     isFavorite.value = !isFavorite.value;
     if (isFavorite.value) {
         favoris.value.push(props.sentierId);

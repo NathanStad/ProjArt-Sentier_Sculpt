@@ -29,6 +29,8 @@
 <script setup>
 import {ref, onMounted} from 'vue';
 import buttonFavoris from '@/components/elements/buttonFavorite.vue' 
+import axios from "axios";
+
 const sentiers = ref([]);
 const favoris = ref(JSON.parse(localStorage.getItem("favoris")));
 console.log(favoris.value);

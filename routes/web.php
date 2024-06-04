@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CommentaireController;
 use App\Http\Controllers\CritereController;
 use App\Http\Controllers\EtapeController;
 use App\Http\Controllers\MotClesController;
@@ -19,6 +20,7 @@ Route::get('/data-theme', [ThemeController::class, 'index']);
 Route::get('/data-motcles', [MotClesController::class, 'index']);
 Route::get('/data-critere', [CritereController::class, 'index']);
 Route::get('/data-poi', [POIController::class, 'index']);
+Route::get('/commentaire', [CommentaireController::class, 'store']);
 
 // Vérification de compte et login
 Route::get('/data-user-{id}', [UserController::class, 'show']);
