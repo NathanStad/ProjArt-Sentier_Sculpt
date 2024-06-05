@@ -1,10 +1,18 @@
 <template>
-    <!-- Map -->
-    <div id="app"></div>
+  <div id="app">
+    <carte />
+    <p v-for="sentier in sentiers" :key="sentier.id">{{ sentier }}</p>
+
+  </div>
 </template>
+
+<script setup>
+import carte from './elements/carte.vue'
+</script>
+
 <script>
 import axios from 'axios';
-import {ref} from 'vue';
+import { ref } from 'vue';
 
 // import des données
 // Récupéré les données avec le tableau JSON "sentiers"
@@ -27,8 +35,8 @@ export default {
       }
     }
   }
+
 };
 </script>
-<style>
-    
-</style>
+
+<style scoped></style>

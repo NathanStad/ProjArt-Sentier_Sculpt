@@ -17,6 +17,11 @@
         "vite": "^5.0"
     },
     "dependencies": {
+        "@mapbox/polyline": "^1.2.1",
+        "@maplibre/maplibre-gl-directions": "^0.7.0",
+        "maplibre-gl": "^4.3.2",
+        "openrouteservice-js": "^0.3.2",
+        "sortablejs": "^1.15.2",
         "swiper": "^11.1.4",
         "vue": "^3.4.27"
     }
