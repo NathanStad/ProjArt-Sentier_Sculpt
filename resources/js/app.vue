@@ -20,7 +20,7 @@
 import { ref, computed } from 'vue';
 import axios from "axios";
 import Accueil from "@/components/accueil.vue";
-import Carte from "@/components/carte.vue";
+import Carte from "@/components/carte-accueil.vue";
 import Sentier from "@/components/sentier.vue";
 import Etapes from "@/components/steps-list.vue";
 import Etape from "@/components/step.vue";
@@ -138,7 +138,7 @@ const currentView = computed(() => {
     --font-size-large: 1.8rem;
 
     --box-shadow-light: 0 0px 10px rgba(0, 0, 0, 0.3);
-    --box-shadow-light-bottom: 0 5px 10px rgba(0, 0, 0, 0.3);
+    --box-shadow-light-bottom: 0 8px 10px rgba(0, 0, 0, 0.1);
     --box-shadow-heavy: 0px 0px 20px rgba(0, 0, 0, 0.5);
 
     /* Espacement */

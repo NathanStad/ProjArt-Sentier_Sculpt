@@ -28,7 +28,7 @@ export default {
   methods: {
     async fetchSentiers() {
       try {
-        const response = await axios.get('/data-sentier');
+        const response = await axios.get('/data-sentiers');
         this.sentiers = response.data;
       } catch (error) {
         console.error('Error fetching sentiers:', error);

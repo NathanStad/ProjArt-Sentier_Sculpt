@@ -332,6 +332,11 @@ textarea {
     display: none;
 }
 
+#theme-parent{
+    position: relative;
+    left: -5%;
+}
+
 .theme div {
     margin-right: var(--margin-small);
 }

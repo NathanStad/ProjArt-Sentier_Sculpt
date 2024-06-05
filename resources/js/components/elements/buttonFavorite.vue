@@ -1,6 +1,6 @@
 <template>
     <span
-        :class="`material-symbols-outline`"
+        class="material-symbols-outline"
          @click.stop="toggleFavorite"
     >
         favorite
