@@ -50,7 +50,7 @@
                     <div
                         :style="{ 'background-image': `url(${sentier.photo})` }"
                     >
-                        <buttonFavoris :is="sentier.id"></buttonFavoris>
+                        <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
                     </div>
                     <div class="affichage">
                         <div>
