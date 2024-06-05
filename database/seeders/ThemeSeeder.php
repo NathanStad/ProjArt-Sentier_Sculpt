@@ -10,12 +10,47 @@ class ThemeSeeder extends Seeder {
 
     public function run(): void
     {
-        // Theme::create([
-        //     'name' => 'Architecture',
-        //     'icone' => 'https://example.com/cats/photo1',
-        // ]);
+        Theme::create([
+            'name' => 'Archéologie',
+            'icone' => '<span class="material-symbols-outlined">
+            tibia
+            </span>',
+        ]);
 
-        // Theme::factory()->count(20)->create();
+        Theme::create([
+            'name' => 'Ecologie',
+            'icone' => '<span class="material-symbols-outlined">
+            nest_eco_leaf
+            </span>',
+        ]);
+
+        Theme::create([
+            'name' => 'Géologie',
+            'icone' => '<span class="material-symbols-outlined">
+            volcano
+            </span>',
+        ]);
+
+        Theme::create([
+            'name' => 'Artisanat local',
+            'icone' => '<span class="material-symbols-outlined">
+            storefront
+            </span>',
+        ]);
+
+        Theme::create([
+            'name' => 'Littérature',
+            'icone' => '<span class="material-symbols-outlined">
+            book_4
+            </span>',
+        ]);
+
+        Theme::create([
+            'name' => 'Arts',
+            'icone' => '<span class="material-symbols-outlined">
+            palette
+            </span>',
+        ]);
 
         Theme::create([
             'name' => 'Culinaire',

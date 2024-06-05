@@ -40,7 +40,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 1 du Sentier Typique',
+            'nom' => 'Le Pont de la Thièle',
             'description' => 'Description de l\'étape 1 du sentier.',
             'latitude' => $latitude1,
             'longitude' => $longitude1,
@@ -52,7 +52,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 2 du Sentier Typique',
+            'nom' => 'La Grande Piscine',
             'description' => 'Description de l\'étape 2 du sentier.',
             'latitude' => $latitude2,
             'longitude' => $longitude2,
@@ -64,7 +64,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 3 du Sentier Typique',
+            'nom' => 'Le Lamai Thai',
             'description' => 'Description de l\'étape 3 du sentier.',
             'latitude' => $latitude3,
             'longitude' => $longitude3,
@@ -92,7 +92,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 1 du Sentier Historique',
+            'nom' => 'Au dessus de la gare',
             'description' => 'Description de l\'étape 1 du sentier.',
             'latitude' => $latitude1,
             'longitude' => $longitude1,
@@ -104,7 +104,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 2 du Sentier Historique',
+            'nom' => 'Aux côtés de Michou',
             'description' => 'Description de l\'étape 2 du sentier.',
             'latitude' => $latitude2,
             'longitude' => $longitude2,
@@ -116,7 +116,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 3 du Sentier Historique',
+            'nom' => 'Vers le Chalet de Gobbet',
             'description' => 'Description de l\'étape 3 du sentier.',
             'latitude' => $latitude3,
             'longitude' => $longitude3,
@@ -144,7 +144,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 1 du Sentier Nature',
+            'nom' => 'Marais de Shrek',
             'description' => 'Description de l\'étape 1 du sentier.',
             'latitude' => $latitude1,
             'longitude' => $longitude1,
@@ -156,7 +156,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 2 du Sentier Nature',
+            'nom' => 'Vers les Bious',
             'description' => 'Description de l\'étape 2 du sentier.',
             'latitude' => $latitude2,
             'longitude' => $longitude2,
@@ -168,7 +168,7 @@ class EtapeSeeder extends Seeder {
 
         Etape::create([
             'sentier_id' => $sentier->id,
-            'nom' => 'Étape 3 du Sentier Nature',
+            'nom' => 'La ferme de Mosieur Gooodman',
             'description' => 'Description de l\'étape 3 du sentier.',
             'latitude' => $latitude3,
             'longitude' => $longitude3,
