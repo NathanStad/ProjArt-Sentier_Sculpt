@@ -9,4 +9,4 @@ const csrfToken = document.head.querySelector('meta[name="csrf-token"]').content
 // Configure Axios pour inclure le token CSRF dans les en-têtes
 axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
 
-createApp(VueApp).mount('#app')
+createApp(VueApp).mount("#app");
