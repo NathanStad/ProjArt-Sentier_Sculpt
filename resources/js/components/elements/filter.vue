@@ -3,7 +3,7 @@
     <!-- Critères -->
     <p>Critères</p>
     <div>
-      <label v-for="critere in criteres" :key="critere.id">
+      <label v-for="critere in criteres" :key="critere.id" :class="{ checkbox: true, active: selectedCriteres.includes(critere.id) }">
         <input
           v-model="selectedCriteres"
           type="checkbox"
@@ -17,7 +17,7 @@
     <!-- Mot clés -->
     <p>Mot clés</p>
     <div>
-      <label v-for="motcle in motcles" :key="motcle.id">
+      <label v-for="motcle in motcles" :key="motcle.id" :class="{ checkbox: true, active: selectedMotCles.includes(motcle.id) }">
         <input
           v-model="selectedMotCles"
           type="checkbox"
@@ -30,7 +30,7 @@
 
     <!-- Difficulté -->
     <p>Difficulté</p>
-    <div>
+    <div id="difficulte">
       <label>
         <input
           v-model="difficulte"
@@ -48,8 +48,10 @@
           name="difficulte[]"
           value="moyen"
         />
-        <span class="material-symbols-outlined">bolt</span>
-        <span class="material-symbols-outlined">bolt</span>
+        <div>
+          <span class="material-symbols-outlined">bolt</span>
+          <span class="material-symbols-outlined">bolt</span>
+        </div>
         <p>Moyen</p>
       </label>
       <label>
@@ -59,9 +61,11 @@
           name="difficulte[]"
           value="difficile"
         />
-        <span class="material-symbols-outlined">bolt</span>
-        <span class="material-symbols-outlined">bolt</span>
-        <span class="material-symbols-outlined">bolt</span>
+        <div>
+          <span class="material-symbols-outlined">bolt</span>
+          <span class="material-symbols-outlined">bolt</span>
+          <span class="material-symbols-outlined">bolt</span>
+        </div>
         <p>Difficile</p>
       </label>
     </div>
@@ -122,7 +126,8 @@ watch([selectedCriteres, selectedMotCles, difficulte], () => {
 }
 #filter > p {
   font-weight: bold;
-  padding-top: 15%;
+  padding-top: 7%;
+  padding-bottom: 5%;
 }
 label {
   display: flex;
@@ -130,5 +135,31 @@ label {
 }
 .material-symbols-outlined {
   margin-right: 5px;
+}
+
+#difficulte{
+  display: flex;
+  justify-content: space-around;
+}
+
+#difficulte label{
+  display: flex;
+  flex-direction: column;
+}
+
+#difficulte label > p{
+  padding-top: 5px;
+}
+#difficulte label > p,
+#difficulte label  span
+{
+  color: var(--color-text-secondary);
+}
+#difficulte input:checked + span,
+#difficulte input:checked + span + p,
+#difficulte input:checked + div + p,
+#difficulte input:checked + div >  span
+{
+  color: var(--primary);
 }
 </style>

@@ -48,7 +48,7 @@
                     style="display: none"
                 />
             </div>
-            <div v-else class="input-container">
+            <div v-else class="input-container step">
                 <label>Ajouter une photo</label>
                 <label for="photo">
                     <span class="material-symbols-outlined"> add_a_photo </span>
@@ -239,6 +239,11 @@ const components = {
     width: 90%;
     margin: auto;
     margin-bottom: 20%;
+}
+
+.step label[for="photo"]{
+    width: 100% !important;
+    height: 150px;
 }
 
 .titreEtape {

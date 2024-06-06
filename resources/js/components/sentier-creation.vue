@@ -6,6 +6,7 @@
                     <span class="material-symbols-outlined">arrow_back_ios</span>
                 </a>
                 <h1>Création de sentier</h1>
+                <div></div>
             </div>
             <label>
                 Nom sentier
@@ -14,14 +15,19 @@
             <label>
                 Description sentier
                 <textarea
-                    v-model="descriptionSentier"
-                    id="descriptionSentier"
-                    cols="30"
-                    rows="10"
-                    required
+                v-model="descriptionSentier"
+                id="descriptionSentier"
+                cols="30"
+                rows="10"
+                required
                 ></textarea>
             </label>
-
+            <br>
+            <label>
+                Nom de la localisation <br>
+                <input v-model="lieu" type="text" id="nomSentier" required />
+            </label>
+            
             <p>Sélection d'un thème</p>
             <div class="three-box">
                 <label
@@ -150,6 +156,7 @@ import axios from "axios";
 // Define reactive state
 const nomSentier = ref("");
 const descriptionSentier = ref("");
+const lieu = ref("");
 const selectedTheme = ref(null);
 const selectedCriteres = ref([]);
 const selectedMotCles = ref([]);
@@ -159,8 +166,10 @@ const photoSentier = ref(null);
 // Si ça vient pour une mise à jour
 if (sessionStorage.getItem('update')) {
     const data = JSON.parse(sessionStorage.getItem('sentierCreation'))
+    console.log(data);
     nomSentier.value = data.nomSentier;
     descriptionSentier.value = data.descriptionSentier;
+    lieu.value = data.location;
     selectedTheme.value = data.theme;
     selectedCriteres.value = data.criteres;
     selectedMotCles.value = data.motcles;
@@ -232,7 +241,6 @@ const submitData = async () => {
     formData.append('photoSentier', photoSentier.value);
 
     try {
-        await axios.post('/submit-sentier', formData);
         // Mettez à jour le nom du fichier avec le nouveau nom renvoyé par le serveur
         const formDataToSave = {
             nomSentier: nomSentier.value,

@@ -3,6 +3,13 @@
         <p>Loading...</p>
     </div>
     <div v-else id="sentier">
+        <div class="header">
+            <a @click.prevent="goBack">
+                <span class="material-symbols-outlined"> arrow_back_ios </span>
+            </a>
+            <h1>{{ sentier.nom }}</h1>
+            <div></div>
+        </div>
         <!-- Sentier -->
         <div id="seniter-sentier">
             <div>
@@ -34,12 +41,8 @@
                         <p>
                             {{
                                 sentier.duree < 3600
-                                    ? `${Math.floor(
-                                          sentier.duree / 60
-                                      )} minutes`
-                                    : `${Math.floor(
-                                          sentier.duree / 3600
-                                      )} heures`
+                                    ? `${Math.floor(sentier.duree / 60)} min`
+                                    : `${Math.floor(sentier.duree / 3600)} h`
                             }}
                         </p>
                     </div>
@@ -110,7 +113,11 @@
             id="step"
             :class="{ content: true, active: currentContent === 'step' }"
         >
-            <a :href="`#step-${etape.id}`" v-for="etape in etapes" :key="etape.id">
+            <a
+                :href="`#step-${etape.id}`"
+                v-for="etape in etapes"
+                :key="etape.id"
+            >
                 <img :src="etape.photo" :alt="etape.description" />
                 <div class="info-box">
                     <p>{{ etape.nom }}</p>
@@ -123,12 +130,8 @@
                             <p>
                                 {{
                                     etape.duree < 3600
-                                        ? `${Math.floor(
-                                              etape.duree / 60
-                                          )} minutes`
-                                        : `${Math.floor(
-                                              etape.duree / 3600
-                                          )} heures`
+                                        ? `${Math.floor(etape.duree / 60)} min`
+                                        : `${Math.floor(etape.duree / 3600)} h`
                                 }}
                             </p>
                         </div>
@@ -166,7 +169,7 @@
         <div
             id="comms"
             :class="{ content: true, active: currentContent === 'comms' }"
-        >   
+        >
             <ul>
                 <li v-for="commentaire in commentaires" :key="commentaire.id">
                     <div>
@@ -218,7 +221,9 @@ import "swiper/css/pagination";
 const onSwiper = (swiper) => {
     console.log(swiper);
 };
-
+const goBack = () => {
+    window.history.back();
+};
 const onSlideChange = () => {
     console.log("slide change");
 };
@@ -418,14 +423,14 @@ onMounted(async () => {
     box-shadow: var(--box-shadow-light);
     text-decoration: none;
 }
-#step img{
+#step img {
     height: 60%;
     width: 100%;
 }
-#step .info-box{
+#step .info-box {
     height: 40%;
 }
-#step .info-box > p{
+#step .info-box > p {
     width: 30%;
     font-size: 1.1rem;
     font-weight: 700;
@@ -442,7 +447,7 @@ onMounted(async () => {
 .link {
     cursor: pointer;
 }
-.boutton-demarer{
+.boutton-demarer {
     width: 60vw;
     background: var(--primary);
     padding: var(--padding-large) var(--padding-large);
@@ -456,5 +461,10 @@ onMounted(async () => {
     font-weight: 600;
     font-size: 1.2rem;
     text-decoration: none;
+}
+#sentier,
+#desc,
+#step {
+    margin-bottom: 40%;
 }
 </style>

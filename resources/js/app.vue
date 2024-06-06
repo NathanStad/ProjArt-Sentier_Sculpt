@@ -167,7 +167,7 @@ const currentView = computed(() => {
     /* Largeurs et hauteurs */
     --width-full: 100%;
     --height-full: 100%;
-    --width-85: 85%;
+    --width-85: 80%;
     --width-fit: fit-content;
     --height-15vh: 15vh;
     --height-100vh: 100vh;
@@ -210,15 +210,15 @@ h2{
 img{
   object-fit: cover;
 }
-body {
+body, html {
   overflow: hidden scroll;
   width: 100vw;
   margin: 0;
   min-height: 100vh;
 }
 section{
-  padding: 15px;
-  min-height: 100vh;
+  padding: 30px;
+  min-height: 90vh;
 }
 p{
   margin: 0;
@@ -241,5 +241,116 @@ h1{
     display: flex;
     justify-content: space-between;
     margin-bottom: var(--margin-large);
+}
+
+
+/* Input */
+input[type="text"] {
+    margin-bottom: var(--margin-medium);
+    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+}
+input[type="email"] {
+    margin-bottom: var(--margin-medium);
+    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+}
+input[type="password"] {
+    margin-bottom: var(--margin-medium);
+    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+}
+button {
+    margin-bottom: var(--margin-medium);
+    padding: var(--padding-large) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+    background: var(--primary);
+    color: white !important;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+}
+input[type="submit"] {
+    margin-bottom: var(--margin-medium);
+    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+    background: var(--primary);
+    color: white;
+}
+input[pseudo="-webkit-file-upload-button"] {
+    margin-bottom: var(--margin-medium);
+    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+    background: var(--primary);
+    color: white;
+}
+textarea {
+    margin-bottom: var(--margin-medium);
+    height: 300px;
+    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+}
+
+/* Bouton Filtre */
+
+#buttonFiltre {
+    position: absolute;
+    top: 13%;
+    right: 5%;
+    padding: 15px;
+    box-shadow: var(--box-shadow-light);
+    border-radius: var(--border-radius-full);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 12;
+    background-color: white;
+}
+
+/* Map */
+
+.maplibregl-ctrl-group{
+    background: none !important;
+    box-shadow: none !important;
+}
+.maplibregl-ctrl-top-right {
+    position: absolute;
+    z-index: 10;
+    top: 37%;
+}
+.maplibregl-ctrl button{
+    background-color: white !important;
+}
+
+.visible{
+  display: block !important;
 }
 </style>

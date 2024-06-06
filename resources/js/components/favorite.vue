@@ -4,9 +4,20 @@
     </div>
     <div v-else>
         <h1>Favoris</h1>
-        <input type="text" value="Recherche" />
-        <a :href="`#sentier-${sentier.id}`" v-for="sentier in sentiers" :key="sentier" class="sentier">
-            <!-- Boutton Favoris -->
+        <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Recherche par nom ou localisation"
+        />
+        <a
+            :href="`#sentier-${sentier.id}`"
+            v-for="sentier in filteredSentiers"
+            :key="sentier.id"
+            class="sentier"
+        >
+            <div>
+                <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
+            </div>
             <div>
                 <img :src="sentier.photo" :alt="sentier.nom" />
                 <div v-html="sentier.theme.icone"></div>
@@ -14,44 +25,143 @@
             <div>
                 <div>
                     <p>{{ sentier.nom }}</p>
-                    <p><span class="material-symbols-outlined">
+                    <p>
+                        <span class="material-symbols-outlined">
                             location_on
                         </span>
-                        {{ sentier.localisation }}</p>
+                        {{ sentier.localisation }}
+                    </p>
                 </div>
-                <buttonFavoris :is="sentier.id"></buttonFavoris>
-                <a :href="`#steps-${sentier.id}`"></a>
             </div>
+            <a :href="`#steps-${sentier.id}`" class="button">Démarrer</a>
         </a>
-        <p v-if="sentiers < 1">Vous n'avez pas encore de favoris</p>
+        <p v-if="filteredSentiers.length < 1">
+            Introuvable
+        </p>
     </div>
 </template>
+
 <script setup>
-import {ref, onMounted} from 'vue';
-import buttonFavoris from '@/components/elements/buttonFavorite.vue' 
+import { ref, onMounted, computed } from "vue";
+import buttonFavoris from "@/components/elements/buttonFavorite.vue";
 import axios from "axios";
 
+const isLoading = ref(true);
 const sentiers = ref([]);
 const favoris = ref(JSON.parse(localStorage.getItem("favoris")));
-console.log(favoris.value);
+
+const searchQuery = ref("");
+
+const fetchSentier = async (sentierId) => {
+    if (sentierId !== "") {
+        try {
+            const response = await axios.get(`/data-sentier-${sentierId}`);
+            sentiers.value.push(response.data);
+        } catch (error) {
+            console.error("Error fetching sentiers:", error);
+        }
+    }
+};
 
 favoris.value.forEach((sentierId) => {
-    const fetchSentier = async () => {
-        if (sentierId !== "") {
-            try {
-                const response = await axios.get(`/data-sentier-${sentierId}`);
-                sentiers.value.push(response.data);
-            } catch (error) {
-                console.error("Error fetching sentiers:", error);
-            }
-        }
-    };
-    fetchSentier()
+    fetchSentier(sentierId);
 });
 
-onMounted(async () => {
-    
+const filteredSentiers = computed(() => {
+    return sentiers.value.filter((sentier) => {
+        const query = searchQuery.value.toLowerCase();
+        return (
+            sentier.nom.toLowerCase().includes(query) ||
+            sentier.localisation.toLowerCase().includes(query)
+        );
+    });
+});
+
+onMounted(() => {
     isLoading.value = false;
 });
 </script>
-<style lang=""></style>
+
+<style scoped>
+h1 {
+    text-align: center;
+    padding-bottom: 10%;
+}
+.sentier {
+    display: flex;
+    position: relative;
+    padding: 15px;
+    background: white;
+    box-shadow: var(--box-shadow-light);
+    border-radius: var(--border-radius-medium);
+    width: 100%;
+    height: 170px;
+    text-decoration: none;
+}
+input{
+    padding: var(--padding-large) calc(var(--padding-medium) * 2.33) !important;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    width: 100% !important;
+    margin-bottom:12%  !important;
+}
+.sentier > div:first-of-type {
+    position: absolute;
+    right: 10%;
+    top: 15%;
+}
+.sentier > div:first-of-type span {
+    color: var(--primary);
+}
+.sentier > div:nth-of-type(2){
+    overflow: hidden;
+    border-radius: var(--border-radius-small);
+    position: relative;
+    width: 40%;
+    margin-right:15px ;
+}
+.sentier > div:nth-of-type(2) img{
+    width: 100%;
+    height: 100%;
+}
+.sentier > div:nth-of-type(2) div{
+    position: absolute;
+    z-index: 3;
+    bottom: 5%;
+    right: 5%;
+}
+.sentier > div:nth-of-type(2) > div > span{
+    color: white !important;
+}
+.sentier > div:nth-of-type(3) > div{
+    display: flex;
+    flex-direction: column;
+    justify-content: start ;
+    height: 50%;
+    width: 125px;
+}
+.sentier > div:nth-of-type(3) > div > p:first-of-type{
+    font-size: 1rem;
+    font-weight: 600;
+}
+.sentier > div:nth-of-type(3) > div > p:last-of-type{
+    display: flex;
+    align-items: center;
+    color: var(--color-text-secondary);
+}
+.sentier > div:nth-of-type(3) > div > p:last-of-type span{
+    font-size: 1.5rem;
+    color: var(--color-text-secondary);
+}
+.button{
+    padding: 15px 30px;
+    background: var(--primary);
+    border-radius:var(--border-radius-small);
+    text-decoration: none;
+    color: white;
+    position: absolute;
+    right: 10%;
+    bottom: 15%;
+}
+</style>

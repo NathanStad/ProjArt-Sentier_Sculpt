@@ -1,15 +1,11 @@
 <template>
-    <span
-        class="material-symbols-outline"
-         @click.stop="toggleFavorite"
-    >
+    <span :class="{'material-symbols-outlined':true, full: isFavorite === true}" @click.stop="toggleFavorite">
         favorite
     </span>
 </template>
 
 <script setup>
 import { ref, defineProps } from "vue";
-
 const isFavorite = ref(false);
 const favoris = ref([]);
 
@@ -43,12 +39,20 @@ const toggleFavorite = () => {
 };
 </script>
 
-<style>
+<style scoped>
 .favorite {
     cursor: pointer;
 }
 
 .favorite-filled {
     color: red;
+}
+
+.material-symbols-outlined.full {
+  font-variation-settings:
+  'FILL' 1,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
 }
 </style>

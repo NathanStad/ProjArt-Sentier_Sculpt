@@ -4,7 +4,11 @@
     </div>
     <div v-else id="compte">
         <div class="header">
-            <h1>Compte</h1>
+            <a @click.prevent="goBack">
+                <span class="material-symbols-outlined"> arrow_back_ios </span>
+            </a>
+            <h1>Mon Compte</h1>
+            <div></div>
         </div>
         <div id="user">
             <img :src="user.photo" :alt="user.name" />
@@ -227,7 +231,7 @@ const moveToArchive = (sentier, targetArchive) => {
     const toggleArchive = async (sentierId) => {
         try {
             const response = await axios.patch(
-                `/set-sentiers/${sentierId}/archive`
+                `/set-sentier/${sentierId}/archive`
             );
         } catch (error) {
             console.error("Error toggling archive status:", error);
@@ -235,7 +239,9 @@ const moveToArchive = (sentier, targetArchive) => {
     };
     toggleArchive(sentier.id);
 };
-
+const goBack = () => {
+    window.history.back();
+};
 // Créerun nouveau seniter
 
 const newSentier = () =>{
@@ -254,6 +260,7 @@ const editSentier = (sentier) => {
         const seniterData = {
             nomSentier: sentier.nom,
             descriptionSentier: sentier.description ,
+            lieu: sentier.localisation ,
             theme: sentier.theme_id ,
             criteres: [] ,
             motcles: [],
@@ -317,7 +324,9 @@ onMounted(async () => {
     height: 150px;
     border-radius: var( --border-radius-full);
 }
-
+#user h3{
+    margin: var(--margin-small) 0 ;
+}
 /* Vos Sentiers */
 
 #vos-santiers{
@@ -407,13 +416,13 @@ onMounted(async () => {
 
 .sentierItem img{
     width: 100%;
-    height: 200px;
+    height: 200;
 }
 
 .menuSentierButton{
     position: absolute;
-    right: 0%;
-    top: 0%;
+    right: -0.5%;
+    top: -0.5%;
     z-index: 5;
     background-color: white;
     border-radius: var(--border-radius-full);
@@ -451,9 +460,19 @@ onMounted(async () => {
 .content.active {
     display: flex;
 }
-
+#vos-santiers{
+    margin-bottom: 25%;
+}
 #vos-santiers .affichage{
     bottom: 0%;
-    height: 50px;
+    height: 80px;
+    width: 105%;
+    padding: var(--padding-medium) 40px;
+}
+#vos-santiers .affichage > div:nth-of-type(1) > p{
+    font-weight: 600;
+}
+#vos-santiers .affichage > div:nth-of-type(2){
+    right:40px
 }
 </style>

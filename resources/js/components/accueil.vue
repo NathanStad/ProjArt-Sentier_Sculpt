@@ -4,15 +4,15 @@
     </div>
     <div id="accueil" v-else>
         <!-- Bar de recherche -->
-        <input type="text" v-model="searchQuery" placeholder="Rechercher" />
+        <input type="text" v-model="searchQuery" placeholder="Rechercher" class="recherche" />
 
         <!-- Bouton Filtre -->
-        <div @click="toggleFiltre" id="buttonFiltre">
+        <div @click="toggleFiltre()" id="buttonFiltre">
             <span class="material-symbols-outlined"> tune </span>
         </div>
 
         <!-- Conteneur du filtre -->
-        <div v-if="filtreVisible" id="filtre">
+        <div id="filtre" :class="{visible : filtreVisible === true}">
             <Filtre @updateFilters="updateFilters"></Filtre>
         </div>
 
@@ -69,7 +69,7 @@
         </div>
 
         <!-- Destinations préférées -->
-        <h3>Destinations les plus vues</h3>
+        <h3>Sentiers incontournables</h3>
         <div id="lesPlusVues-parent">
             <div id="lesPlusVues">
                 <a
@@ -216,107 +216,26 @@ onMounted(async () => {
 </script>
 
 <style>
-section > div {
+
+.recherche[type="text"]{
+    padding: var(--padding-large) calc(var(--padding-large) * 2.33);
+    z-index: 5;
     position: relative;
-}
-
-input[type="text"] {
-    margin-bottom: var(--margin-medium);
-    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
-    font-size: var(--font-size-small);
-    width: var(--width-85);
-    border-radius: var(--border-radius-large);
-    border: 0;
-    box-shadow: var(--box-shadow-light);
-}
-input[type="email"] {
-    margin-bottom: var(--margin-medium);
-    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
-    font-size: var(--font-size-small);
-    width: var(--width-85);
-    border-radius: var(--border-radius-large);
-    border: 0;
-    box-shadow: var(--box-shadow-light);
-}
-input[type="password"] {
-    margin-bottom: var(--margin-medium);
-    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
-    font-size: var(--font-size-small);
-    width: var(--width-85);
-    border-radius: var(--border-radius-large);
-    border: 0;
-    box-shadow: var(--box-shadow-light);
-}
-button {
-    margin-bottom: var(--margin-medium);
-    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
-    font-size: var(--font-size-small);
-    width: var(--width-85);
-    border-radius: var(--border-radius-large);
-    border: 0;
-    box-shadow: var(--box-shadow-light);
-    background: var(--primary);
-    color: white;
-}
-input[type="submit"] {
-    margin-bottom: var(--margin-medium);
-    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
-    font-size: var(--font-size-small);
-    width: var(--width-85);
-    border-radius: var(--border-radius-large);
-    border: 0;
-    box-shadow: var(--box-shadow-light);
-    background: var(--primary);
-    color: white;
-}
-input[pseudo="-webkit-file-upload-button"] {
-    margin-bottom: var(--margin-medium);
-    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
-    font-size: var(--font-size-small);
-    width: var(--width-85);
-    border-radius: var(--border-radius-large);
-    border: 0;
-    box-shadow: var(--box-shadow-light);
-    background: var(--primary);
-    color: white;
-}
-textarea {
-    margin-bottom: var(--margin-medium);
-    height: 300px;
-    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
-    font-size: var(--font-size-small);
-    width: var(--width-85);
-    border-radius: var(--border-radius-large);
-    border: 0;
-    box-shadow: var(--box-shadow-light);
-}
-
-/* Bouton Filtre */
-
-#buttonFiltre {
-    position: absolute;
-    top: 0;
-    right: 0%;
-    padding: var(--padding-small);
-    box-shadow: var(--box-shadow-light);
-    border-radius: var(--border-radius-full);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: var(--z-index-high);
 }
 
 /* Filtre */
 
 #filtre {
-    position: absolute;
+    display: none;
+    position: fixed;
     background: white;
     z-index: var(--z-index-medium);
     width: 100vw;
-    height: var(--height-100vh);
-    top: -10%;
+    min-height: var(--height-100vh);
+    top: 0%;
     padding: calc(var(--padding-large) * 2) var(--padding-small);
-    left: -2%;
+    left: 0%;
+    z-index: 11;
 }
 
 /* Thèmes */
@@ -345,7 +264,7 @@ textarea {
 
 #theme-parent{
     position: relative;
-    left: -5%;
+    left: -10%;
 }
 
 .theme div {
@@ -355,7 +274,6 @@ textarea {
 #theme {
     margin: var(--margin-medium) 0;
     display: flex;
-    gap: var(--margin-large);
     align-items: center;
     width: var(--width-fit);
     background: white;
@@ -384,12 +302,13 @@ textarea {
     display: flex;
     gap: var(--margin-large);
     align-items: center;
+    padding-right: 15%;
 }
 
 #sentiers-accueil > a {
     display: block;
     width: 300px;
-    height: 400px;
+    height: 420px;
     border-radius: var(--border-radius-medium);
     position: relative;
     overflow: hidden;
@@ -416,9 +335,10 @@ textarea {
     bottom: 10%;
     left: 50%;
     width: 90%;
+    height: 18%;
     transform: translateX(-50%);
     background: white;
-    padding: var(--padding-small) var(--padding-medium);
+    padding: var(--padding-medium) var(--padding-large);
     border-radius: var(--border-radius-small);
 }
 
@@ -426,6 +346,12 @@ textarea {
     font-weight: 700;
 }
 
+.affichage > div:nth-of-type(1){
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 100%;
+}
 .affichage > div:nth-of-type(1) > div {
     display: flex;
     align-items: center;
@@ -435,6 +361,10 @@ textarea {
 .affichage > div:nth-of-type(1) > div span,
 .affichage > div:nth-of-type(1) > div p {
     color: var(--color-text-secondary);
+}
+.affichage > div:nth-of-type(1) > div span{
+    margin-right: 5px ;
+    font-size: 1.2rem;
 }
 
 .affichage > div:nth-of-type(2) {
@@ -447,7 +377,7 @@ textarea {
     color: var(--color-text-secondary);
 }
 
-/* Destination les plus vues */
+/* Sentier incontournable */
 
 h3 {
     margin: var(--margin-medium) 0;
@@ -458,11 +388,18 @@ h3 {
     height: var(--height-15vh);
     display: flex;
     align-items: center;
+    margin-bottom: 10%;
 }
 
 #lesPlusVues {
     display: flex;
     gap: var(--margin-large);
+    padding-right: 15%;
+}
+
+#lesPlusVues p {
+    font-size: 1.1rem;
+    font-weight: 600;
 }
 
 #lesPlusVues a {
@@ -484,7 +421,7 @@ h3 {
 }
 
 #lesPlusVues a div {
-    margin-left: var(--margin-small);
+    margin-left: var(--margin-medium);
 }
 
 </style>

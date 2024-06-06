@@ -39,4 +39,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#app{
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+}
+</style>
