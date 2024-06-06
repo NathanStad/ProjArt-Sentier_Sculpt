@@ -146,6 +146,12 @@ Assurez-vous d'avoir les éléments suivants installés sur votre machine :
    php artisan serve
    ```
 
+2. Démarrez le serveur de développement Vite en exécuant la commande suivante :
+
+   ```bash
+   npm run dev
+   ```
+
 ## Wireframe & Maquette - 📎
 
 La maquette du projet est disponible via le lien Figma ci-dessous. Divisée en plusieurs sections principales, la maquette présente la structure de l'application, incluant les cartes des sentiers, les détails des points d'intérêt, et les interfaces utilisateur pour la gestion des commentaires et des profils.
