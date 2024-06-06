@@ -45,7 +45,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude1,
             'longitude' => $longitude1,
             'ordre' => 1,
-            'photo' => '/imgs/etapes/photo1.jpg',
+            'photo' => '/storage/etapes/photo1.jpg',
             'distance' => $distance1,
             'duree' => $duree1,
         ]);
@@ -57,7 +57,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude2,
             'longitude' => $longitude2,
             'ordre' => 2,
-            'photo' => '/imgs/etapes/photo2.jpg',
+            'photo' => '/storage/etapes/photo2.jpg',
             'distance' => $distance2,
             'duree' => $duree2,
         ]);
@@ -69,7 +69,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude3,
             'longitude' => $longitude3,
             'ordre' => 3,
-            'photo' => '/imgs/etapes/photo3.jpg',
+            'photo' => '/storage/etapes/photo3.jpg',
             'distance' => 0,
             'duree' => 0,
         ]);
@@ -97,7 +97,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude1,
             'longitude' => $longitude1,
             'ordre' => 1,
-            'photo' => '/imgs/etapes/photo4.jpg',
+            'photo' => '/storage/etapes/photo4.jpg',
             'distance' => $distance1,
             'duree' => $duree1,
         ]);
@@ -109,7 +109,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude2,
             'longitude' => $longitude2,
             'ordre' => 2,
-            'photo' => '/imgs/etapes/photo5.jpg',
+            'photo' => '/storage/etapes/photo5.jpg',
             'distance' => $distance2,
             'duree' => $duree2,
         ]);
@@ -121,7 +121,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude3,
             'longitude' => $longitude3,
             'ordre' => 3,
-            'photo' => '/imgs/etapes/photo6.jpg',
+            'photo' => '/storage/etapes/photo6.jpg',
             'distance' => 0,
             'duree' => 0,
         ]);
@@ -149,7 +149,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude1,
             'longitude' => $longitude1,
             'ordre' => 1,
-            'photo' => '/imgs/etapes/photo7.jpg',
+            'photo' => '/storage/etapes/photo7.jpg',
             'distance' => $distance1,
             'duree' => $duree1,
         ]);
@@ -161,7 +161,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude2,
             'longitude' => $longitude2,
             'ordre' => 2,
-            'photo' => '/imgs/etapes/photo8.jpg',
+            'photo' => '/storage/etapes/photo8.jpg',
             'distance' => $distance2,
             'duree' => $duree2,
         ]);
@@ -173,7 +173,7 @@ class EtapeSeeder extends Seeder {
             'latitude' => $latitude3,
             'longitude' => $longitude3,
             'ordre' => 3,
-            'photo' => '/imgs/etapes/photo9.jpg',
+            'photo' => '/storage/etapes/photo9.jpg',
             'distance' => 0,
             'duree' => 0,
         ]);

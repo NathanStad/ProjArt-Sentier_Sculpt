@@ -31,7 +31,7 @@ class SentierSeeder extends Seeder {
             'localisation' => 'Lausanne',
             'compteur' => 0,
             'archive' => 0,
-            'photo' => '/imgs/sentiers/sentier1.jpg',
+            'photo' => '/storage/sentiers/sentier1.jpg',
             'theme_id' => 1,
             'user_id' => 1,
             'difficulte_id' => 3
@@ -45,7 +45,7 @@ class SentierSeeder extends Seeder {
             'localisation' => 'Nyon',
             'compteur' => 0,
             'archive' => 0,
-            'photo' => '/imgs/sentiers/sentier2.jpg',
+            'photo' => '/storage/sentiers/sentier2.jpg',
             'theme_id' => 2,
             'user_id' => 2,
             'difficulte_id' => 2
@@ -59,7 +59,7 @@ class SentierSeeder extends Seeder {
             'localisation' => 'Montreux',
             'compteur' => 0,
             'archive' => 0,
-            'photo' => '/imgs/sentiers/sentier3.jpg',
+            'photo' => '/storage/sentiers/sentier3.jpg',
             'theme_id' => 3,
             'user_id' => 3,
             'difficulte_id' => 1

@@ -197,6 +197,7 @@
                 <button type="submit">Envoyer</button>
             </form>
         </div>
+        <a class="boutton-demarer" :href="`#stepslist-${props.Id}`">Démarrer</a>
     </div>
 </template>
 
@@ -440,5 +441,20 @@ onMounted(async () => {
 }
 .link {
     cursor: pointer;
+}
+.boutton-demarer{
+    width: 60vw;
+    background: var(--primary);
+    padding: var(--padding-large) var(--padding-large);
+    position: fixed;
+    bottom: 12%;
+    text-align: center;
+    color: white;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: var(--border-radius-full);
+    font-weight: 600;
+    font-size: 1.2rem;
+    text-decoration: none;
 }
 </style>

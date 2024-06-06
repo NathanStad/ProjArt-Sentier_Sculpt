@@ -191,4 +191,14 @@ class SentierController extends Controller
         }
     }
 
+    public function uploadFile(Request $request)
+    {
+        if ($request->hasFile('photoSentier')) {
+            $file = $request->file('photoSentier');
+            $path = $file->store('sentiers', 'public');
+            $fileName = $file->hashName(); // Obtenez le nom du fichier généré
+            return response()->json(['message' => 'Sentier created successfully!', 'path' => $path, 'fileName' => $fileName]);
+        }
+        return response()->json(['message' => 'No file uploaded'], 400);
+    }
 }

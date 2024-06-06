@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <a :href="`#sentier-${props.Id}`">
+        <a @click.prevent="goBack">
             <span class="material-symbols-outlined"> arrow_back_ios </span>
         </a>
         <h1>{{ etape.nom }}</h1>
@@ -74,7 +74,9 @@ const fetchStep = async () => {
         }
     }
 };
-
+const goBack = () => {
+  window.history.back();
+};
 // Lifecycle Hook
 onMounted(() => {
     fetchStep();

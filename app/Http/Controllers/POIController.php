@@ -65,4 +65,15 @@ class POIController extends Controller {
                 return response()->json(['message' => 'Point of Interest not found'], 404);
             }
         }
+
+        public function uploadFile(Request $request)
+        {
+            if ($request->hasFile('photoPoi')) {
+                $file = $request->file('photoPoi');
+                $path = $file->store('pois', 'public');
+                $fileName = $file->hashName(); // Obtenez le nom du fichier généré
+                return response()->json(['message' => 'Point d\'interet created successfully!', 'path' => $path, 'fileName' => $fileName]);
+            }
+            return response()->json(['message' => 'No file uploaded'], 400);
+        }
 }

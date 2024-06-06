@@ -23,7 +23,7 @@
         <!-- les sentiers -->
         <div id="vos-santiers">
             <!-- Ajouter un sentier -->
-            <a href="#creationSentier" class="boutton">Ajouter un sentier</a>
+            <a @click="newSentier" class="boutton">Ajouter un sentier</a>
 
             <!-- Choix de si archivé ou non -->
             <div id="button-archive">
@@ -62,7 +62,7 @@
                         </span>
                         Archiver le sentier
                     </div>
-                    <div @click="editSentier(sentier.id)">
+                    <div @click="editSentier(sentier)">
                         <span class="material-symbols-outlined"> edit </span
                         >Modifer le sentier
                     </div>
@@ -126,7 +126,7 @@
                         </span>
                         Désarchiver le sentier
                     </div>
-                    <div @click="editSentier(sentier.id)">
+                    <div @click="editSentier(sentier)">
                         <span class="material-symbols-outlined"> edit </span
                         >Modifer le sentier
                     </div>
@@ -236,10 +236,42 @@ const moveToArchive = (sentier, targetArchive) => {
     toggleArchive(sentier.id);
 };
 
+// Créerun nouveau seniter
+
+const newSentier = () =>{
+    sessionStorage.removeItem('update')
+    sessionStorage.removeItem('sentierCreation')
+    sessionStorage.removeItem('etapes')
+    window.location.href =
+        window.location.href.split("#")[0] + "#creationSentier";
+}
+
 // Envoie pour la modifiction de l'objet
 
-const editSentier = (id) => {
-    sessionStorage.setItem("idSentierEdit", id);
+const editSentier = (sentier) => {
+    console.log(sentier);
+    if (!(sessionStorage.getItem('sentierCreation')) && !sessionStorage.getItem('etapes')) {
+        const seniterData = {
+            nomSentier: sentier.nom,
+            descriptionSentier: sentier.description ,
+            theme: sentier.theme_id ,
+            criteres: [] ,
+            motcles: [],
+            difficulte: sentier.difficulte.id,
+            photoSentier:sentier.photo
+        }
+        sentier.criteres.forEach(critere => {
+            seniterData.criteres.push(critere.id)
+        });
+        sentier.motcles.forEach(motcle => {
+            seniterData.motcles.push(motcle.id)
+        });
+        const etapeData = sentier.etapes
+        console.log(seniterData, etapeData);
+        sessionStorage.setItem('update', true)
+        sessionStorage.setItem('sentierCreation', JSON.stringify(seniterData))
+        sessionStorage.setItem('etapes', JSON.stringify(etapeData))
+    }
     window.location.href =
         window.location.href.split("#")[0] + "#creationSentier";
 };

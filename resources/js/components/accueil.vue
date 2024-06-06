@@ -269,6 +269,17 @@ input[type="submit"] {
     background: var(--primary);
     color: white;
 }
+input[pseudo="-webkit-file-upload-button"] {
+    margin-bottom: var(--margin-medium);
+    padding: var(--padding-medium) calc(var(--padding-medium) * 2.33);
+    font-size: var(--font-size-small);
+    width: var(--width-85);
+    border-radius: var(--border-radius-large);
+    border: 0;
+    box-shadow: var(--box-shadow-light);
+    background: var(--primary);
+    color: white;
+}
 textarea {
     margin-bottom: var(--margin-medium);
     height: 300px;

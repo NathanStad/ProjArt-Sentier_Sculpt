@@ -31,7 +31,13 @@ Route::patch('/set-sentier/{id}/archive', [SentierController::class, 'toggleArch
 Route::delete('/delete-sentier/{id}', [SentierController::class, 'destroy']);
 
 // Insertion de données
+Route::post('/submit-sentier', [SentierController::class, 'store']);
+Route::post('/update-sentier', [SentierController::class, 'update']);
 
+// Insertion de fichier
+Route::post('/submit-file-sentier', [SentierController::class, 'uploadFile']);
+Route::post('/submit-file-poi', [POIController::class, 'uploadFile']);
+Route::post('/submit-file-etapes', [EtapeController::class, 'uploadFile']);
 
 // Faire que tous les liens ammènes à l'application
 Route::get('/{any}', function () {

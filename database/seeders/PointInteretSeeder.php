@@ -18,92 +18,92 @@ class PointInteretSeeder extends Seeder {
 
         PointInteret::create([
             'nom' => 'Château de Chillon',
-            'photo' => '/imgs/pois/photo1.jpg',
+            'photo' => '/storage/pois/photo1.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Cathédrale de Lausanne',
-            'photo' => '/imgs/pois/photo2.jpg',
+            'photo' => '/storage/pois/photo2.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Musée Olympique',
-            'photo' => '/imgs/pois/photo3.jpg',
+            'photo' => '/storage/pois/photo3.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Montreux Jazz Festival',
-            'photo' => '/imgs/pois/photo4.jpg',
+            'photo' => '/storage/pois/photo4.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Lac Léman',
-            'photo' => '/imgs/pois/photo5.jpg',
+            'photo' => '/storage/pois/photo5.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Lavaux',
-            'photo' => '/imgs/pois/photo6.jpg',
+            'photo' => '/storage/pois/photo6.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Chaplin’s World',
-            'photo' => '/imgs/pois/photo7.jpg',
+            'photo' => '/storage/pois/photo7.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Musée de l’Élysée',
-            'photo' => '/imgs/pois/photo8.jpg',
+            'photo' => '/storage/pois/photo8.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Alimentarium',
-            'photo' => '/imgs/pois/photo9.jpg',
+            'photo' => '/storage/pois/photo9.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Aquatis',
-            'photo' => '/imgs/pois/photo10.jpg',
+            'photo' => '/storage/pois/photo10.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Musée Jenisch',
-            'photo' => '/imgs/pois/photo11.jpg',
+            'photo' => '/storage/pois/photo11.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Maison Cailler',
-            'photo' => '/imgs/pois/photo12.jpg',
+            'photo' => '/storage/pois/photo12.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Swiss Vapeur Parc',
-            'photo' => '/imgs/pois/photo13.jpg',
+            'photo' => '/storage/pois/photo13.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Glacier 3000',
-            'photo' => '/imgs/pois/photo14.jpg',
+            'photo' => '/storage/pois/photo14.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Musée HR Giger',
-            'photo' => '/imgs/pois/photo15.jpg',
+            'photo' => '/storage/pois/photo15.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Zoo de la Garenne',
-            'photo' => '/imgs/pois/photo16.jpg',
+            'photo' => '/storage/pois/photo16.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Château de Gruyères',
-            'photo' => '/imgs/pois/photo17.jpg',
+            'photo' => '/storage/pois/photo17.jpg',
         ]);
 
         PointInteret::create([
             'nom' => 'Parc naturel régional Gruyère Pays-d’Enhaut',
-            'photo' => '/imgs/pois/photo18.jpg',
+            'photo' => '/storage/pois/photo18.jpg',
         ]);
     }
 }

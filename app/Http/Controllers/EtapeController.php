@@ -107,5 +107,14 @@ class EtapeController extends Controller {
                 return response()->json(['message' => 'Etape not found'], 404);
             }
         }
-
+        public function uploadFile(Request $request)
+        {
+            if ($request->hasFile('photoEtapes')) {
+                $file = $request->file('photoEtapes');
+                $path = $file->store('etapes', 'public');
+                $fileName = $file->hashName(); // Obtenez le nom du fichier généré
+                return response()->json(['message' => 'Etape created successfully!', 'path' => $path, 'fileName' => $fileName]);
+            }
+            return response()->json(['message' => 'No file uploaded'], 400);
+        }
 }

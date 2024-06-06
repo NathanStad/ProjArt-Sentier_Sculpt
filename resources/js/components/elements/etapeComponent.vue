@@ -84,7 +84,7 @@ export default {
         },
         chargerEtape(etape) {
             console.log("etape click: ", etape.nom);
-            window.location.hash = `etape-${etape.id}`
+            window.location.hash = `step-${etape.id}`
         },
         onSlideTo(id) {
             const slideIndex = this.etapes.etapes.findIndex(etape => etape.id === id);

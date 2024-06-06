@@ -10,7 +10,6 @@
   </section>
 
   <!-- Footer / Nav -->
-  <main></main>
   <footer>
     <Footer :site="currentPath"></Footer>
   </footer>
@@ -23,10 +22,13 @@ import Accueil from "@/components/accueil.vue";
 import Carte from "@/components/carte-accueil.vue";
 import Sentier from "@/components/sentier.vue";
 import Etapes from "@/components/steps-list.vue";
+import ListeEtapes from "@/components/steps-list.vue";
 import Etape from "@/components/step.vue";
 import Login from "@/components/login/login.vue";
 import Compte from "@/components/login/account.vue";
 import CreationSentier from "@/components/sentier-creation.vue";
+import EtapesCreation from "@/components/carte-creation.vue";
+import EtapeCreation from "@/components/step-creation.vue";
 import Favoris from "@/components/favorite.vue";
 
 import Footer from "@/components/elements/footer.vue";
@@ -53,6 +55,10 @@ const routes = {
     component: Etapes,
     label: 'Étapes',
   },
+  '#stepslist': {
+    component: ListeEtapes,
+    label: 'Carte',
+  },
   '#step': {
     component: Etape,
     label: 'Étape',
@@ -67,6 +73,14 @@ const routes = {
   },
   '#creationSentier': {
     component: CreationSentier,
+    label: 'Création de sentier',
+  },
+  '#creationSteps': {
+    component: EtapesCreation,
+    label: 'Création de sentier',
+  },
+  '#creationStep': {
+    component: EtapeCreation,
     label: 'Création de sentier',
   },
   '#favorite': {
@@ -171,6 +185,8 @@ const currentView = computed(() => {
   margin: 0;
   padding: 0;
   color: #1e1e1e;
+  transition: background-color 0.3s ease;
+
 }
 header {
   height: 10vh;
