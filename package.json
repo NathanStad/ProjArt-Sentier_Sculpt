@@ -28,6 +28,7 @@
         "sortablejs": "^1.15.2",
         "swiper": "^11.1.4",
         "vue": "^3.4.27",
+        "vue-slider-component": "^3.2.24",
         "vuedraggable": "^4.1.0"
     }
 }

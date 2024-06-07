@@ -108,8 +108,8 @@ input{
 }
 .sentier > div:first-of-type {
     position: absolute;
-    right: 10%;
-    top: 15%;
+    right: 8%;
+    top: 8%;
 }
 .sentier > div:first-of-type span {
     color: var(--primary);

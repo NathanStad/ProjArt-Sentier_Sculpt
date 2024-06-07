@@ -173,31 +173,42 @@
             <ul>
                 <li v-for="commentaire in commentaires" :key="commentaire.id">
                     <div>
-                        <strong>{{ commentaire.nom }}</strong> -
-                        <p>{{ commentaire.email }}</p>
+                        <div :style="{ backgroundColor: getRandomColor() }">
+                            {{ commentaire.name.slice(0, 1).toUpperCase() }}
+                        </div>
+                        <div>
+                            <p>{{ commentaire.name }}</p>
+                            <p>
+                                {{ convertissorDate(commentaire.created_at) }}
+                            </p>
+                        </div>
                     </div>
-                    <p>{{ commentaire.texte }}</p>
+                    <p>{{ commentaire.message }}</p>
                 </li>
             </ul>
             <form @submit.prevent="submitComment">
-                <input
-                    v-model="newComment.nom"
-                    type="text"
-                    placeholder="Votre nom"
-                    required
-                />
-                <input
-                    v-model="newComment.email"
-                    type="email"
-                    placeholder="Votre email"
-                    required
-                />
-                <textarea
-                    v-model="newComment.texte"
-                    placeholder="Votre commentaire"
-                    required
-                ></textarea>
-                <button type="submit">Envoyer</button>
+                <div>
+                    <textarea
+                        v-model="newComment.message"
+                        placeholder="Rédiger un commentaire"
+                        required
+                    ></textarea>
+                    <input
+                        v-model="newComment.name"
+                        type="text"
+                        placeholder="Votre nom"
+                        required
+                    />
+                    <input
+                        v-model="newComment.email"
+                        type="email"
+                        placeholder="Votre email"
+                        required
+                    />
+                    <button type="submit" class="button">
+                        <span class="material-symbols-outlined"> send </span>
+                    </button>
+                </div>
             </form>
         </div>
         <a class="boutton-demarer" :href="`#stepslist-${props.Id}`">Démarrer</a>
@@ -242,9 +253,9 @@ const props = defineProps({
 const message = ref("");
 const sentier = ref({});
 const etapes = ref([]);
+const commentaires = ref([]);
 const currentContent = ref("step");
 const isLoading = ref(true);
-
 const newComment = ref({
     name: "",
     email: "",
@@ -276,6 +287,7 @@ const fetchSentier = async () => {
             const response = await axios.get(`/data-sentier-${props.Id}`);
             sentier.value = response.data;
             etapes.value = response.data.etapes;
+            commentaires.value = response.data.commentaires;
         } catch (error) {
             console.error("Error fetching sentiers:", error);
         }
@@ -296,8 +308,16 @@ const convertissorDate = (date) => {
     }${mois}.${annee}`;
     return dateFormatee;
 };
-
+function getRandomColor() {
+    // Génère trois valeurs de couleur aléatoires pour les composantes RGB
+    const r = Math.floor(Math.random() * 256);
+    const g = Math.floor(Math.random() * 256);
+    const b = Math.floor(Math.random() * 256);
+    // Combine les valeurs pour former une couleur au format hexadécimal
+    return "#" + r.toString(16) + g.toString(16) + b.toString(16);
+}
 const submitComment = async () => {
+    console.log(newComment.value);
     try {
         const response = await axios.post(`/commentaire`, {
             sentier_id: props.Id,
@@ -305,11 +325,12 @@ const submitComment = async () => {
             email: newComment.value.email,
             message: newComment.value.message,
         });
-        if (response.data.success) {
-            fetchSentier();
+        console.log(response);
+        if (response.statusText == "Created") {
             newComment.value.name = "";
             newComment.value.email = "";
             newComment.value.message = "";
+            fetchSentier()
         } else {
             console.error("Error submitting comment");
         }
@@ -404,7 +425,7 @@ onMounted(async () => {
 .menu {
     height: 80px;
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -466,5 +487,82 @@ onMounted(async () => {
 #desc,
 #step {
     margin-bottom: 40%;
+}
+#comms {
+    flex-direction: column;
+}
+ul {
+    list-style-type: none;
+}
+li {
+    padding-bottom: 10%;
+}
+li:last-of-type {
+    padding-bottom: 15%;
+}
+li > div {
+    padding-bottom: 5%;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+li > div div:first-of-type {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 400;
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    mix-blend-mode: exclusion;
+}
+li > div div:last-of-type p:first-of-type {
+    font-weight: 700;
+}
+li > div div:last-of-type p:last-of-type {
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--color-text-secondary);
+}
+
+#comms form > div{
+    background: white;
+    box-shadow: var(--box-shadow-light);
+    border-radius: var(--border-radius-large);
+    position: relative;
+    padding: 5%;
+}
+#comms form > div > input,
+#comms form > div > textarea
+{
+    width: 100% !important;
+    box-shadow: none !important;
+    border-radius:0 !important;
+    position: relative;
+    margin: 0 !important;
+    padding: 20px 10px !important;
+}
+#comms form > div > input:first-of-type,
+#comms form > div > textarea
+{
+    border-bottom: 1px var(--color-text-secondary) solid;
+}
+textarea::after{
+    content: "max. 1000 caractères";
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+}
+#comms form > div button{
+    background: none;
+    box-shadow: none !important;
+    position: absolute;
+    width: fit-content;
+    transform: translate(120%);
+    bottom: -2.5%;
+}
+#comms form > div button span{
+    color: var(--color-text-secondary);
 }
 </style>

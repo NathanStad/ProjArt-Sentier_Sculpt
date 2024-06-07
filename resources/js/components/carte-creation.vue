@@ -1,223 +1,231 @@
 <template>
-    <div>
-        <div id="page">
-            <div id="formulaire">
-                <div class="header">
-                    <a @click.prevent="goBack">
-                        <span class="material-symbols-outlined">
-                            arrow_back_ios
-                        </span>
-                    </a>
-                    <h1>Création d'un sentier</h1>
-                    <div></div>
-                </div>
-                <div class="form-container">
-                    <draggable v-model="etapes" item-key="id">
-                        <div class="form-container"></div>
-                        <template #item="{ element, index }">
-                            <div class="stepContainer">
-                                <div class="infoMap">
-                                    <p v-if="index === etapes.length - 1">
-                                        <span class="material-symbols-outlined">
-                                            radio_button_unchecked
-                                        </span>
-                                    </p>
-                                    <p v-else>
-                                        <span class="material-symbols-outlined">
-                                            radio_button_checked
-                                        </span>
-                                    </p>
-                                </div>
-
-                                <div class="step" @click="clickEtape(index)">
-                                    <span class="step-name">{{
-                                        element.nom || "Etape " + (index + 1)
+    <div id="page">
+        <div id="formulaire">
+            <div class="form-container">
+                <h1>Création d'un sentier</h1>
+                <draggable v-model="etapes" item-key="id">
+                    <div class="form-container"></div>
+                    <template #item="{ element, index }">
+                        <div class="stepContainer">
+                            <div class="infoMap">
+                                <p v-if="index === etapes.length - 1">
+                                    <span class="material-symbols-outlined">
+                                        radio_button_unchecked
+                                    </span>
+                                </p>
+                                <p v-else>
+                                    <span class="material-symbols-outlined">
+                                        radio_button_checked
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="step" @click="clickEtape(index)">
+                                <span class="step-name">{{
+                                    element.nom || "Etape " + (index + 1)
                                     }}</span>
-                                    <div class="dragHandle">
-                                        <span class="material-symbols-outlined">
-                                            drag_handle
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="deleteEtape">
-                                    <span
-                                        v-if="index !== 0 && index !== 1"
-                                        class="step-emoji"
-                                        @click="delEtape(element)"
-                                        ><span
-                                            class="material-symbols-outlined"
-                                        >
-                                            close
-                                        </span></span
-                                    >
+                                <div class="dragHandle">
+                                    <span class="material-symbols-outlined">
+                                        drag_handle
+                                    </span>
                                 </div>
                             </div>
-                        </template>
-                    </draggable>
-                    <div
-                        v-if="etapes.length <= 5"
-                        class="add-step"
-                        @click="ajouteEtape"
-                    >
-                        + ajouter une étape
-                    </div>
+                            <div class="deleteEtape">
+                                <span v-if="index !== 0 && index !== 1" class="step-emoji"
+                                    @click="delEtape(element)"><span class="material-symbols-outlined">
+                                        close
+                                    </span></span>
+                            </div>
+                        </div>
+                    </template>
+                </draggable>
+                <div v-if="etapes.length < 5" class="add-step" @click="ajouteEtape">
+                    + ajouter une étape
                 </div>
             </div>
-            <div id="partieInferieur">
-                <div id="mapCreationDuSentier"></div>
-                <div id="recenterDiv">
-                    <RecentrerBtnComponent @recenter="recenter" />
-                </div>
+        </div>
+        <div id="partieInferieur">
+            <div id="mapCreationDuSentier"></div>
+            <div id="recenterDiv">
+                <RecentrerBtnComponent @recenter="recenter" />
             </div>
-            <div id="btnSuivant">
-                <button @click="terminerCreation">Terminer</button>
-            </div>
+        </div>
+        <div id="btnSuivant">
+            <button class="button" @click="terminerCreation" >Suivant</button>
         </div>
     </div>
 </template>
 
-<script setup>
-import { ref, onMounted } from "vue";
+<script>
 import draggable from "vuedraggable";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import EtapeComponent from "./elements/etapeComponent.vue";
 import RecentrerBtnComponent from "./elements/recentrerBtnComponent.vue";
+
 import axios from "axios";
 
 let map;
-const mapLoaded = ref(false);
-const etapes = JSON.parse(sessionStorage.getItem("etapes")) || [
-    {
-        nom: "nom 1",
-        description: "la description",
-        coordonnees: { long: 6.6832837302582675, lat: 46.575054030719826 },
-        photo: null,
-        pointInteret: [
-            { nom: "", photo: null },
-            { nom: "", photo: null },
-        ],
-    },
-    {
-        nom: "nom 2",
-        description: "la descr",
-        coordonnees: { long: null, lat: null },
-        photo: null,
-        pointInteret: [
-            { nom: "", photo: null },
-            { nom: "", photo: null },
-        ],
-    },
-    {
-        nom: "nom 3",
-        description: "la descr",
-        coordonnees: { long: 6.6832837302582675, lat: 46.585054030719826 },
-        photo: null,
-        pointInteret: [
-            { nom: "", photo: null },
-            { nom: "", photo: null },
-        ],
-    },
-];
-const markers = ref([]);
-const routeLayerId = ref("");
-const couleur = "#40680c";
-const coordonnesRecenter = ref([6.700021, 46.602693]);
-const zoomRecenter = ref(8);
 
-const loadMap = (tour) => {
-    if (map.getLayer(routeLayerId.value)) {
-        map.removeLayer(routeLayerId.value);
-        map.removeSource(routeLayerId.value);
-    }
-    if (tour.length > 1) {
-        fetch(
-            "https://api.openrouteservice.org/v2/directions/foot-hiking/geojson",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization:
-                        "5b3ce3597851110001cf6248cbe7a7b654c74537a20bd21243c00b7a",
+export default {
+    name: "CarteCreation",
+    components: {
+        draggable,
+        EtapeComponent,
+        RecentrerBtnComponent,
+    },
+
+    data() {
+        return {
+            etapes: JSON.parse(sessionStorage.getItem("etapes")) || [
+                {
+                    nom: "nom 1",
+                    description: "la description",
+                    coordonnees: {
+                        long: 6.6832837302582675,
+                        lat: 46.575054030719826,
+                    },
+                    photo: null,
+                    pointInteret: [
+                        { nom: "", photo: null },
+                        { nom: "", photo: null },
+                    ],
                 },
-                body: JSON.stringify({
-                    coordinates: tour.map((etape) => [
-                        etape.coordonnees.long,
-                        etape.coordonnees.lat,
-                    ]),
-                }),
+                {
+                    nom: "nom 2",
+                    description: "la descr",
+                    coordonnees: { long: null, lat: null },
+                    photo: null,
+                    pointInteret: [
+                        { nom: "", photo: null },
+                        { nom: "", photo: null },
+                    ],
+                },
+                {
+                    nom: "nom 3",
+                    description: "la descr",
+                    coordonnees: {
+                        long: 6.6832837302582675,
+                        lat: 46.585054030719826,
+                    },
+                    photo: null,
+                    pointInteret: [
+                        { nom: "", photo: null },
+                        { nom: "", photo: null },
+                    ],
+                },
+            ],
+            oldIndex: "",
+            newIndex: "",
+            markers: [],
+            routeLayerId: "",
+            couleur: "#40680c",
+            mapLoaded: false,
+            disable: true,
+            coordonnesRecenter: [6.700021, 46.602693],
+            zoomRecenter: 8,
+        };
+    },
+
+    methods: {
+        loadMap(tour) {
+            if (map.getLayer(this.routeLayerId)) {
+                map.removeLayer(this.routeLayerId);
+                map.removeSource(this.routeLayerId);
             }
-        )
-            .then((response) => response.json())
-            .then((responseData) => {
-                const coordinates =
-                    responseData.features[0].geometry.coordinates;
-                map.addLayer({
-                    id: routeLayerId.value,
-                    type: "line",
-                    source: {
-                        type: "geojson",
-                        data: {
-                            type: "Feature",
-                            geometry: {
-                                type: "LineString",
-                                coordinates: coordinates,
-                            },
+            if (tour.length > 1) {
+                fetch(
+                    "https://api.openrouteservice.org/v2/directions/foot-hiking/geojson",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization:
+                                "5b3ce3597851110001cf6248cbe7a7b654c74537a20bd21243c00b7a",
                         },
-                    },
-                    layout: {
-                        "line-join": "round",
-                        "line-cap": "round",
-                    },
-                    paint: {
-                        "line-color": `${couleur}`,
-                        "line-width": 5,
-                    },
-                });
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la requête:", error);
-            });
-    }
-};
-
-const afficheRoute = (tour) => {
-    routeLayerId.value = `route-layer-1`;
-    const etapesInversees = tour.slice().reverse();
-    etapesInversees.forEach((etape, index) => {
-        const coordinate = [etape.coordonnees.long, etape.coordonnees.lat];
-        const marker = new maplibregl.Marker({ color: couleur })
-            .setLngLat(coordinate)
-            .addTo(map);
-        marker.getElement().setAttribute("data-id", etape.id);
-        markers.value.push(marker);
-        marker.setPopup(new maplibregl.Popup().setHTML(`${etape.nom}`));
-        const markerElement = marker._element;
-        const svgElement = markerElement.querySelector("svg");
-        while (svgElement.firstChild) {
-            svgElement.removeChild(svgElement.firstChild);
-        }
-
-        if (index !== 0) {
-            if (svgElement) {
-                const circle = document.createElementNS(
-                    "http://www.w3.org/2000/svg",
-                    "circle"
-                );
-                circle.setAttribute("cx", "12");
-                circle.setAttribute("cy", "27");
-                circle.setAttribute("r", "12");
-                circle.setAttribute("fill", couleur);
-                svgElement.appendChild(circle);
+                        body: JSON.stringify({
+                            coordinates: tour.map((etape) => [
+                                etape.coordonnees.long,
+                                etape.coordonnees.lat,
+                            ]),
+                        }),
+                    }
+                )
+                    .then((response) => response.json())
+                    .then((responseData) => {
+                        const coordinates =
+                            responseData.features[0].geometry.coordinates;
+                        map.addLayer({
+                            id: this.routeLayerId,
+                            type: "line",
+                            source: {
+                                type: "geojson",
+                                data: {
+                                    type: "Feature",
+                                    geometry: {
+                                        type: "LineString",
+                                        coordinates: coordinates,
+                                    },
+                                },
+                            },
+                            layout: {
+                                "line-join": "round",
+                                "line-cap": "round",
+                            },
+                            paint: {
+                                "line-color": `${this.couleur}`,
+                                "line-width": 5,
+                            },
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Erreur lors de la requête:", error);
+                    });
             }
-        } else {
-            if (svgElement) {
-                svgElement.innerHTML = "";
-                svgElement.setAttribute("width", "90");
-                svgElement.setAttribute("height", "90");
-                svgElement.style.position = "relative";
-                svgElement.style.zIndex = "1000";
+        },
+        afficheRoute(tour) {
+            this.routeLayerId = `route-layer-1`;
+            const etapesInversees = tour.slice().reverse();
+            etapesInversees.forEach((etape, index) => {
+                const coordinate = [
+                    etape.coordonnees.long,
+                    etape.coordonnees.lat,
+                ];
+                const marker = new maplibregl.Marker({ color: this.couleur })
+                    .setLngLat(coordinate)
+                    .addTo(map);
+                marker.getElement().setAttribute("data-id", etape.id);
+                this.markers.push(marker);
+                marker.setPopup(new maplibregl.Popup().setHTML(`${etape.nom}`));
+                const markerElement = marker._element;
+                const svgElement = markerElement.querySelector("svg");
+                while (svgElement.firstChild) {
+                    svgElement.removeChild(svgElement.firstChild);
+                }
 
-                const point = `<svg id="Calque_1" data-name="Calque 1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 50 50">
+                if (index !== 0) {
+                    if (svgElement) {
+                        const circle = document.createElementNS(
+                            "http://www.w3.org/2000/svg",
+                            "circle"
+                        );
+                        circle.setAttribute("cx", "12");
+                        circle.setAttribute("cy", "27");
+                        circle.setAttribute("r", "12");
+                        circle.setAttribute("fill", this.couleur);
+                        svgElement.appendChild(circle);
+                    }
+                } else {
+                    if (svgElement) {
+                        const markerElement = marker._element;
+                        const svgElement = markerElement.querySelector("svg");
+                        if (svgElement) {
+                            svgElement.innerHTML = "";
+                            svgElement.setAttribute("width", "90");
+                            svgElement.setAttribute("height", "90");
+                            svgElement.style.position = "relative";
+                            svgElement.style.zIndex = "1000";
+
+                            const point = `<svg id="Calque_1" data-name="Calque 1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 50 50">
                             <defs>
                             <style>
                             .cls-1 {
@@ -253,174 +261,241 @@ const afficheRoute = (tour) => {
                                             <path class="cls-1" d="M21.3,20.2c0-1.1,0-2.3,0-3.4,0-1,.7-1.8,1.6-2,.5,0,.9,0,1.3.2,1.8,1.2,3.6,2.3,5.3,3.5,1.2.8,1.2,2.6,0,3.3-1.8,1.2-3.5,2.3-5.3,3.5-.6.4-1.3.4-1.9,0-.7-.4-1-1-1-1.8,0-1.2,0-2.3,0-3.5ZM23.3,23.7c1.7-1.1,3.5-2.3,5.2-3.4-1.7-1.1-3.4-2.3-5.2-3.4v6.8Z"/>
                                             </svg>`;
                             svgElement.innerHTML = point;
+                        }
+                    }
+                }
+            });
+
+            if (this.mapLoaded) {
+                this.loadMap(tour);
             }
-        }
-    });
 
-    if (mapLoaded.value) {
-        loadMap(tour);
-    }
-
-    map.on("load", () => {
-        mapLoaded.value = true;
-        loadMap(tour);
-    });
-};
-
-const showTours = (tour) => {
-    markers.value.forEach((marker) => marker.remove());
-    const etapeOk = [];
-    tour.forEach((etape, index) => {
-        if (etape.coordonnees.lat === null || etape.coordonnees.long === null) {
-            return;
-        } else {
-            etapeOk.push(etape);
-        }
-    });
-    if (etapeOk[0]) {
-        map.setCenter([
-            etapeOk[etapeOk.length - 1].coordonnees.long,
-            etapeOk[etapeOk.length - 1].coordonnees.lat,
-        ]);
-        map.setZoom(12);
-        zoomRecenter.value = 12;
-        coordonnesRecenter.value = [
-            etapeOk[etapeOk.length - 1].coordonnees.long,
-            etapeOk[etapeOk.length - 1].coordonnees.lat,
-        ];
-        afficheRoute(etapeOk);
-    } else {
-        coordonnesRecenter.value = [6.700021, 46.602693];
-        zoomRecenter.value = 8.5;
-    }
-};
-
-const ajouteEtape = () => {
-    etapes.push({
-        nom: "",
-        description: "",
-        coordonnees: { long: null, lat: null },
-        photo: null,
-        pointInteret: [
-            { nom: "", photo: null },
-            { nom: "", photo: null },
-        ],
-    });
-};
-
-const clickEtape = (index) => {
-    const hash = `creationStep-${index + 1}`;
-    window.location.hash = hash;
-};
-
-const delEtape = (etape) => {
-    const index = etapes.indexOf(etape);
-    if (index > -1) {
-        etapes.splice(index, 1);
-    }
-};
-
-const recenter = () => {
-    map.flyTo({
-        center: coordonnesRecenter.value,
-        zoom: zoomRecenter.value,
-        curve: 1,
-        easing(t) {
-            return t;
+            map.on("load", () => {
+                this.mapLoaded = true;
+                this.loadMap(tour);
+            });
         },
-    });
-};
+        calculerDistance(coord1, coord2) {
+            const R = 6371e3; // Rayon de la Terre en mètres
+            const φ1 = coord1.lat * Math.PI / 180; // Latitude du premier point en radians
+            const φ2 = coord2.lat * Math.PI / 180; // Latitude du deuxième point en radians
+            const Δφ = (coord2.lat - coord1.lat) * Math.PI / 180; // Différence de latitude en radians
+            const Δλ = (coord2.long - coord1.long) * Math.PI / 180; // Différence de longitude en radians
 
-const terminerCreation = () => {
-    // Récupérer les données du sessionStorage
-    const sentierCreationData = JSON.parse(
-        sessionStorage.getItem("sentierCreation")
-    );
-    const etapesData = JSON.parse(sessionStorage.getItem("etapes"));
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-    // Vérifier si les données existent
-    if (!sentierCreationData || !etapesData) {
-        console.error(
-            "Les données du sentier ou des étapes ne sont pas présentes dans le sessionStorage."
-        );
-        return;
-    }
-    if (sessionStorage.getItem("update")) {
-        // Envoyer les données au backend
-        axios
-            .post("/update-sentier", {
-                nom: sentierCreationData.nomSentier,
-                description: sentierCreationData.descriptionSentier,
-                theme_id: sentierCreationData.theme,
-                criteres: sentierCreationData.criteres,
-                motcles: sentierCreationData.motcles,
-                difficulte_id: sentierCreationData.difficulte,
-                photo: sentierCreationData.photoSentierName,
-                etapes: etapesData,
-            })
-            .then((response) => {
-                console.log("Sentier mis à jour avec succès:", response.data);
-                // Effacer les données du sessionStorage après avoir réussi à créer le sentier
-                sessionStorage.removeItem("sentierCreation");
-                sessionStorage.removeItem("etapes");
-                // Redirigez l'utilisateur
-                window.location.hash = `account`;
-            })
-            .catch((error) => {
-                console.error(
-                    "Erreur lors de la mise à jour du sentier:",
-                    error
+            const distance = R * c; // Distance en mètres
+            return distance;
+        },
+        calculerTempsMarche(distance) {
+            const vitesseMarche = 5; // Vitesse moyenne de marche à pied en km/h
+            const tempsSecondes = distance / (vitesseMarche * 1000 / 3600); // Temps en secondes
+            return tempsSecondes;
+        },
+
+        showTours(tour) {
+            this.markers.forEach((marker) => marker.remove());
+            const etapeOk = [];
+            tour.forEach((etape, index) => {
+                if (
+                    etape.coordonnees.lat === null ||
+                    etape.coordonnees.long === null
+                ) {
+                    return;
+                } else {
+                    etapeOk.push(etape);
+                }
+            });
+            if (etapeOk[0]) {
+                map.setCenter([
+                    etapeOk[etapeOk.length - 1].coordonnees.long,
+                    etapeOk[etapeOk.length - 1].coordonnees.lat,
+                ]);
+                map.setZoom(12);
+                this.zoomRecenter = 12;
+                this.coordonnesRecenter = [
+                    etapeOk[etapeOk.length - 1].coordonnees.long,
+                    etapeOk[etapeOk.length - 1].coordonnees.lat,
+                ];
+                this.afficheRoute(etapeOk);
+            } else {
+                this.coordonnesRecenter = [6.700021, 46.602693];
+                this.zoomRecenter = 8.5;
+            }
+        },
+        ajouteEtape() {
+            this.etapes.push({
+                nom: "",
+                description: "",
+                coordonnees: { long: null, lat: null },
+                photo: null,
+                pointInteret: [
+                    { nom: "", photo: null },
+                    { nom: "", photo: null },
+                ],
+            });
+        },
+        clickEtape(index) {
+            const hash = `creationStep-${index + 1}`;
+            window.location.hash = hash;
+        },
+        delEtape(etape) {
+            const index = this.etapes.indexOf(etape);
+            if (index > -1) {
+                this.etapes.splice(index, 1);
+            }
+        },
+        terminerCreation() {
+            // Récupérer les données du sessionStorage
+            console.log('envoie');
+            const sentierCreationData = JSON.parse(
+                sessionStorage.getItem("sentierCreation")
                 );
+                const etapesData = JSON.parse(sessionStorage.getItem("etapes"));
+                
+                // Vérifier si les données existent
+                if (!sentierCreationData || !etapesData) {
+                    console.error(
+                        "Les données du sentier ou des étapes ne sont pas présentes dans le sessionStorage."
+                        );
+                        return;
+                        }
+                    console.log(etapesData);
+            let longueurTotal = 0
+            let dureeTotal = 0
+            let cordonnePrec = null
+            for (let index = 0; index < etapesData.length; index++) {
+                const element = etapesData[index];
+                if (cordonnePrec != null) {
+                    longueurTotal += this.calculerDistance(cordonnePrec,element.coordonnees)
+                } else {
+                    cordonnePrec = element.coordonnees
+                }
+            }
+            dureeTotal = this.calculerTempsMarche(longueurTotal)
+            if (sessionStorage.getItem("update")) {
+                // Envoyer les données au backend
+                axios
+                    .post("/update-sentier", {
+                        nom: sentierCreationData.nomSentier,
+                        description: sentierCreationData.descriptionSentier,
+                        duree: dureeTotal,
+                        longueur: longueurTotal,
+                        localisation: sentierCreationData.localisation,
+                        criteres: sentierCreationData.criteres,
+                        motcles: sentierCreationData.motcles,
+                        etapes: etapesData,
+                        photo: sentierCreationData.photoSentierName,
+                        theme_id: sentierCreationData.theme,
+                        user_id: localStorage.getItem("userId"),
+                        difficulte_id: sentierCreationData.difficulte,
+                    })
+                    .then((response) => {
+                        console.log(
+                            "Sentier mis à jour avec succès:",
+                            response.data
+                        );
+                        // Effacer les données du sessionStorage après avoir réussi à créer le sentier
+                        sessionStorage.removeItem("sentierCreation");
+                        sessionStorage.removeItem("etapes");
+                        sessionStorage.removeItem("update");
+                        // Redirigez l'utilisateur
+                        window.location.hash = `account`;
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Erreur lors de la mise à jour du sentier:",
+                            error
+                        );
+                    });
+            } else {
+                // Envoyer les données au backend
+                axios
+                    .post("/submit-sentier", {
+                        nom: sentierCreationData.nomSentier,
+                        description: sentierCreationData.descriptionSentier,
+                        duree: dureeTotal,
+                        longueur: longueurTotal,
+                        localisation: sentierCreationData.localisation,
+                        criteres: sentierCreationData.criteres,
+                        motcles: sentierCreationData.motcles,
+                        etapes: etapesData,
+                        photo: sentierCreationData.photoSentierName,
+                        theme_id: sentierCreationData.theme,
+                        user_id: localStorage.getItem("userId"),
+                        difficulte_id: sentierCreationData.difficulte,
+                    })
+                    .then((response) => {
+                        console.log("Sentier créé avec succès:", response.data);
+                        // Effacer les données du sessionStorage après avoir réussi à créer le sentier
+                        sessionStorage.removeItem("sentierCreation");
+                        sessionStorage.removeItem("etapes");
+                        // Redirigez l'utilisateur
+                        window.location.hash = `account`;
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Erreur lors de la création du sentier:",
+                            error
+                        );
+                    });
+            }
+        },
+        recenter() {
+            map.flyTo({
+                center: this.coordonnesRecenter,
+                zoom: this.zoomRecenter,
+                curve: 1,
+                easing(t) {
+                    return t;
+                },
             });
-    } else {
-        // Envoyer les données au backend
-        axios
-            .post("/submit-sentier", {
-                nom: sentierCreationData.nomSentier,
-                description: sentierCreationData.descriptionSentier,
-                theme_id: sentierCreationData.theme,
-                criteres: sentierCreationData.criteres,
-                motcles: sentierCreationData.motcles,
-                difficulte_id: sentierCreationData.difficulte,
-                photo: sentierCreationData.photoSentierName,
-                etapes: etapesData,
-            })
-            .then((response) => {
-                console.log("Sentier créé avec succès:", response.data);
-                // Effacer les données du sessionStorage après avoir réussi à créer le sentier
-                sessionStorage.removeItem("sentierCreation");
-                sessionStorage.removeItem("etapes");
-                // Redirigez l'utilisateur
-                window.location.hash = `account`;
-            })
-            .catch((error) => {
-                console.error("Erreur lors de la création du sentier:", error);
+        },
+        disabled(){
+            array.forEach(element => {
+                
             });
-    }
+        }
+    },
+    mounted() {
+        map = new maplibregl.Map({
+            container: "mapCreationDuSentier",
+            style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
+            center: [6.700021, 46.602693],
+            zoom: 9.2,
+        });
+
+        map.on("load", () => {
+            map.addControl(
+                new maplibregl.NavigationControl({
+                    showCompass: false,
+                    showZoom: true,
+                })
+            );
+        });
+        this.showTours(this.etapes);
+        console.log(this.etapes);
+        sessionStorage.setItem("etapes", JSON.stringify(this.etapes));
+    },
+    watch: {
+        etapes: {
+            handler() {
+                this.showTours(this.etapes);
+                sessionStorage.setItem("etapes", JSON.stringify(this.etapes));
+            },
+            deep: true,
+        },
+    },
 };
-
-onMounted(() => {
-    map = new maplibregl.Map({
-        container: "mapCreationDuSentier",
-        style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
-        center: [6.700021, 46.602693],
-        zoom: 9.2,
-    });
-
-    map.on("load", () => {
-        map.addControl(
-            new maplibregl.NavigationControl({
-                showCompass: false,
-                showZoom: true,
-            })
-        );
-    });
-    showTours(etapes);
-    sessionStorage.setItem("etapes", JSON.stringify(etapes));
-});
 </script>
 
 <style scoped>
+h1{
+    text-align: center;
+}
 #recenterDiv {
     position: absolute;
     width: 60px;
@@ -431,30 +506,39 @@ onMounted(() => {
     justify-content: center;
     align-items: center;
 }
-#page{
-    position: absolute;
-    top: 5%;
-}
-#partieInferieur {
-    height: 60vh;
+
+#page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
     width: 100vw;
+}
+
+#partieInferieur {
+    margin-top: 80% ;
+    height: 60vh;
+    width: 100%;
     position: relative;
+    margin-bottom: 50%
 }
 
 #mapCreationDuSentier {
     display: flex;
     flex-direction: column;
     height: 100%;
-    width: 100vw;
+    width: 100%;
 }
 
 #btnSuivant {
     display: flex;
-    position: absolute;
+    position: fixed;
     height: 100px;
     width: 200px;
-    bottom: 15px;
+    bottom: 10%;
     justify-content: center;
+    left: 50%;
+    transform: translate(-50%);
 }
 
 #btnSuivant button {
@@ -471,7 +555,11 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     height: 40vh;
-    width: 100vw;
+    width: 100%;
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translate(-50%);
 }
 
 .form-container {

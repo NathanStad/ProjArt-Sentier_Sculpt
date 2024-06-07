@@ -20,7 +20,8 @@ Route::get('/data-theme', [ThemeController::class, 'index']);
 Route::get('/data-motcles', [MotClesController::class, 'index']);
 Route::get('/data-critere', [CritereController::class, 'index']);
 Route::get('/data-poi', [POIController::class, 'index']);
-Route::get('/commentaire', [CommentaireController::class, 'store']);
+Route::get('/data-commentaire-{id}', [CommentaireController::class, 'getBySentier']);
+Route::post('/commentaire', [CommentaireController::class, 'store']);
 
 // Vérification de compte et login
 Route::get('/data-user-{id}', [UserController::class, 'show']);

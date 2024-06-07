@@ -1,5 +1,6 @@
 <template>
   <div id="filter">
+    <h3>Filtre</h3>
     <!-- Critères -->
     <p>Critères</p>
     <div>
@@ -118,7 +119,7 @@ watch([selectedCriteres, selectedMotCles, difficulte], () => {
 
 <style scoped>
 #filter{
-  display: flex;
+  display: absolute;
   flex-direction: column;
   justify-content: space-between;
   padding: 0% 10%;

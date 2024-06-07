@@ -4,7 +4,12 @@
     </div>
     <div id="accueil" v-else>
         <!-- Bar de recherche -->
-        <input type="text" v-model="searchQuery" placeholder="Rechercher" class="recherche" />
+        <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Rechercher"
+            class="recherche"
+        />
 
         <!-- Bouton Filtre -->
         <div @click="toggleFiltre()" id="buttonFiltre">
@@ -12,7 +17,7 @@
         </div>
 
         <!-- Conteneur du filtre -->
-        <div id="filtre" :class="{visible : filtreVisible === true}">
+        <div id="filtre" :class="{ visible: filtreVisible === true }">
             <Filtre @updateFilters="updateFilters"></Filtre>
         </div>
 
@@ -50,7 +55,7 @@
                     <div
                         :style="{ 'background-image': `url(${sentier.photo})` }"
                     >
-                        <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
+                        <buttonFavoris id="favoris" :sentierId="sentier.id"></buttonFavoris>
                     </div>
                     <div class="affichage">
                         <div>
@@ -92,6 +97,8 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import Filtre from "@/components/elements/filter.vue";
 import buttonFavoris from "@/components/elements/buttonFavorite.vue";
+
+
 
 // Define reactive state
 const themes = ref([]);
@@ -216,8 +223,7 @@ onMounted(async () => {
 </script>
 
 <style>
-
-.recherche[type="text"]{
+.recherche[type="text"] {
     padding: var(--padding-large) calc(var(--padding-large) * 2.33);
     z-index: 5;
     position: relative;
@@ -227,7 +233,7 @@ onMounted(async () => {
 
 #filtre {
     display: none;
-    position: fixed;
+    position: absolute;
     background: white;
     z-index: var(--z-index-medium);
     width: 100vw;
@@ -262,7 +268,7 @@ onMounted(async () => {
     display: none;
 }
 
-#theme-parent{
+#theme-parent {
     position: relative;
     left: -10%;
 }
@@ -346,7 +352,7 @@ onMounted(async () => {
     font-weight: 700;
 }
 
-.affichage > div:nth-of-type(1){
+.affichage > div:nth-of-type(1) {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -362,8 +368,8 @@ onMounted(async () => {
 .affichage > div:nth-of-type(1) > div p {
     color: var(--color-text-secondary);
 }
-.affichage > div:nth-of-type(1) > div span{
-    margin-right: 5px ;
+.affichage > div:nth-of-type(1) > div span {
+    margin-right: 5px;
     font-size: 1.2rem;
 }
 
@@ -423,5 +429,4 @@ h3 {
 #lesPlusVues a div {
     margin-left: var(--margin-medium);
 }
-
 </style>

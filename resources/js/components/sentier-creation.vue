@@ -64,7 +64,7 @@
                 </label>
             </div>
 
-            <p>Mot clés</p>
+            <p>Mot-clés</p>
             <div>
                 <label
                     v-for="motcle in motcles"
@@ -144,7 +144,7 @@
                 />
             </div>
 
-            <button type="submit" :disabled="!isValidForm()">Suivant</button>
+            <button type="submit" :disabled="!isValidForm()" class="button">Suivant</button>
         </div>
     </form>
 </template>
@@ -230,21 +230,13 @@ const fetchMotCles = async () => {
 
 // Function to handle form submission
 const submitData = async () => {    
-    // Créez un FormData pour l'upload du fichier
-    const formData = new FormData();
-    formData.append('nomSentier', nomSentier.value);
-    formData.append('descriptionSentier', descriptionSentier.value);
-    formData.append('theme', selectedTheme.value);
-    selectedCriteres.value.forEach(critere => formData.append('criteres[]', critere));
-    selectedMotCles.value.forEach(motcle => formData.append('motcles[]', motcle));
-    formData.append('difficulte', difficulte.value);
-    formData.append('photoSentier', photoSentier.value);
 
     try {
         // Mettez à jour le nom du fichier avec le nouveau nom renvoyé par le serveur
         const formDataToSave = {
             nomSentier: nomSentier.value,
             descriptionSentier: descriptionSentier.value,
+            localisation: lieu.value,
             theme: selectedTheme.value,
             criteres: selectedCriteres.value,
             motcles: selectedMotCles.value,
@@ -350,6 +342,7 @@ input[type="radio"] + div + p {
 input[type="radio"]:checked + div span,
 input[type="radio"]:checked + div + p {
     color: var(--primary);
+    font-weight: 700;
 }
 
 input[type="radio"] + div > span {

@@ -1,5 +1,5 @@
 <template>
-    <span :class="{'material-symbols-outlined':true, full: isFavorite === true}" @click.stop="toggleFavorite">
+    <span :class="{'material-symbols-outlined':true, full: isFavorite === true}" @click.stop.prevent="toggleFavorite">
         favorite
     </span>
 </template>
