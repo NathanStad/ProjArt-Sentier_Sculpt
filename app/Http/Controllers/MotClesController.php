@@ -13,15 +13,17 @@ class MotClesController extends Controller
         return response()->json($pois);
     }
 
-    public function transformToArray(Request $request, $key)
+    public static function transformToArray($input)
     {
-        $jsonString = $request->input($key);
-
-        if (is_null($jsonString)) {
-            return [];
+        if (is_string($input)) {
+            return explode(',', trim($input, '[]'));
         }
-
-        return json_decode($jsonString, true);
+    
+        if (is_array($input)) {
+            return $input;
+        }
+    
+        return [];
     }
 
     public function arrayMethod(Request $request)

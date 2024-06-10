@@ -55,7 +55,7 @@ nav span{
 }
 @media only screen and (min-width: 900px) {
   nav{
-    padding: 0 20%;
+    padding: 0 25%;
   }
 }
 </style>

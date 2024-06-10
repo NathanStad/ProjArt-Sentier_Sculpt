@@ -169,53 +169,58 @@ const filterByTheme = (themeId) => {
 };
 
 const filteredSentiers = computed(() => {
-    let filtered = sentiers.value.filter((sentier) => {
+    return sentiers.value.filter((sentier) => {
+        let matches = false;
+
         // Filter by search query
         if (searchQuery.value.trim() !== "") {
-            if (
-                !sentier.nom
-                    .toLowerCase()
-                    .includes(searchQuery.value.toLowerCase()) &&
-                !sentier.localisation
-                    .toLowerCase()
-                    .includes(searchQuery.value.toLowerCase())
-            ) {
-                return false;
-            }
+            matches = matches || (
+                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+                sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase())
+            );
         }
+
         // Filter by selected critere
         if (selectedFilters.value.selectedCriteres.length > 0) {
             const critereIds = sentier.criteres.map(critere => critere.id);
-            if (!selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere))) {
-                return false;
-            }
+            const matchesSelectedCriteres = selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere));
+            matches = matches || matchesSelectedCriteres;
         }
+
         // Filter by selected mot cle
         if (selectedFilters.value.selectedMotCles.length > 0) {
             const motCleIds = sentier.motcles.map(motcle => motcle.id);
-            if (!selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle))) {
-                return false;
-            }
+            const matchesSelectedMotCles = selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle));
+            matches = matches || matchesSelectedMotCles;
         }
+
         // Filter by difficulty
         if (selectedFilters.value.difficulte.length > 0) {
-            if (
-                !selectedFilters.value.difficulte.includes(
-                    sentier.difficulte.id
-                )
-            ) {
-                return false;
-            }
+            const matchesDifficulty = selectedFilters.value.difficulte.includes(sentier.difficulte.id);
+            matches = matches || matchesDifficulty;
         }
+
+        // Filter by theme
         if (selectedFilters.value.theme !== null) {
-            if (sentier.theme_id !== selectedFilters.value.theme) {
-                return false;
-            }
+            const matchesTheme = sentier.theme_id === selectedFilters.value.theme;
+            matches = matches || matchesTheme;
         }
-        return true;
+
+        // If no filters are selected, we want to match all sentiers
+        if (
+            searchQuery.value.trim() === "" &&
+            selectedFilters.value.selectedCriteres.length === 0 &&
+            selectedFilters.value.selectedMotCles.length === 0 &&
+            selectedFilters.value.difficulte.length === 0 &&
+            selectedFilters.value.theme === null
+        ) {
+            matches = true;
+        }
+
+        return matches;
     });
-    return filtered;
 });
+
 
 
 // Fetch data when the component is mounted
@@ -318,6 +323,7 @@ onMounted(async () => {
 #theme p {
     font-size: 0.8rem;
     font-weight: 500;
+    text-align: center;
 }
 
 #theme .theme {
@@ -464,7 +470,7 @@ onMounted(async () => {
   }
 #theme{
   width: 100vw;
-  padding: 0 10%;
+  padding: 0 20%;
   justify-content: space-between;
 }
 #theme span{
@@ -477,13 +483,13 @@ onMounted(async () => {
 }
 #lesPlusVues,
 #sentiers-accueil{
-    padding: 0 10%;
+    padding: 0 20%;
 width: 100%;
 display: grid;
 grid-template-columns: 1fr 1fr 1fr 1fr ;
 }
 h3{
-    padding: 0 10%;
+    padding: 0 20%;
 }
 .header input{
     width: 90% !important;
@@ -495,8 +501,8 @@ h3{
 
   .header {
     position: absolute !important;
-    left: 30%;
-    width: 50%;
+    left: 40%;
+    width: 40%;
     top: 4%;
     padding: 0;
   }

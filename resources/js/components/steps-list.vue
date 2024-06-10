@@ -346,7 +346,7 @@ section > div {
 </style>
 <style>
 :root {
-    --swiper-navigation-sides-offset: 5px;
+    --swiper-navigation-sides-offset: 12px;
     --swiper-navigation-size: 3rem;
 }
 .swiper-button-prev,

@@ -123,7 +123,7 @@ export default {
 
 <style>
 :root {
-    --swiper-navigation-color: #5F6368 !important;
+    --swiper-navigation-color: #40680c !important;
     --swiper-theme-color: #40680c !important;
 }
 .swiper-pagination-bullet {

@@ -14,7 +14,6 @@ use App\Http\Requests\SentierUpdateRequest;
 
 class SentierController extends Controller
 {
-
     public function index()
     {
         $sentiers = Sentier::with(['etapes', 'commentaires', 'theme', 'criteres', 'motcles', 'user', 'difficulte'])->get();
@@ -34,86 +33,78 @@ class SentierController extends Controller
     }
 
     public function store(SentierStoreRequest $request)
-{
-    $user = Auth::user();
+    {
 
-    if ($user && $user->role === 'institution') {
-        try {
-            // Créer le sentier
-            $sentier = Sentier::create([
-                'nom' => $request->nom,
-                'description' => $request->description,
-                'duree' => $request->duree,
-                'longueur' => $request->longueur,
-                'localisation' => $request->localisation,
-                'compteur' => 0,
-                'archive' => 0,
-                'photo' => $request->photo,
-                'theme_id' => $request->theme_id,
-                'user_id' => $user->id,
-                'difficulte_id' => $request->difficulte_id,
-            ]);
-
-            // Créer les étapes
-            foreach ($request->etapes as $etapeData) {
-                $etape = Etape::create([
-                    'sentier_id' => $sentier->id,
-                    'nom' => $etapeData['nom'],
-                    'description' => $etapeData['description'],
-                    'latitude' => $etapeData['latitude'],
-                    'longitude' => $etapeData['longitude'],
-                    'distance' => $etapeData['distance'],
-                    'duree' => $etapeData['duree'],
-                    'ordre' => $etapeData['ordre'],
-                    'photo' => $etapeData['photo'],
+            try {
+                // Créer le sentier
+                $sentier = Sentier::create([
+                    'nom' => $request->nom,
+                    'description' => $request->description,
+                    'duree' => $request->duree,
+                    'longueur' => $request->longueur,
+                    'localisation' => $request->localisation,
+                    'compteur' => 0,
+                    'archive' => 0,
+                    'photo' => $request->photo,
+                    'theme_id' => $request->theme_id,
+                    'user_id' => $request->user_id,
+                    'difficulte_id' => $request->difficulte_id,
                 ]);
 
-                // Ajouter les points d'intérêt
-                if (isset($etapeData['points_interet'])) {
-                    foreach ($etapeData['points_interet'] as $poiData) {
-                        $pointInteret = PointInteret::create([
-                            'nom' => $poiData['nom'],
-                            'photo' => $poiData['photo'] ?? null,
-                        ]);
+                // Créer les étapes
+                foreach ($request->etapes as $etapeData) {
+                    $etape = Etape::create([
+                        'sentier_id' => $sentier->id,
+                        'nom' => $etapeData['nom'],
+                        'description' => $etapeData['description'],
+                        'latitude' => $etapeData['latitude'],
+                        'longitude' => $etapeData['longitude'],
+                        'distance' => $etapeData['distance'],
+                        'duree' => $etapeData['duree'],
+                        'ordre' => $etapeData['ordre'],
+                        'photo' => $etapeData['photo'],
+                    ]);
 
-                        $etape->pointsInteret()->attach($pointInteret->id);
+                    // Ajouter les points d'intérêt
+                    if (isset($etapeData['points_interet'])) {
+                        foreach ($etapeData['points_interet'] as $poiData) {
+                            $pointInteret = PointInteret::create([
+                                'nom' => $poiData['nom'],
+                                'photo' => $poiData['photo'] ?? null,
+                            ]);
+
+                            $etape->pointsInteret()->attach($pointInteret->id);
+                        }
                     }
                 }
-            }
 
-            // Attacher les critères
-            if ($request->has('criteres')) {
-                $criteres = Critere::whereIn('id', $request->criteres)->get();
-                $sentier->criteres()->attach($criteres);
-            }
+                // Attacher les critères
+                if ($request->has('criteres')) {
+                    $criteresIds = CritereController::transformToArray($request->criteres);
+                    $criteres = Critere::whereIn('id', $criteresIds)->get();
+                    $sentier->criteres()->attach($criteres);
+                }
 
-            // Attacher les mots-clés
-            if ($request->has('motcles')) {
-                $motcles = MotCle::whereIn('id', $request->motcles)->get();
-                $sentier->motcles()->attach($motcles);
-            }
+                // Attacher les mots-clés
+                if ($request->has('motcles')) {
+                    $motclesIds = MotClesController::transformToArray($request->motcles);
+                    $motcles = MotCle::whereIn('id', $motclesIds)->get();
+                    $sentier->motcles()->attach($motcles);
+                }
 
-            return response()->json($sentier, 201);
-        } catch (\Exception $e) {
-            // Renvoyer une réponse avec les détails de l'erreur
-            return response()->json([
-                'message' => 'Une erreur est survenue lors de la création du sentier.',
-                'error' => $e->getMessage(), // Récupérer le message de l'exception
-                'trace' => $e->getTraceAsString() // Récupérer la trace de l'exception
-            ], 500);
-        }
-    } else {
-        return response()->json(['message' => 'Unauthorized'], 403);
+                return response()->json($sentier, 201);
+            } catch (\Exception $e) {
+                // Renvoyer une réponse avec les détails de l'erreur
+                return response()->json([
+                    'message' => 'Une erreur est survenue lors de la création du sentier.',
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ], 500);
+            }
     }
-}
-
 
     public function update(SentierUpdateRequest $request, $id)
-    {
-        $user = Auth::user();
-
-        if ($user && $user->role === 'institution') {
-            $sentier = Sentier::find($id);
+    {            $sentier = Sentier::find($id);
 
             if (!$sentier) {
                 return response()->json(['message' => 'Sentier not found'], 404);
@@ -184,22 +175,20 @@ class SentierController extends Controller
 
             // Mettre à jour les critères
             if ($request->has('criteres')) {
-                $criteres = Critere::whereIn('id', $request->criteres)->get();
+                $criteresIds = CritereController::transformToArray($request->criteres);
+                $criteres = Critere::whereIn('id', $criteresIds)->get();
                 $sentier->criteres()->sync($criteres);
             }
 
             // Mettre à jour les mots-clés
             if ($request->has('motcles')) {
-                $motcles = MotCle::whereIn('id', $request->motcles)->get();
+                $motclesIds = MotClesController::transformToArray($request->motcles);
+                $motcles = MotCle::whereIn('id', $motclesIds)->get();
                 $sentier->motcles()->sync($motcles);
             }
 
             return response()->json($sentier, 200);
-        } else {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
     }
-
 
     public function destroy($id)
     {
@@ -269,3 +258,4 @@ class SentierController extends Controller
         return response()->json(['message' => 'No file uploaded'], 400);
     }
 }
+

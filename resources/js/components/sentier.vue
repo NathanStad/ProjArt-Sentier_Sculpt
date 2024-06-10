@@ -599,7 +599,7 @@ h1 span {
 }
 ul {
     list-style-type: none;
-    height: 50vh;
+    max-height: 50vh;
     overflow: hidden scroll;
     margin-bottom: 10%;
 }
@@ -713,22 +713,22 @@ li > p {
 }
 @media only screen and (min-width: 900px) {
     #seniter-sentier {
-        margin: 0 10%;
+        margin: 0 20%;
         height: 600px;
     }
     .menu {
-        margin: 0 10%;
+        margin: 0 20%;
     }
     .content {
         display: none;
     }
     #step.active {
         display: grid;
-        margin: 0 10%;
+        margin: 0 20%;
         grid-template-columns: 1fr 1fr;
     }
     #desc.active {
-        margin: 0 10%;
+        margin: 0 20%;
     }
     #sentier,
     #desc,

@@ -42,6 +42,8 @@ import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import RecentrerBtnComponent from "./elements/recentrerBtnComponent.vue";
 import Footer from "@/components/elements/footer.vue";
+import Filtre from "@/components/elements/filter.vue";
+
 
 let map;
 const sentiers = ref([]);
@@ -70,43 +72,54 @@ const toggleFiltre = () => {
 // Filtres les sentiers en fonction des critères de recherche et des filtres sélectionnés
 const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
-        // Filtrer par recherche
+        let matches = false;
+
+        // Filter by search query
         if (searchQuery.value.trim() !== "") {
-            const query = searchQuery.value.toLowerCase();
-            if (
-                !sentier.nom.toLowerCase().includes(query) &&
-                !sentier.localisation.toLowerCase().includes(query)
-            ) {
-                return false;
-            }
+            matches = matches || (
+                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+                sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase())
+            );
         }
-        // Filtrer par critères sélectionnés
+
+        // Filter by selected critere
         if (selectedFilters.value.selectedCriteres.length > 0) {
             const critereIds = sentier.criteres.map(critere => critere.id);
-            if (!selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere))) {
-                return false;
-            }
+            const matchesSelectedCriteres = selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere));
+            matches = matches || matchesSelectedCriteres;
         }
-        // Filtrer par mots-clés sélectionnés
+
+        // Filter by selected mot cle
         if (selectedFilters.value.selectedMotCles.length > 0) {
             const motCleIds = sentier.motcles.map(motcle => motcle.id);
-            if (!selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle))) {
-                return false;
-            }
+            const matchesSelectedMotCles = selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle));
+            matches = matches || matchesSelectedMotCles;
         }
-        // Filtrer par difficulté
+
+        // Filter by difficulty
         if (selectedFilters.value.difficulte.length > 0) {
-            if (!selectedFilters.value.difficulte.includes(sentier.difficulte.id)) {
-                return false;
-            }
+            const matchesDifficulty = selectedFilters.value.difficulte.includes(sentier.difficulte.id);
+            matches = matches || matchesDifficulty;
         }
-        // Filtrer par thème
+
+        // Filter by theme
         if (selectedFilters.value.theme !== null) {
-            if (sentier.theme_id !== selectedFilters.value.theme) {
-                return false;
-            }
+            const matchesTheme = sentier.theme_id === selectedFilters.value.theme;
+            matches = matches || matchesTheme;
         }
-        return true;
+
+        // If no filters are selected, we want to match all sentiers
+        if (
+            searchQuery.value.trim() === "" ||
+            selectedFilters.value.selectedCriteres.length === 0 &&
+            selectedFilters.value.selectedMotCles.length === 0 &&
+            selectedFilters.value.difficulte.length === 0 ||
+            selectedFilters.value.theme === null
+        ) {
+            matches = true;
+        }
+
+        return matches;
     });
 });
 const randomVert = () => {

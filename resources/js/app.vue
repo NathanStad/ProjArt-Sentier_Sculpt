@@ -403,10 +403,10 @@ textarea {
   header{
 margin-bottom: 2% ;
 justify-content: flex-start;
-padding: 0 10%;
+padding: 0 20%;
   }
   .header{
-    padding: 0 10%;
+    padding: 0 20%;
   }
 }
 </style>

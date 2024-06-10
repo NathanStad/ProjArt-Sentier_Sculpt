@@ -480,7 +480,6 @@ export default {
 
             const { longueurTotal, dureeTotal } =
                 await this.calculeDureeTotale();
-
             const payload = {
                 nom: sentierCreationData.nomSentier,
                 description: sentierCreationData.descriptionSentier,
@@ -574,6 +573,7 @@ export default {
             });
 
             formData.append("photo", payload.photo);
+            formData.append("user_id", localStorage.getItem('userId'));
             formData.append("theme_id", payload.theme_id);
             formData.append("difficulte_id", payload.difficulte_id);
             formData.append("archive", payload.archive);

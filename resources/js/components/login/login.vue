@@ -117,7 +117,9 @@ input[type="submit"] {
   left: 50%;
   transform: translate(-50%);
   padding: 20px 20px !important;
+  margin-bottom: 10%;
 }
+
 a {
   font-weight: 600;
 }

@@ -193,6 +193,6 @@ label {
 #difficulte input:checked + span + p,
 #difficulte input:checked + div + p,
 #difficulte input:checked + div > span {
-  color: var(--primary);
+  color: var(--secondary);
 }
 </style>

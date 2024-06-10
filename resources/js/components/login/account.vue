@@ -289,6 +289,7 @@ const goBack = () => {
 const logOut = () => {
     localStorage.removeItem("userId");
     window.location.replace(window.location.href.split("#")[0] + "#login");
+    location.reload();
 };
 // Créerun nouveau seniter
 
@@ -504,6 +505,7 @@ if (!localStorage.getItem("userId")) {
     box-shadow: var(--box-shadow-light);
     text-decoration: none;
     position: relative;
+    margin-bottom:10% ;
 }
 
 .sentierItem img {
