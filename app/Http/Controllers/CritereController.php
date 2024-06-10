@@ -12,11 +12,21 @@ class CritereController extends Controller {
         return response()->json($criteres);
     }  
 
-    public function transformToArray(Request $jsonParam) {
-        if (is_null($jsonParam)) {
+    public function transformToArray(Request $request, $key)
+    {
+        $jsonString = $request->input($key);
+
+        if (is_null($jsonString)) {
             return [];
         }
 
-        return json_decode(json_encode($jsonParam), true);
+        return json_decode($jsonString, true);
+    }
+
+    public function arrayMethod(Request $request)
+    {
+        $array = $this->transformToArray($request, 'criteres');
+
+        return response()->json($array);
     }
 }
