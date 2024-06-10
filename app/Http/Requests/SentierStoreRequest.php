@@ -24,6 +24,16 @@ class SentierStoreRequest extends FormRequest {
             'criteres.*' => 'exists:criteres,id',
             'motcles' => 'sometimes|array',
             'motcles.*' => 'exists:mot_cles,id',
+            'etapes' => 'required|array',
+            'etapes.*.nom' => 'required|string',
+            'etapes.*.description' => 'required|string',
+            'etapes.*.latitude' => 'required|numeric',
+            'etapes.*.longitude' => 'required|numeric',
+            'etapes.*.distance' => 'required|numeric',
+            'etapes.*.duree' => 'required|numeric',
+            'etapes.*.ordre' => 'required|integer',
+            'etapes.*.photo' => 'nullable|string',
         ];
     }
 }
+

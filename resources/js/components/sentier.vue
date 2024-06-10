@@ -7,30 +7,36 @@
             <a @click.prevent="goBack">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
-            <h1>{{ sentier.nom }}</h1>
-            <div></div>
+            <h1>
+                {{ sentier.nom }} <span v-html="sentier.theme.icone"></span>
+            </h1>
+            <div @click="copyUrlToClipboard">
+                <span class="material-symbols-outlined"> content_copy </span>
+            </div>
         </div>
         <!-- Sentier -->
         <div id="seniter-sentier">
             <div>
-                <Swiper
+                <swiper
                     :slides-per-view="1"
                     :pagination="{ clickable: true }"
+                    :modules="modules"
                     @swiper="onSwiper"
                     @slideChange="onSlideChange"
                 >
-                    <SwiperSlide>
+                    <swiperSlide>
                         <img :src="sentier.photo" :alt="sentier.photo" />
-                    </SwiperSlide>
-                    <SwiperSlide v-for="(etape, index) in etapes" :key="index">
+                    </swiperSlide>
+                    <swiperSlide v-for="(etape, index) in etapes" :key="index">
                         <img :src="etape.photo" :alt="etape.description" />
-                    </SwiperSlide>
-                </Swiper>
+                    </swiperSlide>
+                </swiper>
             </div>
             <div class="locate">
                 <span class="material-symbols-outlined"> location_on </span>
                 <p>{{ sentier.localisation }}</p>
             </div>
+            <buttonFavoris id="favoris" :sentierId="sentier.id"></buttonFavoris>
             <!-- Information Essentiel -->
             <div class="info-box">
                 <!-- Durée -->
@@ -164,6 +170,12 @@
             :class="{ content: true, active: currentContent === 'desc' }"
         >
             <p>{{ sentier.description }}</p>
+
+            <div
+                v-for="critere in sentier.criteres"
+                :key="critere"
+                v-html="critere.icone + '<p>' + critere.name + '</p>'"
+            ></div>
         </div>
         <!-- Commentaires -->
         <div
@@ -171,9 +183,16 @@
             :class="{ content: true, active: currentContent === 'comms' }"
         >
             <ul>
-                <li v-for="commentaire in commentaires" :key="commentaire.id">
+                <li
+                    v-for="commentaire in sortedCommentaires"
+                    :key="commentaire.id"
+                >
                     <div>
-                        <div :style="{ backgroundColor: getRandomColor() }">
+                        <div
+                            :style="{
+                                backgroundColor: commentaire.backgroundColor,
+                            }"
+                        >
                             {{ commentaire.name.slice(0, 1).toUpperCase() }}
                         </div>
                         <div>
@@ -208,6 +227,23 @@
                     <button type="submit" class="button">
                         <span class="material-symbols-outlined"> send </span>
                     </button>
+                    <div v-if="showNotification" class="notification">
+                        <div>
+                            <span class="material-symbols-outlined">
+                                check
+                            </span>
+                            <p>
+                                Commentaire envoyé avec succès. <br />
+                                Merci !
+                            </p>
+                            <span
+                                class="material-symbols-outlined"
+                                @click="toggleCloseNotif"
+                            >
+                                close
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -216,27 +252,28 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps } from "vue";
+import { ref, onMounted, defineProps, computed } from "vue";
 import axios from "axios";
+import buttonFavoris from "@/components/elements/buttonFavorite.vue";
 // import Swiper core and required modules
 import { Pagination, A11y } from "swiper/modules";
 
 // Import Swiper Vue.js components
 import { Swiper, SwiperSlide } from "swiper/vue";
-
+// Register components
+defineExpose({
+    components: {
+        Swiper,
+        SwiperSlide,
+    },
+    modules: [Pagination, A11y],
+});
 // Import Swiper styles
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const onSwiper = (swiper) => {
-    console.log(swiper);
-};
 const goBack = () => {
     window.history.back();
-};
-const onSlideChange = () => {
-    console.log("slide change");
 };
 
 const modules = [Pagination, A11y];
@@ -256,12 +293,27 @@ const etapes = ref([]);
 const commentaires = ref([]);
 const currentContent = ref("step");
 const isLoading = ref(true);
-const newComment = ref({
-    name: "",
-    email: "",
-    message: "",
-});
-
+const showNotification = ref(false);
+function getRandomColor() {
+    // Génère une valeur de couleur aléatoire pour la composante G (verte)
+    const g = Math.floor(Math.random() * 175) + 81;
+    // Fixe les valeurs des composantes R et B à 0
+    const r = Math.floor(Math.random() * 64);
+    const b = Math.floor(Math.random() * 14);
+    // Combine les valeurs pour former une couleur au format hexadécimal
+    return (
+        "#" +
+        r.toString(16).padStart(2, "0") +
+        g.toString(16).padStart(2, "0") +
+        b.toString(16).padStart(2, "0")
+    );
+}
+const attributionColor = () => {
+    for (let index = 0; index < commentaires.value.length; index++) {
+        commentaires.value[index].backgroundColor = getRandomColor();
+    }
+    console.log(commentaires.value);
+};
 // Methods
 const incrementCompteur = () => {
     if (props.Id !== "") {
@@ -288,6 +340,7 @@ const fetchSentier = async () => {
             sentier.value = response.data;
             etapes.value = response.data.etapes;
             commentaires.value = response.data.commentaires;
+            attributionColor();
         } catch (error) {
             console.error("Error fetching sentiers:", error);
         }
@@ -308,14 +361,13 @@ const convertissorDate = (date) => {
     }${mois}.${annee}`;
     return dateFormatee;
 };
-function getRandomColor() {
-    // Génère trois valeurs de couleur aléatoires pour les composantes RGB
-    const r = Math.floor(Math.random() * 256);
-    const g = Math.floor(Math.random() * 256);
-    const b = Math.floor(Math.random() * 256);
-    // Combine les valeurs pour former une couleur au format hexadécimal
-    return "#" + r.toString(16) + g.toString(16) + b.toString(16);
-}
+const sortedCommentaires = computed(() => {
+    return commentaires.value
+        .slice()
+        .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+});
+
+// Envoie du commentaire
 const submitComment = async () => {
     console.log(newComment.value);
     try {
@@ -330,7 +382,8 @@ const submitComment = async () => {
             newComment.value.name = "";
             newComment.value.email = "";
             newComment.value.message = "";
-            fetchSentier()
+            fetchSentier();
+            toggleCloseNotif();
         } else {
             console.error("Error submitting comment");
         }
@@ -338,16 +391,48 @@ const submitComment = async () => {
         console.error("Error submitting comment:", error);
     }
 };
-
+// Copie dans le presse papier
+const copyUrlToClipboard = () => {
+    const url = window.location.href;
+    navigator.clipboard
+        .writeText(url)
+        .then(() => {
+            console.log("URL copied to clipboard");
+        })
+        .catch((err) => {
+            console.error("Failed to copy: ", err);
+        });
+};
+const toggleCloseNotif = () => {
+    showNotification.value = !showNotification.value;
+};
 // Lifecycle Hook
 onMounted(async () => {
     await incrementCompteur();
     await fetchSentier();
     isLoading.value = false;
 });
+const newComment = ref({
+    name: "",
+    email: "",
+    message: "",
+});
 </script>
 
 <style>
+h1 {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}
+h1 span {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary);
+}
 #sentier {
     min-height: 90vh;
 }
@@ -383,12 +468,15 @@ onMounted(async () => {
     align-items: center;
     gap: 5px;
     position: absolute;
-    top: 5%;
+    top: 4%;
     left: 5%;
     z-index: 3;
     background: rgba(255, 255, 255, 0.6);
     padding: var(--padding-small) var(--padding-large);
     border-radius: var(--border-radius-large);
+}
+.locate span {
+    font-size: 1.7rem;
 }
 
 .info-box {
@@ -400,22 +488,23 @@ onMounted(async () => {
 }
 .info-box-element {
     display: flex;
+    align-items: center;
     gap: 5px;
 }
 .info-box-element > div > p:first-of-type {
     font-weight: 300;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--primary);
 }
 .info-box-element > div > p:last-of-type {
     font-weight: 500;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--primary);
 }
 .info-box-element svg,
 .info-box-element span {
-    width: 30px;
-    font-size: 30px;
+    width: 1.5rem;
+    font-size: 1.5rem;
     text-align: center;
     color: var(--primary);
 }
@@ -423,7 +512,7 @@ onMounted(async () => {
 /* Menu des prochains affichages */
 
 .menu {
-    height: 80px;
+    height: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -473,7 +562,7 @@ onMounted(async () => {
     background: var(--primary);
     padding: var(--padding-large) var(--padding-large);
     position: fixed;
-    bottom: 12%;
+    bottom: 6%;
     text-align: center;
     color: white;
     left: 50%;
@@ -481,6 +570,7 @@ onMounted(async () => {
     border-radius: var(--border-radius-full);
     font-weight: 600;
     font-size: 1.2rem;
+    z-index: 5;
     text-decoration: none;
 }
 #sentier,
@@ -488,11 +578,30 @@ onMounted(async () => {
 #step {
     margin-bottom: 40%;
 }
+#desc {
+    flex-direction: column;
+    gap: 30px;
+}
+#desc > div {
+    gap: 10px;
+    display: flex;
+    align-items: center;
+}
+#desc > div span {
+    font-size: 1.7rem;
+    color: var(--primary);
+}
+#desc > div p {
+    color: var(--primary);
+}
 #comms {
     flex-direction: column;
 }
 ul {
     list-style-type: none;
+    height: 50vh;
+    overflow: hidden scroll;
+    margin-bottom: 10%;
 }
 li {
     padding-bottom: 10%;
@@ -525,8 +634,10 @@ li > div div:last-of-type p:last-of-type {
     font-size: 0.8rem;
     color: var(--color-text-secondary);
 }
-
-#comms form > div{
+li > p {
+    width: 95%;
+}
+#comms form > div {
     background: white;
     box-shadow: var(--box-shadow-light);
     border-radius: var(--border-radius-large);
@@ -534,27 +645,19 @@ li > div div:last-of-type p:last-of-type {
     padding: 5%;
 }
 #comms form > div > input,
-#comms form > div > textarea
-{
+#comms form > div > textarea {
     width: 100% !important;
     box-shadow: none !important;
-    border-radius:0 !important;
+    border-radius: 0 !important;
     position: relative;
     margin: 0 !important;
     padding: 20px 10px !important;
 }
 #comms form > div > input:first-of-type,
-#comms form > div > textarea
-{
+#comms form > div > textarea {
     border-bottom: 1px var(--color-text-secondary) solid;
 }
-textarea::after{
-    content: "max. 1000 caractères";
-    position: absolute;
-    bottom: 5%;
-    right: 5%;
-}
-#comms form > div button{
+#comms form > div button {
     background: none;
     box-shadow: none !important;
     position: absolute;
@@ -562,7 +665,78 @@ textarea::after{
     transform: translate(120%);
     bottom: -2.5%;
 }
-#comms form > div button span{
+#comms form > div button span {
+    color: var(--primary);
+}
+</style>
+<style scoped>
+.header div span {
     color: var(--color-text-secondary);
+    cursor: pointer;
+}
+.notification {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 0px;
+    right: 0px;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 4;
+    text-align: center;
+    color: var(--primary);
+}
+.notification div {
+    position: relative;
+    padding: 5px 10px;
+    border: 1px solid var(--color-text-secondary);
+    border-radius: var(--border-radius-medium);
+    width: 80%;
+}
+.notification span:last-of-type {
+    font-size: 2rem;
+    color: var(--color-text-secondary);
+    position: absolute;
+    top: 5%;
+    right: 5%;
+}
+.notification span:first-of-type {
+    font-size: 4rem;
+    color: var(--primary);
+}
+.notification p {
+    color: var(--primary);
+    font-weight: 600;
+}
+@media only screen and (min-width: 900px) {
+    #seniter-sentier {
+        margin: 0 10%;
+        height: 600px;
+    }
+    .menu {
+        margin: 0 10%;
+    }
+    .content {
+        display: none;
+    }
+    #step.active {
+        display: grid;
+        margin: 0 10%;
+        grid-template-columns: 1fr 1fr;
+    }
+    #desc.active {
+        margin: 0 10%;
+    }
+    #sentier,
+    #desc,
+    #step {
+        margin-bottom: 7%;
+    }
+    #step a {
+        height: 350px;
+    }
 }
 </style>

@@ -40,6 +40,9 @@ const toggleFavorite = () => {
 </script>
 
 <style scoped>
+span{
+    font-size: 2rem;
+}
 .favorite {
     cursor: pointer;
 }

@@ -5,12 +5,20 @@
     <div id="recenterDiv">
         <RecentrerBtnComponent @recenter="recenter" />
     </div>
+    <ConfirmationModal 
+        v-if="showModal" 
+        @confirm="handleConfirm" 
+        @cancel="enleverConfirmation"
+        :type="true"
+        message="Voulez-vous vraiment remplacer le marqueur existant ?"
+    />
 </template>
 
 <script>
 import maplibregl from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import RecentrerBtnComponent from './recentrerBtnComponent.vue';
+import ConfirmationModal from './ConfirmationModal.vue'; // Import du composant ConfirmationModal
 
 let map;
 
@@ -21,7 +29,9 @@ export default {
             marker: null,
             coordonnesRecenter: [6.700021, 46.602693],
             zoomRecentrer: 8,
-            couleur: '#40680c'
+            couleur: '#40680c',
+            showModal: false,
+            element: ""
         }
     },
     props: {
@@ -65,27 +75,8 @@ export default {
         });
         map.on("click", (e) => {
             if (this.marker) {
-                if (confirm("Voulez-vous vraiment remplacer le marqueur existant ?")) {
-                    this.marker.remove();
-                    const marker = new maplibregl.Marker()
-                        .setLngLat(e.lngLat)
-                        .addTo(map);
-                    this.marker = marker;
-                    const markerElement = marker._element;
-                    const svgElement = markerElement.querySelector('svg');
-                    while (svgElement.firstChild) {
-                        svgElement.removeChild(svgElement.firstChild);
-                    }
-                    if (svgElement) {
-                        console.log(svgElement);
-                        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        circle.setAttribute('cx', '12');
-                        circle.setAttribute('cy', '27');
-                        circle.setAttribute('r', '12');
-                        circle.setAttribute('fill', this.couleur);
-                        svgElement.appendChild(circle);
-                    }
-                }
+                this.showModal = true;
+                this.element = e
             } else {
                 const marker = new maplibregl.Marker()
                     .setLngLat(e.lngLat)
@@ -110,6 +101,9 @@ export default {
         });
     },
     methods: {
+        enleverConfirmation() {
+            this.showModal = false;
+        },
         recenter() {
             map.flyTo({
                 center: this.coordonnesRecenter,
@@ -120,9 +114,32 @@ export default {
                 },
             });
         },
+        handleConfirm() {
+            this.marker.remove();
+            const marker = new maplibregl.Marker()
+                .setLngLat(this.element.lngLat)
+                .addTo(map);
+            this.marker = marker;
+            const markerElement = marker._element;
+            const svgElement = markerElement.querySelector('svg');
+            while (svgElement.firstChild) {
+                svgElement.removeChild(svgElement.firstChild);
+            }
+            if (svgElement) {
+                console.log(svgElement);
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', '12');
+                circle.setAttribute('cy', '27');
+                circle.setAttribute('r', '12');
+                circle.setAttribute('fill', this.couleur);
+                svgElement.appendChild(circle);
+            }
+            this.showModal = false;
+        },
     },
     components: {
-        RecentrerBtnComponent
+        RecentrerBtnComponent,
+        ConfirmationModal // Ajout du composant ConfirmationModal
     },
     watch: {
         marker: {
@@ -157,12 +174,14 @@ export default {
 
 #recenterDiv {
     position: absolute;
-    width: 60px;
+    width: 40px;
     height: 58px;
-    top: 10px;
-    right: 50px;
+    top: 30%;
+    right: 2.5%;
     display: flex;
     justify-content: center;
     align-items: center;
+    rotate: 90deg;
+    border: transparent;
 }
 </style>

@@ -1,5 +1,10 @@
 <template>
     <div id="list-etapes">
+        <div class="header">
+            <a @click.prevent="goBack">
+                <span class="material-symbols-outlined"> arrow_back_ios </span>
+            </a>
+        </div>
         <div id="map"></div>
         <div id="overlayEtape">
             <EtapeComponent
@@ -38,6 +43,9 @@ export default {
         this.fetchSentiers();
     },
     methods: {
+        goBack() {
+            window.history.back();
+        },
         async fetchSentiers() {
             try {
                 const response = await axios.get("/data-sentiers");
@@ -317,36 +325,35 @@ section > div {
     position: relative;
 }
 
-html,
-body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-#recenterDiv {
-    position: absolute;
-    width: 60px;
-    height: 58px;
-    top: 10px;
-    right: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 #overlayEtape {
     width: 100vw;
     height: 120px;
     position: absolute;
-    bottom: 2rem;
+    bottom: 0rem;
 }
 
 .imageEtapeActive {
     border-radius: 50%;
     border: 2px solid black;
     background-size: cover;
+}
+.header {
+    position: absolute;
+    z-index: 2;
+    left: 8%;
+    top: 5%;
+}
+</style>
+<style>
+:root {
+    --swiper-navigation-sides-offset: 5px;
+    --swiper-navigation-size: 3rem;
+}
+.swiper-button-prev,
+.swiper-button-next {
+    font-weight: 900;
+}
+.swiper {
+    overflow: visible !important;
 }
 </style>

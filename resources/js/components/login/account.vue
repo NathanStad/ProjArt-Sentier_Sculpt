@@ -8,19 +8,36 @@
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
             <h1>Mon Compte</h1>
-            <div></div>
+            <span class="material-symbols-outlined" @click="logOut">
+                logout
+            </span>
         </div>
         <div id="user">
             <img :src="user.photo" :alt="user.name" />
 
-            <!-- <a><span class="material-symbols-outlined"> add_a_photo </span></a>-->
+            <label for="photo" id="photoProfil"
+                ><span class="material-symbols-outlined">
+                    add_a_photo
+                </span></label
+            >
             <!-- Pop up Pour la photo -->
-            <!-- <div></div> -->
+            <input
+                type="file"
+                id="photo"
+                name="photoProfil"
+                @change="handleFileUpload"
+                style="display: none"
+                accept="image/png, image/jpeg, image/jpg"
+            />
 
             <!-- Titre -->
             <div>
                 <h3>{{ user.name }}</h3>
-                <h4>{{ user.role }}</h4>
+                <h4>
+                    {{
+                        user.role.slice(0, 1).toUpperCase() + user.role.slice(1)
+                    }}
+                </h4>
             </div>
         </div>
 
@@ -31,15 +48,27 @@
 
             <!-- Choix de si archivé ou non -->
             <div id="button-archive">
-                <span @click="showContent('on')" :class="{ actived: archive === 'on' }">Mes sentiers visibles</span>
-                <span @click="showContent('off')" :class="{ actived: archive === 'off' }">Mes sentiers archivés</span>
+                <span
+                    @click="showContent('on')"
+                    :class="{ actived: archive === 'on' }"
+                    >Mes sentiers visibles</span
+                >
+                <span
+                    @click="showContent('off')"
+                    :class="{ actived: archive === 'off' }"
+                    >Mes sentiers archivés</span
+                >
             </div>
 
             <!-- Sentier non-archivé -->
             <div
                 v-for="sentier in userSentier"
                 :key="sentier.id"
-                :class="{sentierItem: true, content: true, active: archive === 'on' }"
+                :class="{
+                    sentierItem: true,
+                    content: true,
+                    active: archive === 'on',
+                }"
             >
                 <a :href="`#sentier-${sentier.id}`">
                     <img :src="sentier.photo" :alt="sentier.nom" />
@@ -55,7 +84,7 @@
 
                 <span
                     :class="{
-                        menuSentier:true,
+                        menuSentier: true,
                         content: true,
                         active: buttonSentier === sentier.id,
                     }"
@@ -80,8 +109,8 @@
                     <div>
                         <p>{{ sentier.nom }}</p>
                         <div>
-                        <span class="material-symbols-outlined">
-                            location_on
+                            <span class="material-symbols-outlined">
+                                location_on
                             </span>
                             <p>
                                 {{ sentier.localisation }}
@@ -103,7 +132,11 @@
             <div
                 v-for="sentier in userSentierArchive"
                 :key="sentier.id"
-                :class="{sentierItem: true, content: true, active: archive === 'off' }"
+                :class="{
+                    sentierItem: true,
+                    content: true,
+                    active: archive === 'off',
+                }"
             >
                 <a :href="`#sentier-${sentier.id}`">
                     <img :src="sentier.photo" :alt="sentier.nom" />
@@ -119,7 +152,7 @@
 
                 <span
                     :class="{
-                        menuSentier:true,
+                        menuSentier: true,
                         content: true,
                         active: buttonSentier === sentier.id,
                     }"
@@ -144,8 +177,8 @@
                     <div>
                         <p>{{ sentier.nom }}</p>
                         <div>
-                        <span class="material-symbols-outlined">
-                            location_on
+                            <span class="material-symbols-outlined">
+                                location_on
                             </span>
                             <p>
                                 {{ sentier.localisation }}
@@ -164,10 +197,20 @@
             </p>
         </div>
     </div>
+    <ConfirmationModal
+        v-if="modal"
+        :message="modal.message"
+        :onConfirm="modal.onConfirm"
+        :onCancel="modal.onCancel"
+        :type="false"
+    />
+    <footer><Footer></Footer></footer>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
+import Footer from "@/components/elements/footer.vue";
+import ConfirmationModal from "@/components/elements/ConfirmationModal.vue";
 import axios from "axios";
 
 const userId = localStorage.getItem("userId");
@@ -177,6 +220,7 @@ const userSentierArchive = ref([]);
 const archive = ref("on");
 const buttonSentier = ref(null);
 const isLoading = ref(true);
+const modal = ref(false);
 
 // Fonction pour récupérer les informations utilisateur
 const fetchUser = async () => {
@@ -242,43 +286,57 @@ const moveToArchive = (sentier, targetArchive) => {
 const goBack = () => {
     window.history.back();
 };
+const logOut = () => {
+    localStorage.removeItem("userId");
+    window.location.replace(window.location.href.split("#")[0] + "#login");
+};
 // Créerun nouveau seniter
 
-const newSentier = () =>{
-    sessionStorage.removeItem('update')
-    sessionStorage.removeItem('sentierCreation')
-    sessionStorage.removeItem('etapes')
+const newSentier = () => {
+    sessionStorage.removeItem("update");
+    sessionStorage.removeItem("sentierCreation");
+    sessionStorage.removeItem("etapes");
     window.location.href =
         window.location.href.split("#")[0] + "#creationSentier";
-}
+};
 
 // Envoie pour la modifiction de l'objet
 
 const editSentier = (sentier) => {
-    console.log(sentier);
-    if (!(sessionStorage.getItem('sentierCreation')) && !sessionStorage.getItem('etapes')) {
-        const seniterData = {
-            nomSentier: sentier.nom,
-            descriptionSentier: sentier.description ,
-            lieu: sentier.localisation ,
-            theme: sentier.theme_id ,
-            criteres: [] ,
-            motcles: [],
-            difficulte: sentier.difficulte.id,
-            photoSentier:sentier.photo
-        }
-        sentier.criteres.forEach(critere => {
-            seniterData.criteres.push(critere.id)
-        });
-        sentier.motcles.forEach(motcle => {
-            seniterData.motcles.push(motcle.id)
-        });
-        const etapeData = sentier.etapes
-        console.log(seniterData, etapeData);
-        sessionStorage.setItem('update', true)
-        sessionStorage.setItem('sentierCreation', JSON.stringify(seniterData))
-        sessionStorage.setItem('etapes', JSON.stringify(etapeData))
+    if (
+        !sessionStorage.getItem("sentierCreation") &&
+        !sessionStorage.getItem("etapes")
+    ) {
+        sessionStorage.removeItem("sentierCreation");
+        sessionStorage.removeItem("etapes");
     }
+    let seniterData = {
+        nomSentier: sentier.nom,
+        descriptionSentier: sentier.description,
+        lieu: sentier.localisation,
+        theme: sentier.theme_id,
+        criteres: [],
+        motcles: [],
+        difficulte: sentier.difficulte.id,
+        photoSentier: sentier.photo,
+    };
+    sentier.criteres.forEach((critere) => {
+        seniterData.criteres.push(critere.id);
+    });
+    sentier.motcles.forEach((motcle) => {
+        seniterData.motcles.push(motcle.id);
+    });
+    let etapeData = sentier.etapes;
+    for (let index = 0; index < etapeData.length; index++) {
+        etapeData[index].coordonnees = {}
+        etapeData[index].coordonnees.long = etapeData[index].longitude;
+        etapeData[index].coordonnees.lat = etapeData[index].latitude;
+        etapeData[index].coordonnees.lat = etapeData[index].latitude;
+    }
+    console.log(etapeData, sentier);
+    sessionStorage.setItem("update", true);
+    sessionStorage.setItem("sentierCreation", JSON.stringify(seniterData));
+    sessionStorage.setItem("etapes", JSON.stringify(etapeData));
     window.location.href =
         window.location.href.split("#")[0] + "#creationSentier";
 };
@@ -286,50 +344,99 @@ const editSentier = (sentier) => {
 // Suppression du sentier avec une demande de confirmation
 
 const deleteSentier = (sentier) => {
-    if (confirm("Êtes-vous sûr de vouloir supprimer ce sentier ?")) {
+    const handleConfirm = () => {
         axios
             .delete(`/delete-sentier/${sentier.id}`)
             .then((response) => {
                 console.log(response.data);
+                modal.value = false;
+                location.reload();
             })
             .catch((error) => {
                 console.error(error);
             });
+    };
+
+    const handleCancel = () => {
+        modal.value = false;
+    };
+
+    const message = "Êtes-vous sûr de vouloir supprimer ce sentier ?";
+
+    modal.value = {
+        message,
+        onConfirm: handleConfirm,
+        onCancel: handleCancel,
+    };
+};
+// Fonction pour gérer le téléchargement de fichier pour les points d'intérêt
+const handleFileUpload = async (e) => {
+    const errors = ref();
+    const file = e.target.files[0];
+    const formData = new FormData();
+    console.log(localStorage.getItem("userId"));
+    formData.append("photoProfil", file);
+    formData.append("userId", localStorage.getItem("userId"));
+
+    try {
+        const response = await axios.post("/submit-file-account", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+        user.value.photo = `/storage/${response.data.path}`;
+        // errors.value.photo = ""; // Clear error message on successful upload
+    } catch (error) {
+        console.error("Error uploading file:", error);
+        // errors.value.photo = "Erreur lors du téléchargement de la photo.";
     }
 };
-
 // Initialisation des données utilisateur et sentiers
 
 onMounted(async () => {
+    if (userId.value && window.location.href.split("#")[1] === "login") {
+        window.location.replace(
+            window.location.href.split("#")[0] + "#account"
+        );
+    }
     await fetchUser();
     await fetchUserByUser();
     isLoading.value = false;
 });
+
+if (!localStorage.getItem("userId")) {
+    window.location.hash = "#login";
+}
 </script>
 
 <style>
-
 /* Utilisateur */
 
-#user{
+#user {
     height: 25vh;
     display: flex;
-    justify-content: space-around;
-    border-bottom: 1px solid var(--color-text-secondary) ;
+    justify-content: start;
+    gap: 20px;
+    border-bottom: 1px solid var(--color-text-secondary);
     margin-bottom: 20px;
     align-items: center;
+    position: relative;
 }
-#user img{
-    width: 150px;
-    height: 150px;
-    border-radius: var( --border-radius-full);
+#user img {
+    width: 130px;
+    height: 130px;
+    border-radius: var(--border-radius-full);
 }
-#user h3{
-    margin: var(--margin-small) 0 ;
+#user h3 {
+    margin: 10px 0;
+    font-size: 1.35rem;
+}
+#user h4 {
+    font-weight: 500;
 }
 /* Vos Sentiers */
 
-#vos-santiers{
+#vos-santiers {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
@@ -338,10 +445,10 @@ onMounted(async () => {
 
 /* Boutton sentiers */
 
-.boutton{
+.boutton {
     width: 100%;
-    padding: 20px;
-    border: 1px solid var(--primary) ;
+    padding: 15px 20px;
+    border: 1px solid var(--primary);
     text-align: center;
     text-decoration: none;
     border-radius: var(--border-radius-medium);
@@ -350,8 +457,8 @@ onMounted(async () => {
     font-weight: 600;
     position: relative;
 }
-.boutton::after{
-    content: '+';
+.boutton::after {
+    content: "+";
     position: absolute;
     right: 5%;
     font-size: 3rem;
@@ -362,22 +469,8 @@ onMounted(async () => {
 
 /* Button Archive */
 
-#button-archive{
-    margin: 50px 0;
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    width: 100%;
-    padding: 15px;
-    text-align: center;
-    text-decoration: none;
-    border-radius: var(--border-radius-large);
-    color: var(--primary);
-    position: relative;
-    background-color: var(--color-text-secondary);
-}
-#button-archive{
-    margin: 50px 0;
+#button-archive {
+    margin: 30px 0;
     display: flex;
     justify-content: space-between;
     font-size: 0.9rem;
@@ -387,21 +480,20 @@ onMounted(async () => {
     border-radius: var(--border-radius-large);
     color: var(--primary);
     position: relative;
-    background-color: var(--color-text-secondary);
+    background-color: #dadada;
     padding: 0;
 }
-#button-archive span{
-    padding: 15px 15px;
+#button-archive span {
+    padding: 5px 15px;
     width: 60%;
     border-radius: var(--border-radius-large);
-    
 }
-#button-archive span.actived{
-    background-color:var(--primary) ;
+#button-archive span.actived {
+    background-color: var(--primary);
     color: white;
 }
 
-.sentierItem{
+.sentierItem {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -414,23 +506,22 @@ onMounted(async () => {
     position: relative;
 }
 
-.sentierItem img{
+.sentierItem img {
     width: 100%;
     height: 200;
 }
 
-.menuSentierButton{
+.menuSentierButton {
     position: absolute;
     right: -0.5%;
     top: -0.5%;
     z-index: 5;
     background-color: white;
-    border-radius: var(--border-radius-full);
+    border-radius: 0 0 0 var(--border-radius-medium);
     padding: 2%;
-
 }
 
-.menuSentier{
+.menuSentier {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -439,18 +530,18 @@ onMounted(async () => {
     top: 10%;
     z-index: 4;
     background-color: white;
-    border-radius: var(--border-radius-medium) 0 var(--border-radius-medium) var(--border-radius-medium);
+    border-radius: var(--border-radius-medium) 0 var(--border-radius-medium)
+        var(--border-radius-medium);
     padding: 2% 5%;
     height: 50%;
 }
-.menuSentier div{
+.menuSentier div {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 .menuSentier div:last-of-type span,
-.menuSentier div:last-of-type
-{
+.menuSentier div:last-of-type {
     color: red;
 }
 
@@ -460,19 +551,37 @@ onMounted(async () => {
 .content.active {
     display: flex;
 }
-#vos-santiers{
+#vos-santiers {
     margin-bottom: 25%;
 }
-#vos-santiers .affichage{
+#vos-santiers .affichage {
     bottom: 0%;
-    height: 80px;
+    height: 90px;
     width: 105%;
     padding: var(--padding-medium) 40px;
 }
-#vos-santiers .affichage > div:nth-of-type(1) > p{
-    font-weight: 600;
+#vos-santiers .affichage > div:nth-of-type(1) {
+    justify-content: start;
+    gap: 10px;
 }
-#vos-santiers .affichage > div:nth-of-type(2){
-    right:40px
+#vos-santiers .affichage > div:nth-of-type(1) > p {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+#vos-santiers .affichage > div:nth-of-type(2) {
+    right: 40px;
+}
+#photoProfil {
+    position: absolute;
+    padding: 5px;
+    border-radius: 20px;
+    background: #dadada;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 65%;
+}
+#photoProfil span {
+    font-size: 1.3rem;
 }
 </style>

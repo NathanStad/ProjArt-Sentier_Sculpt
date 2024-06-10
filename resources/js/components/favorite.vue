@@ -3,12 +3,16 @@
         <p>Loading...</p>
     </div>
     <div v-else>
-        <h1>Favoris</h1>
-        <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Recherche par nom ou localisation"
-        />
+        <div class="header">
+            <h1>Favoris</h1>
+            <input
+                    type="text"
+                    v-model="searchQuery"
+                    placeholder="Recherche parmi les favoris"
+                    class="recherche"
+                />
+            <span class="material-symbols-outlined search-icone"> search </span>
+        </div>
         <a
             :href="`#sentier-${sentier.id}`"
             v-for="sentier in filteredSentiers"
@@ -31,20 +35,22 @@
                         </span>
                         {{ sentier.localisation }}
                     </p>
-                </div>
+                    </div>
+                <a :href="`#steps-${sentier.id}`" class="button">Démarrer</a>
             </div>
-            <a :href="`#steps-${sentier.id}`" class="button">Démarrer</a>
         </a>
         <p v-if="filteredSentiers.length < 1">
             Introuvable
         </p>
     </div>
+    <footer><Footer></Footer></footer>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import buttonFavoris from "@/components/elements/buttonFavorite.vue";
 import axios from "axios";
+import Footer from "@/components/elements/footer.vue";
 
 const isLoading = ref(true);
 const sentiers = ref([]);
@@ -97,6 +103,7 @@ h1 {
     width: 100%;
     height: 170px;
     text-decoration: none;
+    margin-bottom: 10%;
 }
 input{
     padding: var(--padding-large) calc(var(--padding-medium) * 2.33) !important;
@@ -108,7 +115,7 @@ input{
 }
 .sentier > div:first-of-type {
     position: absolute;
-    right: 8%;
+    right: 5%;
     top: 8%;
 }
 .sentier > div:first-of-type span {
@@ -131,13 +138,14 @@ input{
     bottom: 5%;
     right: 5%;
 }
-.sentier > div:nth-of-type(2) > div > span{
+.sentier > div:nth-of-type(2) *{
     color: white !important;
 }
 .sentier > div:nth-of-type(3) > div{
     display: flex;
     flex-direction: column;
     justify-content: start ;
+    gap: 5px;
     height: 50%;
     width: 125px;
 }
@@ -155,13 +163,44 @@ input{
     color: var(--color-text-secondary);
 }
 .button{
-    padding: 15px 30px;
+    padding: 15px 15px;
     background: var(--primary);
     border-radius:var(--border-radius-small);
     text-decoration: none;
     color: white;
+    right: -15%;
+    bottom: -4%;
+    text-align: center;
+    display: block;
     position: absolute;
-    right: 10%;
-    bottom: 15%;
+    left:auto;
+    width: 40%;
+}
+.recherche{
+    padding: 10px 20px 10px 40px !important;
+    z-index: 5;
+    position: relative;
+    margin-bottom: 0 !important;
+}
+.recherche[type="text"] + .search-icone {
+    display: block;
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    z-index: 5;
+    font-size: 1.5rem ;
+    top: 93px;
+    left: 40px;
+    color: var(--color-text-secondary);
+}
+.header{
+    flex-direction: column;
+    position: sticky;
+    top: 0px;
+    background: white;
+    box-shadow: var(--box-shadow-light-bottom) ;
+    width: 100vw;
+    padding: 10%;
+    transform: translate(-8%);
 }
 </style>

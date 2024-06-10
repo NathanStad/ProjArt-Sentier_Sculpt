@@ -2,30 +2,34 @@
     <form @submit.prevent="submitData">
         <div id="sentier-creation">
             <div class="header">
-                <a @click.prevent="goBack">
+                <a href="#account">
                     <span class="material-symbols-outlined">arrow_back_ios</span>
                 </a>
-                <h1>Création de sentier</h1>
+                <h1>Création d'un sentier</h1>
                 <div></div>
             </div>
-            <label>
+            <label class="block">
                 Nom sentier
-                <input v-model="nomSentier" type="text" id="nomSentier" required />
+                <input v-model="nomSentier" type="text" id="nomSentier" required placeholder="Nom du sentier" />
+             <br><span v-if="errors.nomSentier" class="error">{{ errors.nomSentier }}</span>
             </label>
-            <label>
-                Description sentier
+            <label class="block">
+                Description du sentier
                 <textarea
-                v-model="descriptionSentier"
-                id="descriptionSentier"
-                cols="30"
-                rows="10"
-                required
+                    v-model="descriptionSentier"
+                    id="descriptionSentier"
+                    cols="30"
+                    rows="10"
+                    required
+                    placeholder="Description du sentier"
                 ></textarea>
+             <br><span v-if="errors.descriptionSentier" class="error">{{ errors.descriptionSentier }}</span>
             </label>
             <br>
-            <label>
+            <label class="block">
                 Nom de la localisation <br>
-                <input v-model="lieu" type="text" id="nomSentier" required />
+                <input v-model="lieu" type="text" id="nomLieu" required placeholder="Nom de la localisation" />
+                <span v-if="errors.lieu" class="error">{{ errors.lieu }}</span>
             </label>
             
             <p>Sélection d'un thème</p>
@@ -45,6 +49,7 @@
                     <div v-html="theme.icone"></div>
                     <p>{{ theme.name }}</p>
                 </label>
+             <br><span v-if="errors.selectedTheme" class="error" style="grid-column: 1/4;">{{ errors.selectedTheme }}</span>
             </div>
 
             <p>Critères</p>
@@ -62,6 +67,7 @@
                     />
                     {{ critere.name }}
                 </label>
+             <br><span v-if="errors.selectedCriteres" class="error">{{ errors.selectedCriteres }}</span>
             </div>
 
             <p>Mot-clés</p>
@@ -79,6 +85,7 @@
                     />
                     {{ motcle.name }}
                 </label>
+             <br><span v-if="errors.selectedMotCles" class="error">{{ errors.selectedMotCles }}</span>
             </div>
 
             <p>Niveau de difficulté</p>
@@ -122,26 +129,26 @@
                         <span class="material-symbols-outlined">bolt</span>
                     </div>
                     <p>Difficile</p>
-                </label>
+                </label><span v-if="errors.difficulte" class="error" style="grid-column: 1/4;">{{ errors.difficulte }}</span>
             </div>
 
             <p>Ajouter une photo</p>
             <div class="input-container">
-                <label v-if="photoSentier" for="photoSentier">
+                <label v-if="photoSentier" for="photoSentier" class="addPhoto">
                     <img :src="photoSentier" alt="Photo du sentier" />
                     <span class="material-symbols-outlined editIcon">edit</span>
                 </label>
-                <label v-else for="photoSentier">
+                <label v-else for="photoSentier" class="addPhoto">
                     <span class="material-symbols-outlined">add_a_photo</span>
                 </label>
                 <input
                     type="file"
                     id="photoSentier"
+                    name="photoSentier"
                     @change="handleFileUpload"
                     style="display: none"
                     accept="image/png, image/jpeg, image/jpg"
-                    required
-                />
+                /><span v-if="errors.photoSentier" class="error" style="width:100%;">{{ errors.photoSentier }}</span>
             </div>
 
             <button type="submit" :disabled="!isValidForm()" class="button">Suivant</button>
@@ -150,7 +157,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 
 // Define reactive state
@@ -163,13 +170,24 @@ const selectedMotCles = ref([]);
 const difficulte = ref("");
 const photoSentier = ref(null);
 
+// State for error messages
+const errors = ref({
+    nomSentier: "",
+    descriptionSentier: "",
+    lieu: "",
+    selectedTheme: "",
+    selectedCriteres: "",
+    selectedMotCles: "",
+    difficulte: "",
+    photoSentier: "",
+});
+
 // Si ça vient pour une mise à jour
-if (sessionStorage.getItem('update')) {
+if (sessionStorage.getItem('sentierCreation')) {
     const data = JSON.parse(sessionStorage.getItem('sentierCreation'))
-    console.log(data);
     nomSentier.value = data.nomSentier;
     descriptionSentier.value = data.descriptionSentier;
-    lieu.value = data.location;
+    lieu.value = data.lieu;
     selectedTheme.value = data.theme;
     selectedCriteres.value = data.criteres;
     selectedMotCles.value = data.motcles;
@@ -193,8 +211,10 @@ const handleFileUpload = async (e) => {
             }
         });
         photoSentier.value = `/storage/${response.data.path}`;
+        errors.value.photoSentier = ""; // Clear error message on successful upload
     } catch (error) {
         console.error('Error uploading file:', error);
+        errors.value.photoSentier = "Erreur lors du téléchargement de la photo.";
     }
 };
 
@@ -229,46 +249,67 @@ const fetchMotCles = async () => {
 };
 
 // Function to handle form submission
-const submitData = async () => {    
+const submitData = async () => {
+    // Validate form before submitting
+    validateForm();
 
-    try {
-        // Mettez à jour le nom du fichier avec le nouveau nom renvoyé par le serveur
-        const formDataToSave = {
-            nomSentier: nomSentier.value,
-            descriptionSentier: descriptionSentier.value,
-            localisation: lieu.value,
-            theme: selectedTheme.value,
-            criteres: selectedCriteres.value,
-            motcles: selectedMotCles.value,
-            difficulte: difficulte.value,
-            photoSentier: photoSentier.value, // Utilisez le nouveau nom de fichier
-        };
+    if (isValidForm()) {
+        try {
+            const formDataToSave = {
+                nomSentier: nomSentier.value,
+                descriptionSentier: descriptionSentier.value,
+                localisation: lieu.value,
+                theme: selectedTheme.value,
+                criteres: selectedCriteres.value,
+                motcles: selectedMotCles.value,
+                difficulte: difficulte.value,
+                photoSentier: photoSentier.value,
+            };
 
-        sessionStorage.setItem("sentierCreation", JSON.stringify(formDataToSave));
-        console.log("Form data saved to sessionStorage:", formDataToSave);
+            sessionStorage.setItem("sentierCreation", JSON.stringify(formDataToSave));
+            console.log("Form data saved to sessionStorage:", formDataToSave);
 
-        // Redirigez l'utilisateur
-        window.location.hash = `creationSteps`;
-    } catch (error) {
-        console.error('Error submitting form:', error);
+            // Redirect user
+            window.location.hash = `creationSteps`;
+        } catch (error) {
+            console.error('Error submitting form:', error);
+        }
     }
 };
 
+// Validate the form and set error messages
+const validateForm = () => {
+    errors.value.nomSentier = nomSentier.value ? "" : "Le nom du sentier est requis.";
+    errors.value.descriptionSentier = descriptionSentier.value ? "" : "La description du sentier est requise.";
+    errors.value.lieu = lieu.value ? "" : "Le nom de la localisation est requis.";
+    errors.value.selectedTheme = selectedTheme.value ? "" : "Veuillez sélectionner un thème.";
+    errors.value.selectedCriteres = selectedCriteres.value.length > 0 ? "" : "Veuillez sélectionner au moins un critère.";
+    errors.value.selectedMotCles = selectedMotCles.value.length > 0 ? "" : "Veuillez sélectionner au moins un mot-clé.";
+    errors.value.difficulte = difficulte.value ? "" : "Veuillez sélectionner un niveau de difficulté.";
+    errors.value.photoSentier = photoSentier.value ? "" : "Veuillez ajouter une photo.";
+};
+
+// Fonction pour vérifier si le formulaire est valide
 const isValidForm = () => {
     return (
-        nomSentier.value !== "" &&
-        descriptionSentier.value !== "" &&
-        selectedTheme.value !== null &&
-        selectedCriteres.value.length > 0 &&
-        selectedMotCles.value.length > 0 &&
-        difficulte.value !== "" &&
-        photoSentier.value !== null
+        !errors.value.nomSentier &&
+        !errors.value.descriptionSentier &&
+        !errors.value.lieu &&
+        !errors.value.selectedTheme &&
+        !errors.value.selectedCriteres &&
+        !errors.value.selectedMotCles &&
+        !errors.value.difficulte &&
+        !errors.value.photoSentier
     );
 };
 
-const goBack = () => {
-    window.history.back();
-};
+// Mettre à jour l'état du bouton de soumission en fonction de la validité du formulaire
+watch(
+    [nomSentier, descriptionSentier, lieu, selectedTheme, selectedCriteres, selectedMotCles, difficulte, photoSentier],
+    () => {
+        validateForm();
+    }
+);
 
 // Fetch data when the component is mounted
 onMounted(() => {
@@ -279,13 +320,19 @@ onMounted(() => {
 </script>
 
 <style>
-/* Hide checkboxes and radio buttons */
+/* styles remain unchanged */
+#sentier-creation input[type="text"],
+#sentier-creation textarea {
+    border-radius: var(--border-radius-small);
+    width: 100%;
+}
 input[type="checkbox"],
 input[type="radio"] {
     display: none;
 }
-
-/* Style labels as buttons */
+#sentier-creation .block {
+    display: block;
+}
 label.checkbox {
     display: inline-block;
     padding: 10px 20px;
@@ -296,14 +343,11 @@ label.checkbox {
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
-
-/* Highlight selected labels */
 label.checkbox.active {
-    background-color: var(--primary);
+    background-color: var(--secondary);
     color: white;
-    border: 2px solid var(--primary);
+    border: 2px solid var(--secondary);
 }
-
 #sentier-creation {
     position: absolute;
     z-index: 11;
@@ -313,59 +357,59 @@ label.checkbox.active {
     left: 50%;
     transform: translateX(-50%);
 }
-
 #sentier-creation > * {
     font-size: 1.2rem;
-    margin-top: var(--margin-large);
+    margin-top: var(--margin-small);
 }
-
+#sentier-creation > p {
+    margin-top: var(--margin-large);
+    margin-bottom: var(--margin-medium);
+}
+#sentier-creation > p,
+#sentier-creation > .block {
+    font-weight: 700;
+}
 #sentier-creation > label {
     font-size: 1.2rem;
 }
-
 #sentier-creation > label input,
 #sentier-creation > label textarea {
-    margin-top: var(--margin-large);
+    margin-top: var(--margin-small);
 }
-
 .three-box {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     grid-gap: 30px;
 }
-
 input[type="radio"] + div,
 input[type="radio"] + div + p {
     text-align: center;
 }
-
 input[type="radio"]:checked + div span,
 input[type="radio"]:checked + div + p {
-    color: var(--primary);
+    color: var(--secondary);
     font-weight: 700;
 }
-
 input[type="radio"] + div > span {
     font-size: 1.2rem;
 }
-
 .input-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-bottom: 10px !important;
 }
-
 .input-container label {
     cursor: pointer;
+    overflow: hidden;
 }
-
 .input-container img {
-    max-width: 100%;
-    height: auto;
+    width: 100%;
+    height: 100%;
     display: block;
-    margin-bottom: 10px;
+    object-fit: cover;
+    overflow: hidden;
 }
-
 .input-container .editIcon {
     position: absolute;
     top: 10px;
@@ -374,5 +418,22 @@ input[type="radio"] + div > span {
     border-radius: 50%;
     padding: 5px;
     color: white;
+}
+.addPhoto {
+    height: 150px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-medium);
+    border: 2px solid var(--color-text-secondary);
+}
+.addPhoto span {
+    color: var(--color-text-secondary);
+}
+.error {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.3rem;
 }
 </style>

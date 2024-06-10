@@ -34,11 +34,12 @@ class SentierController extends Controller
     }
 
     public function store(SentierStoreRequest $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        if ($user && $user->role === 'institution') {
-
+    if ($user && $user->role === 'institution') {
+        try {
+            // Créer le sentier
             $sentier = Sentier::create([
                 'nom' => $request->nom,
                 'description' => $request->description,
@@ -53,6 +54,7 @@ class SentierController extends Controller
                 'difficulte_id' => $request->difficulte_id,
             ]);
 
+            // Créer les étapes
             foreach ($request->etapes as $etapeData) {
                 $etape = Etape::create([
                     'sentier_id' => $sentier->id,
@@ -60,9 +62,13 @@ class SentierController extends Controller
                     'description' => $etapeData['description'],
                     'latitude' => $etapeData['latitude'],
                     'longitude' => $etapeData['longitude'],
+                    'distance' => $etapeData['distance'],
+                    'duree' => $etapeData['duree'],
                     'ordre' => $etapeData['ordre'],
+                    'photo' => $etapeData['photo'],
                 ]);
 
+                // Ajouter les points d'intérêt
                 if (isset($etapeData['points_interet'])) {
                     foreach ($etapeData['points_interet'] as $poiData) {
                         $pointInteret = PointInteret::create([
@@ -88,10 +94,19 @@ class SentierController extends Controller
             }
 
             return response()->json($sentier, 201);
-        } else {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        } catch (\Exception $e) {
+            // Renvoyer une réponse avec les détails de l'erreur
+            return response()->json([
+                'message' => 'Une erreur est survenue lors de la création du sentier.',
+                'error' => $e->getMessage(), // Récupérer le message de l'exception
+                'trace' => $e->getTraceAsString() // Récupérer la trace de l'exception
+            ], 500);
         }
+    } else {
+        return response()->json(['message' => 'Unauthorized'], 403);
     }
+}
+
 
     public function update(SentierUpdateRequest $request, $id)
     {
@@ -99,7 +114,7 @@ class SentierController extends Controller
 
         if ($user && $user->role === 'institution') {
             $sentier = Sentier::find($id);
-            
+
             if (!$sentier) {
                 return response()->json(['message' => 'Sentier not found'], 404);
             }
@@ -115,6 +130,57 @@ class SentierController extends Controller
                 'difficulte_id' => $request->difficulte_id,
                 'archive' => $request->archive ?? 0,
             ]);
+
+            // Mettre à jour les étapes
+            $existingEtapes = $sentier->etapes->keyBy('id');
+            foreach ($request->etapes as $etapeData) {
+                if (isset($etapeData['id']) && $existingEtapes->has($etapeData['id'])) {
+                    $etape = $existingEtapes->get($etapeData['id']);
+                    $etape->update([
+                        'nom' => $etapeData['nom'],
+                        'description' => $etapeData['description'],
+                        'latitude' => $etapeData['latitude'],
+                        'longitude' => $etapeData['longitude'],
+                        'distance' => $etapeData['distance'],
+                        'duree' => $etapeData['duree'],
+                        'ordre' => $etapeData['ordre'],
+                        'photo' => $etapeData['photo'],
+                    ]);
+                } else {
+                    $etape = Etape::create([
+                        'sentier_id' => $sentier->id,
+                        'nom' => $etapeData['nom'],
+                        'description' => $etapeData['description'],
+                        'latitude' => $etapeData['latitude'],
+                        'longitude' => $etapeData['longitude'],
+                        'distance' => $etapeData['distance'],
+                        'duree' => $etapeData['duree'],
+                        'ordre' => $etapeData['ordre'],
+                        'photo' => $etapeData['photo'],
+                    ]);
+                }
+
+                // Mettre à jour les points d'intérêt
+                if (isset($etapeData['points_interet'])) {
+                    $existingPointsInteret = $etape->pointsInteret->keyBy('id');
+                    foreach ($etapeData['points_interet'] as $poiData) {
+                        if (isset($poiData['id']) && $existingPointsInteret->has($poiData['id'])) {
+                            $pointInteret = $existingPointsInteret->get($poiData['id']);
+                            $pointInteret->update([
+                                'nom' => $poiData['nom'],
+                                'photo' => $poiData['photo'] ?? $pointInteret->photo,
+                            ]);
+                        } else {
+                            $pointInteret = PointInteret::create([
+                                'nom' => $poiData['nom'],
+                                'photo' => $poiData['photo'] ?? null,
+                            ]);
+
+                            $etape->pointsInteret()->attach($pointInteret->id);
+                        }
+                    }
+                }
+            }
 
             // Mettre à jour les critères
             if ($request->has('criteres')) {
@@ -133,6 +199,7 @@ class SentierController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
     }
+
 
     public function destroy($id)
     {

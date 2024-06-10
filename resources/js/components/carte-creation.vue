@@ -1,46 +1,61 @@
 <template>
     <div id="page">
+        <div class="header">
+            <a href="#creationSentier">
+                <span class="material-symbols-outlined"> arrow_back_ios </span>
+            </a>
+            <h1>Création d’un sentier</h1>
+            <div></div>
+        </div>
         <div id="formulaire">
-            <div class="form-container">
-                <h1>Création d'un sentier</h1>
-                <draggable v-model="etapes" item-key="id">
-                    <div class="form-container"></div>
-                    <template #item="{ element, index }">
-                        <div class="stepContainer">
-                            <div class="infoMap">
-                                <p v-if="index === etapes.length - 1">
-                                    <span class="material-symbols-outlined">
-                                        radio_button_unchecked
-                                    </span>
-                                </p>
-                                <p v-else>
-                                    <span class="material-symbols-outlined">
-                                        radio_button_checked
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="step" @click="clickEtape(index)">
-                                <span class="step-name">{{
-                                    element.nom || "Etape " + (index + 1)
-                                    }}</span>
-                                <div class="dragHandle">
-                                    <span class="material-symbols-outlined">
-                                        drag_handle
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="deleteEtape">
-                                <span v-if="index !== 0 && index !== 1" class="step-emoji"
-                                    @click="delEtape(element)"><span class="material-symbols-outlined">
-                                        close
-                                    </span></span>
+            <draggable v-model="etapes" item-key="id">
+                <div class="form-container"></div>
+                <template #item="{ element, index }">
+                    <div class="stepContainer">
+                        <div class="infoMap">
+                            <p
+                                v-if="index === etapes.length - 1"
+                                class="last-etape"
+                            >
+                                <span class="material-symbols-outlined">
+                                    location_on
+                                </span>
+                            </p>
+                            <p v-else class="prec-etape">
+                                <span class="material-symbols-outlined">
+                                    radio_button_checked
+                                </span>
+                            </p>
+                        </div>
+                        <div class="step" @click="clickEtape(index)">
+                            <p class="step-name">
+                                {{ element.nom || "Etape " + (index + 1) }}
+                            </p>
+                            <div class="dragHandle">
+                                <span class="material-symbols-outlined">
+                                    drag_handle
+                                </span>
                             </div>
                         </div>
-                    </template>
-                </draggable>
-                <div v-if="etapes.length < 5" class="add-step" @click="ajouteEtape">
-                    + ajouter une étape
-                </div>
+                        <div class="deleteEtape">
+                            <span
+                                v-if="index !== 0 && index !== 1"
+                                class="step-emoji"
+                                @click="delEtape(element)"
+                                ><span class="material-symbols-outlined">
+                                    close
+                                </span></span
+                            >
+                        </div>
+                    </div>
+                </template>
+            </draggable>
+            <div v-if="etapes.length < 5" class="add-step" @click="ajouteEtape">
+                + Ajouter une étape
+            </div>
+            <div id="duree">
+                Durée actuelle : {{ Math.floor(duree / 3600) }} h
+                {{ Math.floor((duree % 3600) / 60) }} min
             </div>
         </div>
         <div id="partieInferieur">
@@ -50,7 +65,13 @@
             </div>
         </div>
         <div id="btnSuivant">
-            <button class="button" @click="terminerCreation" >Suivant</button>
+            <button
+                class="button"
+                :disabled="disable"
+                @click="terminerCreation"
+            >
+                Terminer
+            </button>
         </div>
     </div>
 </template>
@@ -116,6 +137,7 @@ export default {
             ],
             oldIndex: "",
             newIndex: "",
+            duree: "",
             markers: [],
             routeLayerId: "",
             couleur: "#40680c",
@@ -277,22 +299,45 @@ export default {
         },
         calculerDistance(coord1, coord2) {
             const R = 6371e3; // Rayon de la Terre en mètres
-            const φ1 = coord1.lat * Math.PI / 180; // Latitude du premier point en radians
-            const φ2 = coord2.lat * Math.PI / 180; // Latitude du deuxième point en radians
-            const Δφ = (coord2.lat - coord1.lat) * Math.PI / 180; // Différence de latitude en radians
-            const Δλ = (coord2.long - coord1.long) * Math.PI / 180; // Différence de longitude en radians
+            const φ1 = (coord1.lat * Math.PI) / 180; // Latitude du premier point en radians
+            const φ2 = (coord2.lat * Math.PI) / 180; // Latitude du deuxième point en radians
+            const Δφ = ((coord2.lat - coord1.lat) * Math.PI) / 180; // Différence de latitude en radians
+            const Δλ = ((coord2.long - coord1.long) * Math.PI) / 180; // Différence de longitude en radians
 
-            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const a =
+                Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) *
+                    Math.cos(φ2) *
+                    Math.sin(Δλ / 2) *
+                    Math.sin(Δλ / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
             const distance = R * c; // Distance en mètres
             return distance;
         },
+        calculeDureeTot() {
+            let longueurTotal = 0;
+            let dureeTotal = 0;
+            let coordonneesPrec = null;
+
+            for (let index = 0; index < this.etapes.length; index++) {
+                const etape = this.etapes[index];
+                if (coordonneesPrec !== null) {
+                    longueurTotal += this.calculerDistance(
+                        coordonneesPrec,
+                        etape.coordonnees
+                    );
+                }
+                coordonneesPrec = etape.coordonnees;
+            }
+
+            dureeTotal = this.calculerTempsMarche(longueurTotal);
+            this.duree = dureeTotal;
+            return { longueurTotal, dureeTotal };
+        },
         calculerTempsMarche(distance) {
             const vitesseMarche = 5; // Vitesse moyenne de marche à pied en km/h
-            const tempsSecondes = distance / (vitesseMarche * 1000 / 3600); // Temps en secondes
+            const tempsSecondes = distance / ((vitesseMarche * 1000) / 3600); // Temps en secondes
             return tempsSecondes;
         },
 
@@ -348,100 +393,146 @@ export default {
                 this.etapes.splice(index, 1);
             }
         },
-        terminerCreation() {
-            // Récupérer les données du sessionStorage
-            console.log('envoie');
+        verifierCoordonneesCompletes() {
+            return this.etapes.every(
+                (etape) =>
+                    etape.coordonnees.lat !== null &&
+                    etape.coordonnees.long !== null
+            );
+        },
+        async calculeDureeTotale() {
+            let longueurTotal = 0;
+            let dureeTotal = 0;
+            const etapes = JSON.parse(sessionStorage.getItem("etapes")) || [];
+
+            for (let i = 0; i < etapes.length - 1; i++) {
+                const coord1 = etapes[i].coordonnees;
+                const coord2 = etapes[i + 1].coordonnees;
+
+                if (
+                    coord1.lat !== null &&
+                    coord1.long !== null &&
+                    coord2.lat !== null &&
+                    coord2.long !== null
+                ) {
+                    const response = await fetch(
+                        "https://api.openrouteservice.org/v2/directions/foot-hiking/geojson",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization:
+                                    "5b3ce3597851110001cf6248cbe7a7b654c74537a20bd21243c00b7a",
+                            },
+                            body: JSON.stringify({
+                                coordinates: [
+                                    [coord1.long, coord1.lat],
+                                    [coord2.long, coord2.lat],
+                                ],
+                            }),
+                        }
+                    );
+
+                    const data = await response.json();
+                    const route = data.features[0];
+                    const distance = route.properties.segments[0].distance; // distance en mètres
+                    const duration = route.properties.segments[0].duration; // durée en secondes
+
+                    etapes[i].distanceToNext = distance;
+                    etapes[i].durationToNext = duration;
+
+                    longueurTotal += distance;
+                    dureeTotal += duration;
+                }
+                etapes[i].ordre = i + 1;
+            }
+
+            // La dernière étape a une distance et une durée de 0
+            etapes[etapes.length - 1].distanceToNext = 0;
+            etapes[etapes.length - 1].durationToNext = 0;
+            etapes[etapes.length - 1].ordre = etapes.length;
+
+            sessionStorage.setItem("etapes", JSON.stringify(etapes));
+
+            return { longueurTotal, dureeTotal };
+        },
+
+        async terminerCreation() {
+            if (!this.verifierCoordonneesCompletes()) {
+                console.error(
+                    "Toutes les coordonnées des étapes doivent être remplies."
+                );
+                return;
+            }
+
+            console.log("envoie");
             const sentierCreationData = JSON.parse(
                 sessionStorage.getItem("sentierCreation")
+            );
+            const etapesData = JSON.parse(sessionStorage.getItem("etapes"));
+
+            if (!sentierCreationData || !etapesData) {
+                console.error(
+                    "Les données du sentier ou des étapes ne sont pas présentes dans le sessionStorage."
                 );
-                const etapesData = JSON.parse(sessionStorage.getItem("etapes"));
-                
-                // Vérifier si les données existent
-                if (!sentierCreationData || !etapesData) {
-                    console.error(
-                        "Les données du sentier ou des étapes ne sont pas présentes dans le sessionStorage."
-                        );
-                        return;
-                        }
-                    console.log(etapesData);
-            let longueurTotal = 0
-            let dureeTotal = 0
-            let cordonnePrec = null
-            for (let index = 0; index < etapesData.length; index++) {
-                const element = etapesData[index];
-                if (cordonnePrec != null) {
-                    longueurTotal += this.calculerDistance(cordonnePrec,element.coordonnees)
-                } else {
-                    cordonnePrec = element.coordonnees
-                }
+                return;
             }
-            dureeTotal = this.calculerTempsMarche(longueurTotal)
-            if (sessionStorage.getItem("update")) {
-                // Envoyer les données au backend
-                axios
-                    .post("/update-sentier", {
-                        nom: sentierCreationData.nomSentier,
-                        description: sentierCreationData.descriptionSentier,
-                        duree: dureeTotal,
-                        longueur: longueurTotal,
-                        localisation: sentierCreationData.localisation,
-                        criteres: sentierCreationData.criteres,
-                        motcles: sentierCreationData.motcles,
-                        etapes: etapesData,
-                        photo: sentierCreationData.photoSentierName,
-                        theme_id: sentierCreationData.theme,
-                        user_id: localStorage.getItem("userId"),
-                        difficulte_id: sentierCreationData.difficulte,
-                    })
-                    .then((response) => {
-                        console.log(
-                            "Sentier mis à jour avec succès:",
-                            response.data
-                        );
-                        // Effacer les données du sessionStorage après avoir réussi à créer le sentier
-                        sessionStorage.removeItem("sentierCreation");
-                        sessionStorage.removeItem("etapes");
-                        sessionStorage.removeItem("update");
-                        // Redirigez l'utilisateur
-                        window.location.hash = `account`;
-                    })
-                    .catch((error) => {
-                        console.error(
-                            "Erreur lors de la mise à jour du sentier:",
-                            error
-                        );
-                    });
-            } else {
-                // Envoyer les données au backend
-                axios
-                    .post("/submit-sentier", {
-                        nom: sentierCreationData.nomSentier,
-                        description: sentierCreationData.descriptionSentier,
-                        duree: dureeTotal,
-                        longueur: longueurTotal,
-                        localisation: sentierCreationData.localisation,
-                        criteres: sentierCreationData.criteres,
-                        motcles: sentierCreationData.motcles,
-                        etapes: etapesData,
-                        photo: sentierCreationData.photoSentierName,
-                        theme_id: sentierCreationData.theme,
-                        user_id: localStorage.getItem("userId"),
-                        difficulte_id: sentierCreationData.difficulte,
-                    })
-                    .then((response) => {
-                        console.log("Sentier créé avec succès:", response.data);
-                        // Effacer les données du sessionStorage après avoir réussi à créer le sentier
-                        sessionStorage.removeItem("sentierCreation");
-                        sessionStorage.removeItem("etapes");
-                        // Redirigez l'utilisateur
-                        window.location.hash = `account`;
-                    })
-                    .catch((error) => {
-                        console.error(
-                            "Erreur lors de la création du sentier:",
-                            error
-                        );
-                    });
+
+            const { longueurTotal, dureeTotal } =
+                await this.calculeDureeTotale();
+
+            const payload = {
+                nom: sentierCreationData.nomSentier,
+                description: sentierCreationData.descriptionSentier,
+                duree: dureeTotal,
+                longueur: longueurTotal,
+                localisation: sentierCreationData.localisation,
+                criteres: sentierCreationData.criteres,
+                motcles: sentierCreationData.motcles,
+                etapes: etapesData.map((etape, index) => ({
+                    nom: etape.nom,
+                    description: etape.description,
+                    latitude: etape.coordonnees.lat,
+                    longitude: etape.coordonnees.long,
+                    duree: etape.durationToNext || 0,
+                    distance: etape.distanceToNext || 0,
+                    ordre: etape.ordre || index + 1,
+                    photo: etape.photo,
+                    points_interet: etape.pointsInteret
+                        ? etape.pointsInteret.map((poi) => ({
+                              nom: poi.nom,
+                              photo: poi.photo || null,
+                          }))
+                        : [],
+                })),
+                photo: sentierCreationData.photoSentierName,
+                theme_id: sentierCreationData.theme,
+                user_id: localStorage.getItem("userId"),
+                difficulte_id: sentierCreationData.difficulte,
+            };
+
+            console.log(payload);
+            const apiUrl = sessionStorage.getItem("update")
+                ? "/update/sentier"
+                : "/submit/sentier";
+
+            try {
+                const response = await axios.post(apiUrl, payload, {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                console.log("Sentier traité avec succès:", response.data);
+                sessionStorage.removeItem("sentierCreation");
+                sessionStorage.removeItem("etapes");
+                if (!sessionStorage.getItem("update"))
+                    sessionStorage.removeItem("update");
+                window.location.hash = `account`;
+            } catch (error) {
+                console.error(
+                    "Erreur lors du traitement du sentier:",
+                    error.response ? error.response.data : error.message
+                );
             }
         },
         recenter() {
@@ -454,13 +545,12 @@ export default {
                 },
             });
         },
-        disabled(){
-            array.forEach(element => {
-                
-            });
-        }
+        disabled() {
+            array.forEach((element) => {});
+        },
     },
     mounted() {
+        console.log(JSON.parse(sessionStorage.getItem("etapes")));
         map = new maplibregl.Map({
             container: "mapCreationDuSentier",
             style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
@@ -477,14 +567,19 @@ export default {
             );
         });
         this.showTours(this.etapes);
+        this.calculeDureeTot();
+        this.disable = !this.verifierCoordonneesCompletes();
         console.log(this.etapes);
         sessionStorage.setItem("etapes", JSON.stringify(this.etapes));
     },
     watch: {
         etapes: {
             handler() {
-                this.showTours(this.etapes);
+                this.loadMap(this.etapes);
                 sessionStorage.setItem("etapes", JSON.stringify(this.etapes));
+                this.calculeDureeTot();
+                console.log(this.etapes);
+                this.disable = !this.verifierCoordonneesCompletes();
             },
             deep: true,
         },
@@ -493,18 +588,11 @@ export default {
 </script>
 
 <style scoped>
-h1{
+h1 {
     text-align: center;
 }
-#recenterDiv {
-    position: absolute;
-    width: 60px;
-    height: 58px;
-    top: 10px;
-    right: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+span {
+    color: var(--color-text-secondary);
 }
 
 #page {
@@ -516,18 +604,22 @@ h1{
 }
 
 #partieInferieur {
-    margin-top: 80% ;
     height: 60vh;
     width: 100%;
     position: relative;
-    margin-bottom: 50%
+}
+
+#recenterDiv {
+    right: -7%;
+    top: 25%;
 }
 
 #mapCreationDuSentier {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    width: 100%;
+    height: 110%;
+    width: 100vw;
+    transform: translate(-8.5%);
 }
 
 #btnSuivant {
@@ -535,7 +627,7 @@ h1{
     position: fixed;
     height: 100px;
     width: 200px;
-    bottom: 10%;
+    bottom: 0%;
     justify-content: center;
     left: 50%;
     transform: translate(-50%);
@@ -544,7 +636,7 @@ h1{
 #btnSuivant button {
     height: 60px;
     width: 100%;
-    background-color: green;
+    background-color: var(--secondary);
     color: white;
     font-size: 20px;
     border: none;
@@ -554,108 +646,100 @@ h1{
 #formulaire {
     display: flex;
     flex-direction: column;
-    height: 40vh;
+    align-items: center;
+    min-height: 40vh;
     width: 100%;
-    position: absolute;
-    top: 5%;
-    left: 50%;
-    transform: translate(-50%);
+    padding-bottom: 5%;
+    position: relative;
 }
-
-.form-container {
-    background-color: white;
-    height: 100%;
+#formulaire > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 15px;
     width: 100%;
-    overflow-y: scroll;
-    padding-bottom: 30px;
 }
-
-.form-container h2 {
-    color: #4caf50;
-    text-align: center;
-}
-
 .stepContainer {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 70%;
-    height: 60px;
-    margin: auto;
-}
-
-.infoMap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    width: 15%;
-}
-
-.step {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 15px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    height: 80%;
     width: 100%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    gap: 5px;
+    padding: 0px 20px;
 }
-
-.deleteEtape {
+.stepContainer .prec-etape,
+.stepContainer .prec-etape span,
+.stepContainer .last-etape span {
+    font-size: 1.4rem;
     display: flex;
+    position: relative;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100%;
-    width: 15%;
 }
-
-.add-step {
+.stepContainer .prec-etape::after,
+.stepContainer .prec-etape::before {
+    content: "";
+    display: block;
+    background: var(--color-text-secondary);
+    width: 5px;
+    height: 5px;
+    position: absolute;
+    border-radius: var(--border-radius-full);
+}
+.stepContainer .prec-etape span::before,
+.stepContainer .last-etape span::before {
+    content: "";
+    display: block;
+    background: var(--secondary);
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    border-radius: var(--border-radius-full);
+}
+.stepContainer .last-etape span::before {
+    width: 8px;
+    height: 8px;
+    top: 5px;
+}
+.stepContainer .prec-etape span::before {
+    top: 4.5px;
+}
+.stepContainer .prec-etape::before {
+    top: 30px;
+}
+.stepContainer .prec-etape::after {
+    top: 45px;
+}
+.stepContainer .last-etape span {
+    font-size: 1.6rem;
+}
+.stepContainer .deleteEtape span {
+    font-size: 1.6rem;
+}
+.stepContainer .step {
     display: flex;
-    justify-content: center;
-    margin-top: 10px;
-    cursor: pointer;
-    color: #4caf50;
-    font-size: 24px;
+    justify-content: space-between;
+    width: 75%;
+    align-items: center;
+    padding: 5px 15px;
+    border-radius: var(--border-radius-small);
+    box-shadow: var(--box-shadow-light);
 }
-
-.dragHandle {
-    cursor: move;
+.add-step {
+    font-size: 1.8rem;
+    color: var(--color-text-secondary);
+    padding: 15px 23px;
 }
-
-@media (min-width: 1000px) {
-    #page {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        height: 100vh;
-        width: 100vw;
-    }
-
-    #formulaire {
-        height: 100vh;
-        width: 40vw;
-    }
-
-    #map {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        width: 60vw;
-        background-color: green;
-    }
-
-    #btnSuivant {
-        display: flex;
-        position: absolute;
-        left: 8%;
-        bottom: 50px;
-    }
-
-    #btnSuivant button {
-        height: 50px;
-    }
+#duree {
+    position: absolute;
+    bottom: 0;
+    z-index: 3;
+    color: var(--color-text-secondary);
+    padding-bottom: 2px;
+}
+form {
+    width: 100%;
 }
 </style>

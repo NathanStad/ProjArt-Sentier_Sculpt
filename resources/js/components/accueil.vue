@@ -3,39 +3,42 @@
         <p>Loading...</p>
     </div>
     <div id="accueil" v-else>
+        <header><Header></Header></header>
         <!-- Bar de recherche -->
-        <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Rechercher"
-            class="recherche"
-        />
-
-        <!-- Bouton Filtre -->
-        <div @click="toggleFiltre()" id="buttonFiltre">
-            <span class="material-symbols-outlined"> tune </span>
+        <div class="header">
+            <input
+                type="text"
+                v-model="searchQuery"
+                placeholder="Rechercher par lieu et nom"
+                class="recherche"
+            />
+            <span class="material-symbols-outlined search-icone"> search </span>
+            <!-- Bouton Filtre -->
+            <div @click="toggleFiltre()" id="buttonFiltre">
+                <span class="material-symbols-outlined"> tune </span>
+            </div>
         </div>
 
         <!-- Conteneur du filtre -->
         <div id="filtre" :class="{ visible: filtreVisible === true }">
-            <Filtre @updateFilters="updateFilters"></Filtre>
+            <Filtre @updateFilters="updateFilters" :closeFilter="toggleFiltre"></Filtre>
         </div>
 
         <!-- Thèmes -->
         <div id="theme-parent">
             <div id="theme">
-                <div class="theme" @click="filterByTheme(null)">
+                <div :class="{theme:true, 'current': themeCurrent == null}" @click="filterByTheme(null)">
                     <div>
                         <span class="material-symbols-outlined">
                             footprint
                         </span>
                     </div>
-                    <p>Tous</p>
+                    <p>Tout</p>
                 </div>
                 <div
                     v-for="theme in themes"
                     :key="theme.id"
-                    class="theme"
+                    :class="{theme:true, 'current': themeCurrent == theme.id}"
                     @click="filterByTheme(theme.id)"
                 >
                     <div v-html="theme.icone"></div>
@@ -55,7 +58,10 @@
                     <div
                         :style="{ 'background-image': `url(${sentier.photo})` }"
                     >
-                        <buttonFavoris id="favoris" :sentierId="sentier.id"></buttonFavoris>
+                        <buttonFavoris
+                            id="favoris"
+                            :sentierId="sentier.id"
+                        ></buttonFavoris>
                     </div>
                     <div class="affichage">
                         <div>
@@ -70,6 +76,7 @@
                         <div v-html="sentier.theme.icone"></div>
                     </div>
                 </a>
+                <p v-if="filteredSentiers < 1">Sentiers recherchés introuvables</p>
             </div>
         </div>
 
@@ -90,6 +97,7 @@
             </div>
         </div>
     </div>
+    <footer><Footer></Footer></footer>
 </template>
 
 <script setup>
@@ -97,8 +105,8 @@ import { ref, computed, onMounted } from "vue";
 import axios from "axios";
 import Filtre from "@/components/elements/filter.vue";
 import buttonFavoris from "@/components/elements/buttonFavorite.vue";
-
-
+import Footer from "@/components/elements/footer.vue";
+import Header from "@/components/elements/header.vue";
 
 // Define reactive state
 const themes = ref([]);
@@ -107,6 +115,7 @@ const sentiersPref = ref([]);
 const filtreVisible = ref(false);
 const searchQuery = ref("");
 const isLoading = ref(true);
+const themeCurrent = ref(null)
 
 const selectedFilters = ref({
     selectedCriteres: [],
@@ -156,6 +165,7 @@ const toggleFiltre = () => {
 
 const filterByTheme = (themeId) => {
     selectedFilters.value.theme = themeId;
+    themeCurrent.value = themeId;
 };
 
 const filteredSentiers = computed(() => {
@@ -175,21 +185,15 @@ const filteredSentiers = computed(() => {
         }
         // Filter by selected critere
         if (selectedFilters.value.selectedCriteres.length > 0) {
-            if (
-                !selectedFilters.value.selectedCriteres.includes(
-                    sentier.theme_id
-                )
-            ) {
+            const critereIds = sentier.criteres.map(critere => critere.id);
+            if (!selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere))) {
                 return false;
             }
         }
         // Filter by selected mot cle
         if (selectedFilters.value.selectedMotCles.length > 0) {
-            if (
-                !selectedFilters.value.selectedMotCles.includes(
-                    sentier.difficulte_id
-                )
-            ) {
+            const motCleIds = sentier.motcles.map(motcle => motcle.id);
+            if (!selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle))) {
                 return false;
             }
         }
@@ -197,7 +201,7 @@ const filteredSentiers = computed(() => {
         if (selectedFilters.value.difficulte.length > 0) {
             if (
                 !selectedFilters.value.difficulte.includes(
-                    sentier.difficulte_id
+                    sentier.difficulte.id
                 )
             ) {
                 return false;
@@ -213,6 +217,7 @@ const filteredSentiers = computed(() => {
     return filtered;
 });
 
+
 // Fetch data when the component is mounted
 onMounted(async () => {
     await fetchTheme();
@@ -224,9 +229,20 @@ onMounted(async () => {
 
 <style>
 .recherche[type="text"] {
-    padding: var(--padding-large) calc(var(--padding-large) * 2.33);
+    padding: 10px 20px 10px 40px;
     z-index: 5;
     position: relative;
+    margin-bottom: 0;
+}
+.recherche[type="text"] + .search-icone {
+    display: block;
+    position: absolute;
+    width: fit-content;
+    height: fit-content;
+    z-index: 5;
+    font-size: 1.5rem ;
+    left: 10px;
+    color: var(--color-text-secondary);
 }
 
 /* Filtre */
@@ -243,14 +259,16 @@ onMounted(async () => {
     left: 0%;
     z-index: 11;
 }
+#accueil .header {
+    margin-bottom: 0;
+}
 
 /* Thèmes */
-
 .theme {
     display: flex;
     align-items: center;
-    margin-bottom: var(--margin-small);
-    width: 110px;
+    padding-bottom: var(--margin-small);
+    width: 85px;
 }
 
 #sentiers-parent,
@@ -272,7 +290,14 @@ onMounted(async () => {
     position: relative;
     left: -10%;
 }
-
+.current{
+    border-bottom: 1px solid var(--primary) ;
+}
+.current span,
+.current p
+{
+    color: var(--primary);
+}
 .theme div {
     margin-right: var(--margin-small);
 }
@@ -287,11 +312,12 @@ onMounted(async () => {
 }
 
 #theme span {
-    font-size: var(--font-size-large);
+    font-size: var(--font-size-small);
 }
 
 #theme p {
-    font-size: var(--font-size-small);
+    font-size: 0.8rem;
+    font-weight: 500;
 }
 
 #theme .theme {
@@ -313,8 +339,8 @@ onMounted(async () => {
 
 #sentiers-accueil > a {
     display: block;
-    width: 300px;
-    height: 420px;
+    width: 260px;
+    height: 350px;
     border-radius: var(--border-radius-medium);
     position: relative;
     overflow: hidden;
@@ -329,11 +355,12 @@ onMounted(async () => {
     background-position: center center;
 }
 
-#sentiers-accueil > a > div:nth-of-type(1) span {
+#favoris {
     position: absolute;
-    right: 15%;
+    right: 8%;
     color: white;
     top: 5%;
+    z-index: 4;
 }
 
 .affichage {
@@ -385,8 +412,8 @@ onMounted(async () => {
 
 /* Sentier incontournable */
 
-h3 {
-    margin: var(--margin-medium) 0;
+#accueil h3 {
+    margin: var(--margin-large) 0 var(--margin-medium) 0;
     font-size: var(--font-size-medium);
 }
 
@@ -428,5 +455,50 @@ h3 {
 
 #lesPlusVues a div {
     margin-left: var(--margin-medium);
+}
+
+@media (min-width: 900px) {
+  #theme-parent{
+    left: -2%;
+    width: 100vw;
+  }
+#theme{
+  width: 100vw;
+  padding: 0 10%;
+  justify-content: space-between;
+}
+#theme span{
+    font-size: var(--font-size-large);
+}
+#lesPlusVues-parent,
+#sentiers-parent{
+    width: 100%;
+    margin-bottom: 5% !important;
+}
+#lesPlusVues,
+#sentiers-accueil{
+    padding: 0 10%;
+width: 100%;
+display: grid;
+grid-template-columns: 1fr 1fr 1fr 1fr ;
+}
+h3{
+    padding: 0 10%;
+}
+.header input{
+    width: 90% !important;
+  }
+}
+</style>
+<style scoped>
+@media (min-width: 900px) {
+
+  .header {
+    position: absolute !important;
+    left: 30%;
+    width: 50%;
+    top: 4%;
+    padding: 0;
+  }
 }
 </style>

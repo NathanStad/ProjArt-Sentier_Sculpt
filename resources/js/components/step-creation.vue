@@ -1,9 +1,15 @@
 <template>
+    <div class="header">
+        <a href="#creationSteps">
+            <span class="material-symbols-outlined"> arrow_back_ios </span>
+        </a>
+        <h1>Création de l'étape {{ noEtape }}</h1>
+        <div></div>
+    </div>
     <div class="container">
-        <h1 class="titreEtape">Étape {{ this.noEtape }}</h1>
         <form @submit.prevent="handleSubmit" v-if="etapes">
             <div class="input-container">
-                <label for="nom">Nom de l'étape</label>
+                <p>Nom de l'étape</p>
                 <input
                     type="text"
                     v-model="etapes.nom"
@@ -12,10 +18,10 @@
                     maxlength="100"
                     required
                 />
-                <span class="char-limit">max. 100 caractères</span>
+                <span v-if="errors.nom" class="error">{{ errors.nom }}</span>
             </div>
             <div class="input-container">
-                <label for="description">Description de l'étape</label>
+                <p>Description de l'étape</p>
                 <textarea
                     v-model="etapes.description"
                     id="description"
@@ -24,58 +30,77 @@
                     required
                 ></textarea>
                 <span class="char-limit">max. 2000 caractères</span>
+                <span v-if="errors.description" class="error">{{ errors.description }}</span>
             </div>
             <div class="input-container">
-                <label>Pointer le lieu de l'étape</label>
+                <p>Pointer le lieu de l'étape</p>
                 <div class="map">
                     <ChoixPosition
                         :etapes="etapes"
                         :updateCoordinates="updateCoordinates"
                     />
                 </div>
+                <span v-if="errors.coordinates" class="error">{{ errors.coordinates }}</span>
             </div>
 
             <div v-if="etapes.photo" class="input-container">
-                <label>Ajouter une photo</label>
-                <label for="photo">
+                <p>Ajouter une photo</p>
+                <label for="photo" class="addPhoto">
                     <img :src="etapes.photo" alt="image de l'etape" />
                     <span class="material-symbols-outlined editIcon">edit</span>
                 </label>
                 <input
                     type="file"
+                    name="photo"
                     id="photo"
                     @change="handleFileUploadEtapes"
                     style="display: none"
                 />
             </div>
             <div v-else class="input-container step">
-                <label>Ajouter une photo</label>
-                <label for="photo">
+                <p>Ajouter une photo</p>
+                <label for="photo" class="addPhoto">
                     <span class="material-symbols-outlined"> add_a_photo </span>
                 </label>
                 <input
                     type="file"
+                    name="photo"
                     id="photo"
                     @change="handleFileUploadEtapes"
                     style="display: none"
                 />
+                <span v-if="errors.photo" class="error">{{ errors.photo }}</span>
             </div>
 
             <div class="input-container" v-if="etapes.pointInteret">
-                <label>Point d'intérêts</label>
+                <p>Point d'intérêts</p>
                 <div class="ptInteret">
                     <input
                         type="text"
                         v-model="etapes.pointInteret[0].nom"
                         placeholder="Nom du point d'intérêt"
                     />
-                    <label for="photoInteret-1">
+                    <label
+                        for="photoInteret-1"
+                        v-if="etapes.pointInteret[0].photo"
+                        class="addPhotoPoi"
+                    >
+                        <img
+                            :src="etapes.pointInteret[0].photo"
+                            alt="image de l'etape"
+                        />
+                        <span class="material-symbols-outlined editIcon"
+                            >edit</span
+                        >
+                    </label>
+                    <label for="photoInteret-1" v-else class="addPhotoPoi">
                         <span class="material-symbols-outlined"
                             >add_a_photo</span
                         >
                     </label>
                     <input
                         type="file"
+                        name="photoInteret-1"
                         id="photoInteret-1"
                         @change="(e) => handleFileUploadPoi(e, 0)"
                         style="display: none"
@@ -83,16 +108,31 @@
                 </div>
                 <div class="ptInteret">
                     <input
+                        name="ptInteret1"
                         type="text"
                         v-model="etapes.pointInteret[1].nom"
                         placeholder="Nom du point d'intérêt"
                     />
-                    <label for="photoInteret-2">
+                    <label
+                        for="photoInteret-2"
+                        v-if="etapes.pointInteret[1].photo"
+                        class="addPhotoPoi"
+                    >
+                        <img
+                            :src="etapes.pointInteret[1].photo"
+                            alt="image de l'etape"
+                        />
+                        <span class="material-symbols-outlined editIcon"
+                            >edit</span
+                        >
+                    </label>
+                    <label v-else for="photoInteret-2" class="addPhotoPoi">
                         <span class="material-symbols-outlined"
                             >add_a_photo</span
                         >
                     </label>
                     <input
+                        name="ptInteret2"
                         type="file"
                         id="photoInteret-2"
                         @change="(e) => handleFileUploadPoi(e, 1)"
@@ -101,22 +141,32 @@
                 </div>
             </div>
             <div class="btnSuivant">
-                <input type="submit" value="Envoyer">
+                <input type="submit" value="Suivant" />
             </div>
         </form>
     </div>
 </template>
 
+
 <script setup>
-import { ref, onMounted, watch } from 'vue';
-import axios from 'axios';
-import ChoixPosition from './elements/choixPosition.vue';
+import { ref, onMounted, watch } from "vue";
+import axios from "axios";
+import ChoixPosition from "./elements/choixPosition.vue";
 
 // Déclaration des états réactifs
 const etapes = ref([]);
 const noEtape = ref(null);
 const nomPhotoEtape = ref(null);
 const nomPhotoPoi = ref([null]);
+
+// Ajout de l'état réactif pour les erreurs
+const errors = ref({
+    nom: "",
+    description: "",
+    coordinates: "",
+    photo: ""
+    // Ajoutez d'autres erreurs si nécessaire pour les autres champs
+});
 
 // Récupération des données de sessionStorage à l'initialisation du composant
 onMounted(() => {
@@ -125,32 +175,37 @@ onMounted(() => {
     if (etapesData) {
         etapes.value = JSON.parse(etapesData)[index];
         noEtape.value = index + 1;
+        console.log(etapes.value);
     } else {
         console.error("No 'etapes' data in sessionStorage.");
     }
 });
 
 // Surveillance des changements de l'état `etapes`
-watch(etapes, (newEtapes) => {
-    console.log(newEtapes);
-}, { deep: true });
+watch(
+    etapes,
+    (newEtapes) => {
+        console.log(newEtapes);
+    },
+    { deep: true }
+);
 
 // Fonction pour gérer le téléchargement de fichier pour l'étape
 const handleFileUploadEtapes = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append('photoEtapes', file);
-
+    formData.append("photoEtapes", file);
+    console.log(formData);
     try {
-        const response = await axios.post('/submit-file-etapes', formData, {
+        const response = await axios.post("/submit-file-etapes", formData, {
             headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+                "Content-Type": "multipart/form-data",
+            },
         });
         nomPhotoEtape.value = response.data.fileName;
         etapes.value.photo = `/storage/${response.data.path}`;
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error("Error uploading file:", error);
     }
 };
 
@@ -158,47 +213,68 @@ const handleFileUploadEtapes = async (e) => {
 const handleFileUploadPoi = async (e, index) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append('photoPoi', file);
+    formData.append("photoPoi", file);
 
     try {
-        const response = await axios.post('/submit-file-poi', formData, {
+        const response = await axios.post("/submit-file-poi", formData, {
             headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+                "Content-Type": "multipart/form-data",
+            },
         });
         nomPhotoPoi.value[index] = response.data.fileName;
-        etapes.value.pointInteret[index].photo = `/storage/${response.data.path}`;
+        etapes.value.pointInteret[
+            index
+        ].photo = `/storage/${response.data.path}`;
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error("Error uploading file:", error);
     }
 };
 
 // Fonction pour mettre à jour les coordonnées
 const updateCoordinates = (lngLat) => {
-    etapes.value.coordonnees.long = lngLat.lng;
-    etapes.value.coordonnees.lat = lngLat.lat;
+    etapes.value.coordonnees = { long: lngLat.lng, lat: lngLat.lat };
 };
 
 // Fonction pour gérer la soumission du formulaire
 const handleSubmit = () => {
-    const index = parseInt(window.location.hash.split("-")[1]) - 1;
-    const etapesData = sessionStorage.getItem("etapes");
-    if (etapesData) {
-        let etapesArray = JSON.parse(etapesData);
-        console.log(etapesArray[index]);
-        etapesArray[index] = etapes.value;
-        console.log(etapesArray[index]);
-        sessionStorage.setItem("etapes", JSON.stringify(etapesArray));
-        console.log(sessionStorage.getItem("etapes"));
-        window.location.hash = `creationSteps`;
-    } else {
-        console.error("No 'etapes' data in sessionStorage.");
-    }
-};
+    // Validation des champs
+    let valid = true;
+    errors.value.nom = "";
+    errors.value.description = "";
+    errors.value.coordinates = "";
+    errors.value.photo = "";
 
-// Déclaration des composants enfants
-const components = {
-    ChoixPosition,
+    if (!etapes.value.nom) {
+        errors.value.nom = "Le nom de l'étape est requis.";
+        valid = false;
+    }
+    if (!etapes.value.description) {
+        errors.value.description = "La description de l'étape est requise.";
+        valid = false;
+    }
+    if (!etapes.value.coordonnees || !etapes.value.coordonnees.long || !etapes.value.coordonnees.lat) {
+        errors.value.coordinates = "Les coordonnées de l'étape sont requises.";
+        valid = false;
+    }
+    if (!etapes.value.photo) {
+        errors.value.photo = "La photo de l'étape est requise.";
+        valid = false;
+    }
+    // Ajoutez d'autres validations si nécessaire pour les autres champs
+
+    // Soumettre le formulaire si tout est valide
+    if (valid) {
+        const index = parseInt(window.location.hash.split("-")[1]) - 1;
+        const etapesData = sessionStorage.getItem("etapes");
+        if (etapesData) {
+            let etapesArray = JSON.parse(etapesData);
+            etapesArray[index] = etapes.value;
+            sessionStorage.setItem("etapes", JSON.stringify(etapesArray));
+            window.location.hash = `creationSteps`;
+        } else {
+            console.error("No 'etapes' data in sessionStorage.");
+        }
+    }
 };
 </script>
 
@@ -238,10 +314,9 @@ const components = {
     height: 100%;
     width: 90%;
     margin: auto;
-    margin-bottom: 20%;
 }
 
-.step label[for="photo"]{
+.step label[for="photo"] {
     width: 100% !important;
     height: 150px;
 }
@@ -291,7 +366,6 @@ const components = {
 }
 
 .input-container label {
-    display: block;
     font-weight: bold;
     margin-bottom: 5px;
 }
@@ -317,7 +391,6 @@ const components = {
     width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding-right: 25px;
 }
 
 .ptInteret input {
@@ -331,10 +404,50 @@ const components = {
     margin-bottom: 10px;
 }
 
+.ptInteret input {
+    margin-bottom: 0 !important;
+    margin-right: 10px !important;
+}
+
 .map {
     width: 100%;
     height: 340px;
     border-radius: 10px;
     position: relative;
+}
+</style>
+<style scoped>
+.input-container {
+    align-items: flex-start;
+}
+p {
+    padding: 15px 0px;
+    font-weight: 700;
+}
+#nom {
+    width: 100%;
+}
+.addPhotoPoi {
+    height: 50px;
+    width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius-medium);
+    border: 1px solid var(--color-text-secondary);
+    overflow: hidden;
+}
+.addPhotoPoi span {
+    color: var(--color-text-secondary);
+}
+textarea {
+    box-shadow: var(--box-shadow-light);
+}
+.btnSuivant {
+    margin-top: 15px;
+}
+.btnSuivant input {
+    padding: 20px;
+    margin-bottom: 0 !important;
 }
 </style>

@@ -1,6 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- 
+    
+Projet d'articulation dans le cadre de l'HEIG-VD 
 
+Projet fait par l'équipe Sculpt composé de Morgane Devals, Sami Gilliand, Léa Macaluso, Tristan Montanari et Nathan Stader
+
+-->
+<!DOCTYPE html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

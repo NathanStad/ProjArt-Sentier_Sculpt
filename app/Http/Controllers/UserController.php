@@ -40,19 +40,32 @@ class UserController extends Controller {
             return response()->json($user, 201);
         }
         
-        public function authenticate(Request $request)
+        public function uploadFile(Request $request)
         {
-            $credentials = $request->validate([
-                'email' => ['required', 'email'],
-                'password' => ['required'],
-            ]);
-    
-            if (Auth::attempt($credentials)) {
-                $request->session()->regenerate();
-    
-                return response()->json(['message' => 'Authenticated', 'user' => Auth::user(), ], 200);
+            // Obtenez l'utilisateur par son ID
+            $user = User::find($request->input('userId'));
+        
+            // Vérifiez que l'utilisateur existe
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
             }
-    
-            return response()->json(['message' => 'Authentication failed'], 401);
+        
+            // Vérifiez que la requête contient un fichier
+            if ($request->hasFile('photoProfil')) {
+                $file = $request->file('photoProfil');
+                $path = $file->store('users', 'public');
+                $fileName = $file->hashName(); // Obtenez le nom du fichier généré
+        
+                $trueFileName = '/storage/' . $path;
+                $user->update([
+                    'photo' => $trueFileName,
+                ]);
+        
+                return response()->json(['message' => 'Photo updated successfully!', 'path' => $path, 'fileName' => $fileName]);
+            }
+        
+            return response()->json(['message' => 'No file uploaded'], 400);
         }
+        
+        
 }

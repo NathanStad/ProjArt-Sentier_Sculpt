@@ -1,6 +1,10 @@
 <template>
   <div id="filter">
-    <h3>Filtre</h3>
+    <div class="header">
+      <span @click="callParentMethod" class="material-symbols-outlined">arrow_back_ios</span>
+      <h1>Filtre</h1>
+      <div @click="resetFilters">Réinitialiser</div>
+    </div>
     <!-- Critères -->
     <p>Critères</p>
     <div>
@@ -74,8 +78,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, defineEmits } from 'vue';
+import { ref, onMounted, watch, defineEmits, defineProps } from 'vue';
 import axios from 'axios';
+
+const props = defineProps({
+  closeFilter: {
+    type: Function,
+    required: true
+  }
+});
+
+function callParentMethod() {
+  props.closeFilter();
+}
 
 const criteres = ref([]);
 const motcles = ref([]);
@@ -115,15 +130,34 @@ watch([selectedCriteres, selectedMotCles, difficulte], () => {
     difficulte: difficulte.value
   });
 });
+
+// Fonction pour réinitialiser tous les inputs à zéro
+function resetFilters() {
+  selectedCriteres.value = [];
+  selectedMotCles.value = [];
+  difficulte.value = [];
+}
 </script>
 
 <style scoped>
-#filter{
+#filter {
   display: absolute;
   flex-direction: column;
   justify-content: space-between;
   padding: 0% 10%;
   height: 100%;
+}
+#filter .header{
+  position: sticky;
+  top: 0;
+  background: white;
+  padding-bottom: 5%;
+  padding-top: 5%;
+}
+#filter .header div:last-of-type{
+  color: red;
+  font-weight: 500;
+  margin-top: 5px ;
 }
 #filter > p {
   font-weight: bold;
@@ -138,29 +172,27 @@ label {
   margin-right: 5px;
 }
 
-#difficulte{
+#difficulte {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 
-#difficulte label{
+#difficulte label {
   display: flex;
   flex-direction: column;
 }
 
-#difficulte label > p{
+#difficulte label > p {
   padding-top: 5px;
 }
 #difficulte label > p,
-#difficulte label  span
-{
+#difficulte label span {
   color: var(--color-text-secondary);
 }
 #difficulte input:checked + span,
 #difficulte input:checked + span + p,
 #difficulte input:checked + div + p,
-#difficulte input:checked + div >  span
-{
+#difficulte input:checked + div > span {
   color: var(--primary);
 }
 </style>

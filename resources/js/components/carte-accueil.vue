@@ -1,20 +1,24 @@
 <template>
-    <!-- Bar de recherche -->
-    <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Rechercher"
-        class="recherche"
-    />
-
-    <!-- Bouton Filtre -->
-    <div @click="toggleFiltre" id="buttonFiltre">
-        <span class="material-symbols-outlined"> tune </span>
+    <div class="header">
+        <input
+            type="text"
+            v-model="searchQuery"
+            placeholder="Rechercher par lieu et nom"
+            class="recherche"
+        />
+        <span class="material-symbols-outlined search-icone"> search </span>
+        <!-- Bouton Filtre -->
+        <div @click="toggleFiltre()" id="buttonFiltre">
+            <span class="material-symbols-outlined"> tune </span>
+        </div>
     </div>
 
     <!-- Conteneur du filtre -->
-    <div v-if="filtreVisible" id="filtre">
-        <Filtre @updateFilters="updateFilters"></Filtre>
+    <div id="filtre" :class="{ visible: filtreVisible === true }">
+        <Filtre
+            @updateFilters="updateFilters"
+            :closeFilter="toggleFiltre"
+        ></Filtre>
     </div>
     <div id="carte-accueil">
         <div id="mapCarteAccueil"></div>
@@ -28,89 +32,152 @@
             <p>No sentiers available</p>
         </div> -->
     </div>
+    <footer><Footer></Footer></footer>
 </template>
 
 <script setup>
+import { ref, onMounted, watchEffect, computed } from "vue";
+import axios from "axios";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import RecentrerBtnComponent from "./elements/recentrerBtnComponent.vue";
-import axios from "axios";
-import { ref, onMounted, watchEffect } from "vue";
+import Footer from "@/components/elements/footer.vue";
 
 let map;
-
 const sentiers = ref([]);
 const coordonnesRecenter = ref([6.700021, 46.602693]);
+const searchQuery = ref(""); // Variable pour la barre de recherche
+const selectedFilters = ref({
+    selectedCriteres: [],
+    selectedMotCles: [],
+    difficulte: [],
+    theme: null,
+});
+const filtreVisible = ref(false); // Variable pour afficher ou masquer les filtres
 
 const fetchSentiers = async () => {
-  try {
-    const response = await axios.get("/data-sentiers");
-    sentiers.value = response.data.filter((item) => item.archive === 0);
-  } catch (error) {
-    console.error("Error fetching sentiers:", error);
-  }
+    try {
+        const response = await axios.get("/data-sentiers");
+        sentiers.value = response.data.filter((item) => item.archive === 0);
+    } catch (error) {
+        console.error("Error fetching sentiers:", error);
+    }
 };
-
+// Méthode pour basculer l'affichage des filtres
+const toggleFiltre = () => {
+    filtreVisible.value = !filtreVisible.value;
+};
+// Filtres les sentiers en fonction des critères de recherche et des filtres sélectionnés
+const filteredSentiers = computed(() => {
+    return sentiers.value.filter((sentier) => {
+        // Filtrer par recherche
+        if (searchQuery.value.trim() !== "") {
+            const query = searchQuery.value.toLowerCase();
+            if (
+                !sentier.nom.toLowerCase().includes(query) &&
+                !sentier.localisation.toLowerCase().includes(query)
+            ) {
+                return false;
+            }
+        }
+        // Filtrer par critères sélectionnés
+        if (selectedFilters.value.selectedCriteres.length > 0) {
+            const critereIds = sentier.criteres.map(critere => critere.id);
+            if (!selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere))) {
+                return false;
+            }
+        }
+        // Filtrer par mots-clés sélectionnés
+        if (selectedFilters.value.selectedMotCles.length > 0) {
+            const motCleIds = sentier.motcles.map(motcle => motcle.id);
+            if (!selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle))) {
+                return false;
+            }
+        }
+        // Filtrer par difficulté
+        if (selectedFilters.value.difficulte.length > 0) {
+            if (!selectedFilters.value.difficulte.includes(sentier.difficulte.id)) {
+                return false;
+            }
+        }
+        // Filtrer par thème
+        if (selectedFilters.value.theme !== null) {
+            if (sentier.theme_id !== selectedFilters.value.theme) {
+                return false;
+            }
+        }
+        return true;
+    });
+});
 const randomVert = () => {
-  const green = Math.floor(Math.random() * 100) + 100;
-  const red = Math.floor(Math.random() * 0);
-  const blue = Math.floor(Math.random() * 0);
+    const green = Math.floor(Math.random() * 100) + 100;
+    const red = Math.floor(Math.random() * 0);
+    const blue = Math.floor(Math.random() * 0);
 
-  const hex = (value) => {
-    const hexValue = value.toString(16);
-    return hexValue.length === 1 ? "0" + hexValue : hexValue;
-  };
+    const hex = (value) => {
+        const hexValue = value.toString(16);
+        return hexValue.length === 1 ? "0" + hexValue : hexValue;
+    };
 
-  const color = `#${hex(red)}${hex(green)}${hex(blue)}`;
-  return color;
+    const color = `#${hex(red)}${hex(green)}${hex(blue)}`;
+    return color;
 };
+
+// Global array to store markers and layers
+let existingMarkers = [];
+let existingLayers = [];
 
 const afficheRoute = (tour) => {
-  const routeLayerId = `route-layer${tour.id}`;
-  if (map.getLayer(routeLayerId)) {
-    map.removeLayer(routeLayerId);
-    map.removeSource(routeLayerId);
-  }
-  const couleur = randomVert();
-  const etapesInversees = tour.etapes.slice().reverse();
-  const idDepart = tour.etapes[0].id;
+    const routeLayerId = `route-layer${tour.id}`;
+    if (map.getLayer(routeLayerId)) {
+        map.removeLayer(routeLayerId);
+        map.removeSource(routeLayerId);
+    }
 
-  etapesInversees.forEach((etape, index) => {
-    const coordinate = [etape.longitude, etape.latitude];
-    const marker = new maplibregl.Marker({ color: couleur })
-      .setLngLat(coordinate)
-      .addTo(map);
-    if (etape.id !== idDepart) {
-      const markerElement = marker._element;
-      const svgElement = markerElement.querySelector("svg");
-      if (svgElement) {
-        svgElement.innerHTML = "";
+    const couleur = randomVert();
+    const etapesInversees = tour.etapes.slice().reverse();
+    const idDepart = tour.etapes[0].id;
 
-        svgElement.style.position = "relative";
-        svgElement.style.zIndex = "12";
+    etapesInversees.forEach((etape, index) => {
+        const coordinate = [etape.longitude, etape.latitude];
+        const marker = new maplibregl.Marker({ color: couleur })
+            .setLngLat(coordinate)
+            .addTo(map);
 
-        const circle = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "circle"
-        );
-        circle.setAttribute("cx", "12");
-        circle.setAttribute("cy", "27");
-        circle.setAttribute("r", "12");
-        circle.setAttribute("fill", couleur);
+        // Add the marker to the global array
+        existingMarkers.push(marker);
 
-        svgElement.appendChild(circle);
-      }
-    } else {
-      const markerElement = marker._element;
-      const svgElement = markerElement.querySelector("svg");
-      if (svgElement) {
-        svgElement.innerHTML = "";
-        svgElement.setAttribute("width", "90");
-        svgElement.setAttribute("height", "90");
-        svgElement.style.position = "relative";
-        svgElement.style.zIndex = "1000";
+        if (etape.id !== idDepart) {
+            const markerElement = marker._element;
+            const svgElement = markerElement.querySelector("svg");
+            if (svgElement) {
+                svgElement.innerHTML = "";
 
-        const point = `<svg id="Calque_1" data-name="Calque 1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 50 50">
+                svgElement.style.position = "relative";
+                svgElement.style.zIndex = "12";
+
+                const circle = document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "circle"
+                );
+                circle.setAttribute("cx", "12");
+                circle.setAttribute("cy", "27");
+                circle.setAttribute("r", "12");
+                circle.setAttribute("fill", couleur);
+
+                svgElement.appendChild(circle);
+            }
+        } else {
+            const markerElement = marker._element;
+            const svgElement = markerElement.querySelector("svg");
+            if (svgElement) {
+                svgElement.innerHTML = "";
+                svgElement.setAttribute("width", "90");
+                svgElement.setAttribute("height", "90");
+                svgElement.style.position = "relative";
+                svgElement.style.zIndex = "1000";
+
+                const point = `<svg id="Calque_1" data-name="Calque 1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 50 50">
                         <defs>
                           <style>
                             .cls-1 { display: none; }
@@ -125,116 +192,132 @@ const afficheRoute = (tour) => {
                         <circle class="cls-3" cx="25" cy="20" r="9"/>
                         <g>
                           <path class="cls-4" d="M24.1,18c-.3.3-.6.5-.8.7-.2.2-.3.5-.3.8,0,.5-.1,1-.2,1.4,0,.4-.3.5-.6.5-.3,0-.5-.3-.5-.6,0-.7.2-1.4.3-2.2,0-.2.2-.5.4-.6.5-.4,1-.8,1.5-1.2.5-.4,1-.6,1.6-.6.5,0,.9.2,1.1.6.2.5.4,1,.6,1.5.2.5.4.9.9,1.1.4.2.8.4,1.2.6.3.2.5.4.3.7-.1.3-.4.4-.8.2-.6-.3-1.3-.6-1.9-.9-.3-.2-.5-.5-.8-.8-.1.5-.2,1.1-.4,1.7,0,0,0,.2.1.3.9,1.4,1.8,2.8,2.7,4.2.2.3.2.6,0,.9-.2.3-.4.4-.8.3-.2,0-.4-.2-.5-.3-1.2-1.8-2.4-3.7-3.5-5.6,0,0,0-.2,0-.4.1-.7.3-1.3.4-2,0,0,0-.2,0-.4Z"/>
-                          <path class="cls-4" d="M23.4,21.7c.3.4.6.8.9,1.2,0,0,0,.1,0,.2-.1.4-.2.8-.4,1.1-.4.7-1,1.3-1.5,2-.3.4-.7.5-1,.2-.3-.2-.4-.7,0-1,.2-.2.3-.5.5-.7.7-.8,1.1-1.7,1.3-2.7,0,0,0-.1,0-.2,0,0,0,0,0-.1Z"/>
+                          <path class="cls-4" d="M23.4,21.7c.3.4.6.8.9,1.2,0,0,0,.1,0,.2-.1.4-.2.8-.4 1.1-.4.7-1 1.3-1.5 2-.3.4-.7.5-1 .2-.3-.2-.4-.7,0-1,.2-.2.3-.5.5-.7.7-.8,1.1-1.7,1.3-2.7,0,0,0-.1,0-.2,0,0,0,0,0-.1Z"/>
                           <path class="cls-4" d="M24.7,14.4c0-.7.6-1.3,1.3-1.3.7,0,1.3.6,1.3,1.3,0,.7-.6,1.3-1.3,1.3-.7,0-1.3-.6-1.3-1.3Z"/>
                         </g>
                         <path class="cls-1" d="M21.3,20.2c0-1.1,0-2.3,0-3.4,0-1,.7-1.8,1.6-2,.5,0,.9,0,1.3.2,1.8,1.2,3.6,2.3,5.3,3.5,1.2.8,1.2,2.6,0,3.3-1.8,1.2-3.5,2.3-5.3,3.5-.6.4-1.3.4-1.9,0-.7-.4-1-1-1-1.8,0-1.2,0-2.3,0-3.5ZM23.3,23.7c1.7-1.1,3.5-2.3,5.2-3.4-1.7-1.1-3.4-2.3-5.2-3.4v6.8Z"/>
                       </svg>`;
-        svgElement.innerHTML = point;
-      }
-    }
-
-    marker.getElement().addEventListener("click", () => {
-      window.location.hash = `sentier-${tour.id}`;
-    });
-  });
-  map.on("load", () => {
-    if (tour.etapes.length > 1) {
-      fetch(
-        "https://api.openrouteservice.org/v2/directions/foot-hiking/geojson",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization:
-              "5b3ce3597851110001cf6248cbe7a7b654c74537a20bd21243c00b7a",
-          },
-          body: JSON.stringify({
-            coordinates: tour.etapes.map((etape) => [
-              etape.longitude,
-              etape.latitude,
-            ]),
-          }),
+                svgElement.innerHTML = point;
+            }
         }
-      )
-        .then((response) => response.json())
-        .then((responseData) => {
-          const coordinates =
-            responseData.features[0].geometry.coordinates;
 
-          map.addLayer({
-            id: routeLayerId,
-            type: "line",
-            source: {
-              type: "geojson",
-              data: {
-                type: "Feature",
-                geometry: {
-                  type: "LineString",
-                  coordinates: coordinates,
-                },
-              },
-            },
-            layout: {
-              "line-join": "round",
-              "line-cap": "round",
-            },
-            paint: {
-              "line-color": `${couleur}`,
-              "line-width": 5,
-            },
-          });
-        })
-        .catch((error) => {
-          console.error("Erreur lors de la requête:", error);
+        marker.getElement().addEventListener("click", () => {
+            window.location.hash = `sentier-${tour.id}`;
         });
+    });
+
+    if (tour.etapes.length > 1) {
+        fetch(
+            "https://api.openrouteservice.org/v2/directions/foot-hiking/geojson",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization:
+                        "5b3ce3597851110001cf6248cbe7a7b654c74537a20bd21243c00b7a",
+                },
+                body: JSON.stringify({
+                    coordinates: tour.etapes.map((etape) => [
+                        etape.longitude,
+                        etape.latitude,
+                    ]),
+                }),
+            }
+        )
+            .then((response) => response.json())
+            .then((responseData) => {
+                const coordinates =
+                    responseData.features[0].geometry.coordinates;
+
+                map.addLayer({
+                    id: routeLayerId,
+                    type: "line",
+                    source: {
+                        type: "geojson",
+                        data: {
+                            type: "Feature",
+                            geometry: {
+                                type: "LineString",
+                                coordinates: coordinates,
+                            },
+                        },
+                    },
+                    layout: {
+                        "line-join": "round",
+                        "line-cap": "round",
+                    },
+                    paint: {
+                        "line-color": `${couleur}`,
+                        "line-width": 5,
+                    },
+                });
+
+                // Add the layer to the global array
+                existingLayers.push(routeLayerId);
+            })
+            .catch((error) => {
+                console.error("Erreur lors de la requête:", error);
+            });
     }
-  });
 };
 
 const showTours = (tours) => {
-  tours.forEach((tour) => {
-    afficheRoute(tour);
-  });
+    // Remove existing markers
+    existingMarkers.forEach(marker => marker.remove());
+    existingMarkers = []; // Clear the array
+
+    // Remove existing layers
+    existingLayers.forEach(layerId => {
+        if (map.getLayer(layerId)) {
+            map.removeLayer(layerId);
+            map.removeSource(layerId);
+        }
+    });
+    existingLayers = []; // Clear the array
+
+    tours.forEach((tour) => {
+        afficheRoute(tour);
+    });
 };
 
+
 const recenter = () => {
-  console.log("recenter");
-  map.flyTo({
-    center: coordonnesRecenter.value,
-    zoom: 8.5,
-    curve: 1,
-    easing(t) {
-      return t;
-    },
-  });
+    console.log("recenter");
+    map.flyTo({
+        center: coordonnesRecenter.value,
+        zoom: 8.5,
+        curve: 1,
+        easing(t) {
+            return t;
+        },
+    });
 };
 
 onMounted(() => {
-  map = new maplibregl.Map({
-    container: "mapCarteAccueil",
-    style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
-    center: [6.700021, 46.602693],
-    zoom: 8.5,
-  });
+    map = new maplibregl.Map({
+        container: "mapCarteAccueil",
+        style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
+        center: [6.700021, 46.602693],
+        zoom: 8.5,
+    });
 
-  map.on("load", () => {
-    map.addControl(
-      new maplibregl.NavigationControl({
-        showCompass: false,
-        showZoom: true,
-      })
-    );
-  });
+    map.on("load", () => {
+        map.addControl(
+            new maplibregl.NavigationControl({
+                showCompass: false,
+                showZoom: true,
+            })
+        );
+    });
 
-  fetchSentiers();
+    fetchSentiers();
 });
 
 watchEffect(() => {
-  showTours(sentiers.value);
+  console.log(filteredSentiers.value);
+    showTours(filteredSentiers.value);
 });
 </script>
-
 
 <style scoped>
 #mapCarteAccueil {
@@ -244,27 +327,18 @@ watchEffect(() => {
     left: 0;
     top: 0;
 }
-
-#recenterDiv {
-    position: absolute;
-    width: 40px;
-    height: 58px;
-    top: 30%;
-    right: 4%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    rotate: 90deg;
+.header span {
+    top: 8px;
 }
 #recenter {
     padding: 5px 10px;
 }
-.recherche{
+.recherche {
     top: 5% !important;
-    position: absolute;
-    width: 70%;
+    width: 80%;
 }
-#buttonFiltre{
+#buttonFiltre {
     top: 5% !important;
+    right: 5%;
 }
 </style>
