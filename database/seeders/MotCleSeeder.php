@@ -34,9 +34,9 @@ class MotCleSeeder extends Seeder {
         ]);
 
         MotCle::create([
-            'name' => 'Fôret',
+            'name' => 'Forêt',
         ]);
-
+ 
         MotCle::create([
             'name' => 'Jardins',
         ]);
