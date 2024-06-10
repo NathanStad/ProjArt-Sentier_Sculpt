@@ -12,4 +12,13 @@ class MotClesController extends Controller
         
         return response()->json($pois);
     }
+
+    public function transformToArray(Request $jsonParam) {
+
+        if (is_null($jsonParam)) {
+            return [];
+        }
+
+        return json_decode(json_encode($jsonParam), true);
+    }
 }
