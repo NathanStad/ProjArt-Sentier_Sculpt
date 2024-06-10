@@ -490,6 +490,7 @@ export default {
                 criteres: sentierCreationData.criteres,
                 motcles: sentierCreationData.motcles,
                 etapes: etapesData.map((etape, index) => ({
+                    id: etape.id,
                     nom: etape.nom,
                     description: etape.description,
                     latitude: etape.coordonnees.lat,
@@ -500,6 +501,7 @@ export default {
                     photo: etape.photo,
                     points_interet: etape.pointsInteret
                         ? etape.pointsInteret.map((poi) => ({
+                              id: poi.id,
                               nom: poi.nom,
                               photo: poi.photo || null,
                           }))
@@ -507,19 +509,83 @@ export default {
                 })),
                 photo: sentierCreationData.photoSentierName,
                 theme_id: sentierCreationData.theme,
-                user_id: localStorage.getItem("userId"),
                 difficulte_id: sentierCreationData.difficulte,
+                archive: sentierCreationData.archive || 0,
             };
+            // Conversion de la durée en entier
+            payload.duree = parseInt(payload.duree);
+
+            // Conversion des critères en tableau
+            payload.criteres = Array.isArray(payload.criteres)
+                ? payload.criteres
+                : [payload.criteres];
+
+            // Conversion des mots-clés en tableau
+            payload.motcles = Array.isArray(payload.motcles)
+                ? payload.motcles
+                : [payload.motcles];
 
             console.log(payload);
-            const apiUrl = sessionStorage.getItem("update")
-                ? "/update/sentier"
-                : "/submit/sentier";
+            const formData = new FormData();
+            formData.append("nom", payload.nom);
+            formData.append("description", payload.description);
+            formData.append("duree", payload.duree);
+            formData.append("longueur", payload.longueur);
+            formData.append("localisation", payload.localisation);
 
+            // Erreur 
+
+            formData.append("criteres", JSON.stringify(payload.criteres));
+            formData.append("motcles", JSON.stringify(payload.motcles));
+
+            //
+
+            payload.etapes.forEach((etape, index) => {
+                if (etape.id) {
+                    formData.append(`etapes[${index}][id]`, etape.id);
+                }
+                formData.append(`etapes[${index}][nom]`, etape.nom);
+                formData.append(
+                    `etapes[${index}][description]`,
+                    etape.description
+                );
+                formData.append(`etapes[${index}][latitude]`, etape.latitude);
+                formData.append(`etapes[${index}][longitude]`, etape.longitude);
+                formData.append(`etapes[${index}][duree]`, etape.duree);
+                formData.append(`etapes[${index}][distance]`, etape.distance);
+                formData.append(`etapes[${index}][ordre]`, etape.ordre);
+                formData.append(`etapes[${index}][photo]`, etape.photo);
+                etape.points_interet.forEach((poi, poiIndex) => {
+                    if (poi.id) {
+                        formData.append(
+                            `etapes[${index}][points_interet][${poiIndex}][id]`,
+                            poi.id
+                        );
+                    }
+                    formData.append(
+                        `etapes[${index}][points_interet][${poiIndex}][nom]`,
+                        poi.nom
+                    );
+                    formData.append(
+                        `etapes[${index}][points_interet][${poiIndex}][photo]`,
+                        poi.photo
+                    );
+                });
+            });
+
+            formData.append("photo", payload.photo);
+            formData.append("theme_id", payload.theme_id);
+            formData.append("difficulte_id", payload.difficulte_id);
+            formData.append("archive", payload.archive);
+
+            const apiUrl = sessionStorage.getItem("update")
+                ? `/update/sentier/${payload.id}`
+                : "/submit/sentier";
+            console.log(JSON.stringify(payload.criteres));
             try {
-                const response = await axios.post(apiUrl, payload, {
+                const response = await axios.post(apiUrl, formData, {
                     headers: {
-                        "Content-Type": "application/json",
+                        "Content-Type": "multipart/form-data",
                     },
                 });
                 console.log("Sentier traité avec succès:", response.data);
@@ -529,10 +595,17 @@ export default {
                     sessionStorage.removeItem("update");
                 window.location.hash = `account`;
             } catch (error) {
-                console.error(
-                    "Erreur lors du traitement du sentier:",
-                    error.response ? error.response.data : error.message
-                );
+                if (error.response && error.response.data) {
+                    console.error(
+                        "Erreur lors du traitement du sentier:",
+                        error.response.data
+                    );
+                } else {
+                    console.error(
+                        "Erreur lors du traitement du sentier:",
+                        error.message
+                    );
+                }
             }
         },
         recenter() {
