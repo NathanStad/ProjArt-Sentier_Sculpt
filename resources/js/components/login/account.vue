@@ -3,12 +3,13 @@
         <p>Loading...</p>
     </div>
     <div v-else id="compte">
+
         <div class="header">
             <a @click.prevent="goBack">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
             <h1>Mon Compte</h1>
-            <span class="material-symbols-outlined" @click="logOut">
+            <span class="material-symbols-outlined" @click="logOut" id="logout">
                 logout
             </span>
         </div>
@@ -41,10 +42,10 @@
             </div>
         </div>
 
+        <a @click="newSentier" class="boutton">Ajouter un sentier</a>
         <!-- les sentiers -->
         <div id="vos-santiers">
             <!-- Ajouter un sentier -->
-            <a @click="newSentier" class="boutton">Ajouter un sentier</a>
 
             <!-- Choix de si archivé ou non -->
             <div id="button-archive">
@@ -97,7 +98,7 @@
                     </div>
                     <div @click="editSentier(sentier)">
                         <span class="material-symbols-outlined"> edit </span
-                        >Modifer le sentier
+                        >Modifier le sentier
                     </div>
                     <div @click="deleteSentier(sentier)">
                         <span class="material-symbols-outlined"> delete </span
@@ -193,7 +194,7 @@
                 v-if="userSentierArchive.length < 1"
                 :class="{ content: true, active: archive === 'off' }"
             >
-                Vous n'avez pas publié de sentier
+                Vous n'avez pas de sentier dans l'archive
             </p>
         </div>
     </div>
@@ -244,7 +245,17 @@ const fetchUserByUser = async () => {
         console.error("Error fetching sentiers:", error);
     }
 };
-
+const fetchStep = async (id) => {
+    if (id !== "") {
+        try {
+            const response = await axios.get(`/data-step-${id}`);
+            return response.data;
+        } catch (error) {
+            console.error("Error fetching sentiers:", error);
+            return error
+        }
+    }
+};
 // Fonction pour afficher le contenu en fonction du choix (archivé ou non)
 const showContent = (content) => {
     archive.value = content;
@@ -303,7 +314,13 @@ const newSentier = () => {
 
 // Envoie pour la modifiction de l'objet
 
-const editSentier = (sentier) => {
+const editSentier = async (sentier) => {
+    let etapeData = []
+    for (let index = 0; index < sentier.etapes.length; index++) {
+        let value = await fetchStep(sentier.etapes[index].id)      
+        etapeData.push(value)  
+    }
+    console.log(etapeData);
     if (
         !sessionStorage.getItem("sentierCreation") &&
         !sessionStorage.getItem("etapes")
@@ -327,7 +344,6 @@ const editSentier = (sentier) => {
     sentier.motcles.forEach((motcle) => {
         seniterData.motcles.push(motcle.id);
     });
-    let etapeData = sentier.etapes;
     for (let index = 0; index < etapeData.length; index++) {
         etapeData[index].coordonnees = {}
         etapeData[index].coordonnees.long = etapeData[index].longitude;
@@ -412,7 +428,9 @@ if (!localStorage.getItem("userId")) {
 
 <style>
 /* Utilisateur */
-
+#compte{
+    width: 100%;
+}
 #user {
     height: 25vh;
     display: flex;
@@ -447,6 +465,7 @@ if (!localStorage.getItem("userId")) {
 /* Boutton sentiers */
 
 .boutton {
+    display: block;
     width: 100%;
     padding: 15px 20px;
     border: 1px solid var(--primary);
@@ -585,5 +604,92 @@ if (!localStorage.getItem("userId")) {
 }
 #photoProfil span {
     font-size: 1.3rem;
+}
+#logout{
+    cursor: pointer;
+    color: var(--color-text-secondary);
+}
+@media only screen and (min-width: 900px) {
+    #compte{
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        grid-template-rows: 1fr 3fr 1fr;
+        min-height: 90vh;
+        padding: 0 5%;
+    }
+    .header{
+        grid-column: 1/2;
+        grid-row: 1/2;
+    }
+    #user{
+        grid-column: 1/2;
+        grid-row: 2/3;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+    }
+    #user img{
+        width: 50%;
+        height: auto;
+        border-radius:200px ;
+    }
+    #user h3{
+        padding: 0;
+        margin: 0;
+        font-size: 2rem;
+        text-align: center;
+    }
+    #photoProfil{
+        top: 55%;
+        left: 30%;
+    }
+    #photoProfil span{
+        font-size: 2.3rem;
+    }
+    #user h4{
+        padding: 0;
+        margin-top: 5%;
+        font-size: 1.3rem;
+        text-align: center;
+    }
+    .boutton{
+        grid-column: 1/2;
+        grid-row: 3/4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50%;
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    #vos-santiers{
+        grid-column: 2/3;
+        grid-row: 1/4;
+        margin-bottom: 0;
+        display: grid;
+        grid-template-columns: 1fr 1fr ;
+        align-items: unset;
+        gap: 30px;
+        padding: 0 5%;
+        }
+        #button-archive{
+        margin: 0 18% !important;
+        grid-column: 1/3;
+        height: 30%;
+        width: 70%;
+        margin: 0;
+        position: relative;
+        top: 30%;
+        transform: translateY(-50%);
+    }
+    #button-archive span{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+  .login .cls-1 {
+        fill: white;
+      }
 }
 </style>

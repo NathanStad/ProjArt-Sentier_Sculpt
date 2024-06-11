@@ -354,4 +354,9 @@ watchEffect(() => {
     top: 5% !important;
     right: 5%;
 }
+@media only screen and (min-width: 900px) {
+    .recherche[type="text"] + .search-icone{
+        left:18.5%;
+    }
+}
 </style>

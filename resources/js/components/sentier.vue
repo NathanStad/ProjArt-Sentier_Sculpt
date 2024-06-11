@@ -662,7 +662,7 @@ li > p {
     box-shadow: none !important;
     position: absolute;
     width: fit-content;
-    transform: translate(120%);
+    transform: translate(23vw);
     bottom: -2.5%;
 }
 #comms form > div button span {
@@ -719,12 +719,19 @@ li > p {
     .menu {
         margin: 0 20%;
     }
+    #comms {
+        margin: 0 20%;
+    }
     .content {
         display: none;
     }
-    #step.active {
+    #step.active{
         display: grid;
         margin: 0 20%;
+        grid-template-columns: 1fr 1fr;
+    }
+    #comms ul{
+        display: grid;
         grid-template-columns: 1fr 1fr;
     }
     #desc.active {
@@ -732,11 +739,17 @@ li > p {
     }
     #sentier,
     #desc,
-    #step {
+    #comms {
         margin-bottom: 7%;
     }
     #step a {
         height: 350px;
+    }
+    #comms form > div > textarea{
+        height: 10vh;
+    }
+    .boutton-demarer{
+        width: 30%;
     }
 }
 </style>

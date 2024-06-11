@@ -195,4 +195,10 @@ label {
 #difficulte input:checked + div > span {
   color: var(--secondary);
 }
+@media only screen and (min-width: 900px) {
+  #filter {
+    padding: 0% 20%;
+
+  }
+}
 </style>

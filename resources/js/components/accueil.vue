@@ -374,7 +374,7 @@ onMounted(async () => {
     bottom: 10%;
     left: 50%;
     width: 90%;
-    height: 18%;
+    min-height: 18%;
     transform: translateX(-50%);
     background: white;
     padding: var(--padding-medium) var(--padding-large);
@@ -470,7 +470,7 @@ onMounted(async () => {
   }
 #theme{
   width: 100vw;
-  padding: 0 20%;
+  padding: 0 18%;
   justify-content: space-between;
 }
 #theme span{
@@ -483,16 +483,23 @@ onMounted(async () => {
 }
 #lesPlusVues,
 #sentiers-accueil{
-    padding: 0 20%;
+    padding: 0 18%;
 width: 100%;
 display: grid;
 grid-template-columns: 1fr 1fr 1fr 1fr ;
 }
 h3{
-    padding: 0 20%;
+    padding: 0 18%;
 }
 .header input{
     width: 90% !important;
+  }
+  #sentiers-accueil > a{
+    width: 100%;
+  }
+  .sentier-nom{
+    font-size: 0.9rem;
+    width: 85%;
   }
 }
 </style>

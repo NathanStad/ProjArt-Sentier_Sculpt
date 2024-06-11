@@ -242,6 +242,14 @@ h1 {
     position: relative;
     margin-bottom: var(--margin-large);
 }
+.header a span{
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
+.header span:first-child{
+    color: var(--color-text-secondary);
+    cursor: pointer;
+}
 
 /* Input */
 input[type="text"] {
@@ -403,10 +411,13 @@ textarea {
   header{
 margin-bottom: 2% ;
 justify-content: flex-start;
-padding: 0 20%;
+padding: 0 18%;
+  }
+  footer{
+    height: 8vh;
   }
   .header{
-    padding: 0 20%;
+    padding: 0 18%;
   }
 }
 </style>

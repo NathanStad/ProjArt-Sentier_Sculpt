@@ -30,7 +30,9 @@
                     required
                 ></textarea>
                 <span class="char-limit">max. 2000 caractères</span>
-                <span v-if="errors.description" class="error">{{ errors.description }}</span>
+                <span v-if="errors.description" class="error">{{
+                    errors.description
+                }}</span>
             </div>
             <div class="input-container">
                 <p>Pointer le lieu de l'étape</p>
@@ -40,7 +42,9 @@
                         :updateCoordinates="updateCoordinates"
                     />
                 </div>
-                <span v-if="errors.coordinates" class="error">{{ errors.coordinates }}</span>
+                <span v-if="errors.coordinates" class="error">{{
+                    errors.coordinates
+                }}</span>
             </div>
 
             <div v-if="etapes.photo" class="input-container">
@@ -69,7 +73,9 @@
                     @change="handleFileUploadEtapes"
                     style="display: none"
                 />
-                <span v-if="errors.photo" class="error">{{ errors.photo }}</span>
+                <span v-if="errors.photo" class="error">{{
+                    errors.photo
+                }}</span>
             </div>
 
             <div class="input-container" v-if="etapes.pointInteret">
@@ -147,7 +153,6 @@
     </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
@@ -164,7 +169,7 @@ const errors = ref({
     nom: "",
     description: "",
     coordinates: "",
-    photo: ""
+    photo: "",
     // Ajoutez d'autres erreurs si nécessaire pour les autres champs
 });
 
@@ -252,7 +257,11 @@ const handleSubmit = () => {
         errors.value.description = "La description de l'étape est requise.";
         valid = false;
     }
-    if (!etapes.value.coordonnees || !etapes.value.coordonnees.long || !etapes.value.coordonnees.lat) {
+    if (
+        !etapes.value.coordonnees ||
+        !etapes.value.coordonnees.long ||
+        !etapes.value.coordonnees.lat
+    ) {
         errors.value.coordinates = "Les coordonnées de l'étape sont requises.";
         valid = false;
     }
@@ -277,7 +286,6 @@ const handleSubmit = () => {
     }
 };
 </script>
-
 
 <style>
 * {
@@ -391,6 +399,7 @@ const handleSubmit = () => {
     width: 100%;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 
 .ptInteret input {
@@ -408,12 +417,24 @@ const handleSubmit = () => {
     margin-bottom: 0 !important;
     margin-right: 10px !important;
 }
-
+.ptInteret span{
+    font-size: 1rem;
+    color: white;
+    top: -5px !important;
+    right: -5px !important;
+}
+.container .input-container .editIcon{
+    top: 25px;
+    right: -15px;
+}
 .map {
     width: 100%;
     height: 340px;
     border-radius: 10px;
     position: relative;
+}
+.container #recenterDiv {
+    top: 20%;
 }
 </style>
 <style scoped>
@@ -437,17 +458,59 @@ p {
     border: 1px solid var(--color-text-secondary);
     overflow: hidden;
 }
-.addPhotoPoi span {
-    color: var(--color-text-secondary);
-}
 textarea {
     box-shadow: var(--box-shadow-light);
 }
 .btnSuivant {
     margin-top: 15px;
+    cursor: pointer;
 }
 .btnSuivant input {
     padding: 20px;
     margin-bottom: 0 !important;
+    cursor: pointer;
+}
+@media only screen and (min-width: 900px) {
+    .container {
+        margin: 0;
+        margin-top:5% ;
+        padding: 0 18%;
+    }
+    .container form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: fit-content fit-content fit-content;
+        gap: 40px;
+        position: relative;
+        min-height: 75vh;
+
+    }
+    .input-container:nth-of-type(1){
+        grid-column: 1/2;
+        grid-row: 1/2;
+    }
+    .input-container:nth-of-type(2){
+        grid-column: 1/2;
+        grid-row:2/3;
+    }
+    .input-container:nth-of-type(3){
+        grid-column: 2/3;
+        grid-row: 1/3;
+    }
+    .input-container:nth-of-type(4){
+        grid-column: 1/2;
+        grid-row: 3/4;
+    }
+    .input-container:nth-of-type(5){
+        grid-column: 2/3;
+        grid-row: 3/4;
+    }
+    .btnSuivant {
+        position: absolute;
+        width:30%;
+        right: 0;
+        bottom: -7%;
+    }
+
 }
 </style>

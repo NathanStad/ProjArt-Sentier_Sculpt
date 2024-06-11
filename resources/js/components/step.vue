@@ -54,7 +54,7 @@
 
         <div>
             <h3>Retour à la carte</h3>
-            <a :href="'#stepslist-' + props.Id" id="back">
+            <a :href="'#stepslist-' + etape.sentier_id" id="back">
                 <span class="material-symbols-outlined"> keyboard_return </span>
                 <img
                     src="/storage/etapes/Capture d’écran 2024-06-09 153325.png"
@@ -138,6 +138,9 @@ onMounted(async () => {
 #etape > * {
     margin-bottom: 10%;
 }
+#etape > *:last-child {
+    margin-bottom: 5%;
+}
 h3 {
     font-weight: 600;
     margin-bottom: 2%;
@@ -191,7 +194,7 @@ h3 {
     position: relative;
     background: var(--color-text);
     border-radius: var(--border-radius-medium);
-    margin-bottom: 10%;
+    overflow: hidden;
 }
 #back span {
     position: absolute;
@@ -199,12 +202,51 @@ h3 {
     top: 50%;
     transform: translate(-50%, -50%);
     z-index: 5;
-    font-size: 5rem;
+    font-size: 3rem;
     color: white;
 }
 #back img {
     width: 100%;
     height: 100%;
-    opacity: 0.5;
+    opacity: 0.7;
+}
+@media only screen and (min-width: 900px) {
+    #etape{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    #etape > *:last-child {
+        margin: 0 18%;
+        margin-bottom: 1%;
+    }
+    #etape > * {
+        margin-bottom: 3%;
+        grid-column: 1/3;
+    }
+    .swiper {
+        margin-top: 0;
+        margin: 0 18%;
+        width: 64%;
+        height: 500px;
+    }
+    h3 {
+        padding: 0;
+    }
+    #etape > div:nth-of-type(3){
+        grid-column: 1/2;
+        padding-left: 36%;
+        }
+        #etape > div:nth-of-type(4){
+            grid-column: 2/3;
+            padding-right: 36%;
+    }
+    #poi > div{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .poi-element{
+        width: 100%;
+        height:270px;
+    }
 }
 </style>

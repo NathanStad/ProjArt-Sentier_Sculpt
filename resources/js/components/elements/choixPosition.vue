@@ -184,4 +184,9 @@ export default {
     rotate: 90deg;
     border: transparent;
 }
+@media only screen and (min-width: 900px) {
+    #recenterDiv{
+        right: 1.5%;
+    }
+}
 </style>

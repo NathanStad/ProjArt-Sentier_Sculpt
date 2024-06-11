@@ -2,7 +2,7 @@
     <div v-if="isLoading">
         <p>Loading...</p>
     </div>
-    <div v-else>
+    <div v-else id="favorite">
         <div class="header">
             <h1>Favoris</h1>
             <input
@@ -19,7 +19,7 @@
             :key="sentier.id"
             class="sentier"
         >
-            <div>
+            <div @click="reload">
                 <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
             </div>
             <div>
@@ -39,8 +39,11 @@
                 <a :href="`#steps-${sentier.id}`" class="button">Démarrer</a>
             </div>
         </a>
-        <p v-if="filteredSentiers.length < 1">
-            Introuvable
+        <p v-if="filteredSentiers.length < 1 && sentiers.length >= 1" id="non">
+            Pas de favoris trouvé
+        </p>
+        <p v-if="sentiers.length < 1" id="non">
+            Vous n'avez actuelement pas de favoris
         </p>
     </div>
     <footer><Footer></Footer></footer>
@@ -72,7 +75,9 @@ const fetchSentier = async (sentierId) => {
 favoris.value.forEach((sentierId) => {
     fetchSentier(sentierId);
 });
-
+const reload = () =>{
+    location.reload();
+}
 const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
         const query = searchQuery.value.toLowerCase();
@@ -202,5 +207,50 @@ input{
     width: 100vw;
     padding: 10%;
     transform: translate(-8%);
+}
+@media only screen and (min-width: 900px) {
+
+    .header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        transform: translate(-2%);
+        padding: 5% 18%;
+        grid-column: 1/3;
+    }
+
+    .header input{
+        left: 0;
+        transform: none;
+    }
+    h1{
+        padding-bottom:0
+    }
+    .recherche{
+        width: 50% !important;
+    }
+    .recherche[type="text"] + .search-icone{
+        left:50.5%;
+        top:92px
+    }
+    #favorite{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+    }
+    .sentier{
+        height : 250px;
+        width:60%;
+    }
+    .sentier:nth-child(even){
+        margin-left: 32%;
+    }
+    .sentier:nth-child(odd){
+        margin-right: 32%;
+    }
+    #non{
+        padding: 0 16.5%;
+        width: 100%;
+        grid-column: 1/3;
+    }
 }
 </style>

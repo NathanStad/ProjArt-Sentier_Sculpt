@@ -3,15 +3,25 @@
         <div id="sentier-creation">
             <div class="header">
                 <a href="#account">
-                    <span class="material-symbols-outlined">arrow_back_ios</span>
+                    <span class="material-symbols-outlined"
+                        >arrow_back_ios</span
+                    >
                 </a>
                 <h1>Création d'un sentier</h1>
                 <div></div>
             </div>
             <label class="block">
                 Nom sentier
-                <input v-model="nomSentier" type="text" id="nomSentier" required placeholder="Nom du sentier" />
-             <br><span v-if="errors.nomSentier" class="error">{{ errors.nomSentier }}</span>
+                <input
+                    v-model="nomSentier"
+                    type="text"
+                    id="nomSentier"
+                    required
+                    placeholder="Nom du sentier"
+                />
+                <br /><span v-if="errors.nomSentier" class="error">{{
+                    errors.nomSentier
+                }}</span>
             </label>
             <label class="block">
                 Description du sentier
@@ -23,15 +33,23 @@
                     required
                     placeholder="Description du sentier"
                 ></textarea>
-             <br><span v-if="errors.descriptionSentier" class="error">{{ errors.descriptionSentier }}</span>
+                <br /><span v-if="errors.descriptionSentier" class="error">{{
+                    errors.descriptionSentier
+                }}</span>
             </label>
-            <br>
+            <br />
             <label class="block">
-                Nom de la localisation <br>
-                <input v-model="lieu" type="text" id="nomLieu" required placeholder="Nom de la localisation" />
+                Nom de la localisation <br />
+                <input
+                    v-model="lieu"
+                    type="text"
+                    id="nomLieu"
+                    required
+                    placeholder="Nom de la localisation"
+                />
                 <span v-if="errors.lieu" class="error">{{ errors.lieu }}</span>
             </label>
-            
+
             <p>Sélection d'un thème</p>
             <div class="three-box">
                 <label
@@ -49,7 +67,12 @@
                     <div v-html="theme.icone"></div>
                     <p>{{ theme.name }}</p>
                 </label>
-             <br><span v-if="errors.selectedTheme" class="error" style="grid-column: 1/4;">{{ errors.selectedTheme }}</span>
+                <br /><span
+                    v-if="errors.selectedTheme"
+                    class="error"
+                    style="grid-column: 1/4"
+                    >{{ errors.selectedTheme }}</span
+                >
             </div>
 
             <p>Critères</p>
@@ -57,7 +80,10 @@
                 <label
                     v-for="critere in criteres"
                     :key="critere.id"
-                    :class="{ checkbox: true, active: selectedCriteres.includes(critere.id) }"
+                    :class="{
+                        checkbox: true,
+                        active: selectedCriteres.includes(critere.id),
+                    }"
                 >
                     <input
                         v-model="selectedCriteres"
@@ -67,7 +93,9 @@
                     />
                     {{ critere.name }}
                 </label>
-             <br><span v-if="errors.selectedCriteres" class="error">{{ errors.selectedCriteres }}</span>
+                <br /><span v-if="errors.selectedCriteres" class="error">{{
+                    errors.selectedCriteres
+                }}</span>
             </div>
 
             <p>Mot-clés</p>
@@ -75,7 +103,10 @@
                 <label
                     v-for="motcle in motcles"
                     :key="motcle.id"
-                    :class="{ checkbox: true, active: selectedMotCles.includes(motcle.id) }"
+                    :class="{
+                        checkbox: true,
+                        active: selectedMotCles.includes(motcle.id),
+                    }"
                 >
                     <input
                         v-model="selectedMotCles"
@@ -85,7 +116,9 @@
                     />
                     {{ motcle.name }}
                 </label>
-             <br><span v-if="errors.selectedMotCles" class="error">{{ errors.selectedMotCles }}</span>
+                <br /><span v-if="errors.selectedMotCles" class="error">{{
+                    errors.selectedMotCles
+                }}</span>
             </div>
 
             <p>Niveau de difficulté</p>
@@ -128,8 +161,13 @@
                         <span class="material-symbols-outlined">bolt</span>
                         <span class="material-symbols-outlined">bolt</span>
                     </div>
-                    <p>Difficile</p>
-                </label><span v-if="errors.difficulte" class="error" style="grid-column: 1/4;">{{ errors.difficulte }}</span>
+                    <p>Difficile</p> </label
+                ><span
+                    v-if="errors.difficulte"
+                    class="error"
+                    style="grid-column: 1/4"
+                    >{{ errors.difficulte }}</span
+                >
             </div>
 
             <p>Ajouter une photo</p>
@@ -148,10 +186,17 @@
                     @change="handleFileUpload"
                     style="display: none"
                     accept="image/png, image/jpeg, image/jpg"
-                /><span v-if="errors.photoSentier" class="error" style="width:100%;">{{ errors.photoSentier }}</span>
+                /><span
+                    v-if="errors.photoSentier"
+                    class="error"
+                    style="width: 100%"
+                    >{{ errors.photoSentier }}</span
+                >
             </div>
 
-            <button type="submit" :disabled="!isValidForm()" class="button">Suivant</button>
+            <button type="submit" :disabled="!isValidForm()" class="button">
+                Suivant
+            </button>
         </div>
     </form>
 </template>
@@ -183,8 +228,8 @@ const errors = ref({
 });
 
 // Si ça vient pour une mise à jour
-if (sessionStorage.getItem('sentierCreation')) {
-    const data = JSON.parse(sessionStorage.getItem('sentierCreation'))
+if (sessionStorage.getItem("sentierCreation")) {
+    const data = JSON.parse(sessionStorage.getItem("sentierCreation"));
     nomSentier.value = data.nomSentier;
     descriptionSentier.value = data.descriptionSentier;
     lieu.value = data.lieu;
@@ -202,19 +247,20 @@ const motcles = ref([]);
 const handleFileUpload = async (e) => {
     const file = e.target.files[0];
     const formData = new FormData();
-    formData.append('photoSentier', file);
+    formData.append("photoSentier", file);
 
     try {
-        const response = await axios.post('/submit-file-sentier', formData, {
+        const response = await axios.post("/submit-file-sentier", formData, {
             headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+                "Content-Type": "multipart/form-data",
+            },
         });
         photoSentier.value = `/storage/${response.data.path}`;
         errors.value.photoSentier = ""; // Clear error message on successful upload
     } catch (error) {
-        console.error('Error uploading file:', error);
-        errors.value.photoSentier = "Erreur lors du téléchargement de la photo.";
+        console.error("Error uploading file:", error);
+        errors.value.photoSentier =
+            "Erreur lors du téléchargement de la photo.";
     }
 };
 
@@ -258,7 +304,7 @@ const submitData = async () => {
             const formDataToSave = {
                 nomSentier: nomSentier.value,
                 descriptionSentier: descriptionSentier.value,
-                localisation: lieu.value,
+                lieu: lieu.value,
                 theme: selectedTheme.value,
                 criteres: selectedCriteres.value,
                 motcles: selectedMotCles.value,
@@ -266,27 +312,48 @@ const submitData = async () => {
                 photoSentier: photoSentier.value,
             };
 
-            sessionStorage.setItem("sentierCreation", JSON.stringify(formDataToSave));
+            sessionStorage.setItem(
+                "sentierCreation",
+                JSON.stringify(formDataToSave)
+            );
             console.log("Form data saved to sessionStorage:", formDataToSave);
 
             // Redirect user
             window.location.hash = `creationSteps`;
         } catch (error) {
-            console.error('Error submitting form:', error);
+            console.error("Error submitting form:", error);
         }
     }
 };
 
 // Validate the form and set error messages
 const validateForm = () => {
-    errors.value.nomSentier = nomSentier.value ? "" : "Le nom du sentier est requis.";
-    errors.value.descriptionSentier = descriptionSentier.value ? "" : "La description du sentier est requise.";
-    errors.value.lieu = lieu.value ? "" : "Le nom de la localisation est requis.";
-    errors.value.selectedTheme = selectedTheme.value ? "" : "Veuillez sélectionner un thème.";
-    errors.value.selectedCriteres = selectedCriteres.value.length > 0 ? "" : "Veuillez sélectionner au moins un critère.";
-    errors.value.selectedMotCles = selectedMotCles.value.length > 0 ? "" : "Veuillez sélectionner au moins un mot-clé.";
-    errors.value.difficulte = difficulte.value ? "" : "Veuillez sélectionner un niveau de difficulté.";
-    errors.value.photoSentier = photoSentier.value ? "" : "Veuillez ajouter une photo.";
+    errors.value.nomSentier = nomSentier.value
+        ? ""
+        : "Le nom du sentier est requis.";
+    errors.value.descriptionSentier = descriptionSentier.value
+        ? ""
+        : "La description du sentier est requise.";
+    errors.value.lieu = lieu.value
+        ? ""
+        : "Le nom de la localisation est requis.";
+    errors.value.selectedTheme = selectedTheme.value
+        ? ""
+        : "Veuillez sélectionner un thème.";
+    errors.value.selectedCriteres =
+        selectedCriteres.value.length > 0
+            ? ""
+            : "Veuillez sélectionner au moins un critère.";
+    errors.value.selectedMotCles =
+        selectedMotCles.value.length > 0
+            ? ""
+            : "Veuillez sélectionner au moins un mot-clé.";
+    errors.value.difficulte = difficulte.value
+        ? ""
+        : "Veuillez sélectionner un niveau de difficulté.";
+    errors.value.photoSentier = photoSentier.value
+        ? ""
+        : "Veuillez ajouter une photo.";
 };
 
 // Fonction pour vérifier si le formulaire est valide
@@ -305,7 +372,16 @@ const isValidForm = () => {
 
 // Mettre à jour l'état du bouton de soumission en fonction de la validité du formulaire
 watch(
-    [nomSentier, descriptionSentier, lieu, selectedTheme, selectedCriteres, selectedMotCles, difficulte, photoSentier],
+    [
+        nomSentier,
+        descriptionSentier,
+        lieu,
+        selectedTheme,
+        selectedCriteres,
+        selectedMotCles,
+        difficulte,
+        photoSentier,
+    ],
     () => {
         validateForm();
     }
@@ -436,4 +512,23 @@ input[type="radio"] + div > span {
     font-size: 0.9rem;
     margin-top: 0.3rem;
 }
+</style>
+<style scoped>
+
+    @media only screen and (min-width: 900px) {
+        #sentier-creation > * {
+            margin: 1% 18%;
+        }
+        .header {
+            margin: 3% 0 !important;
+            margin-bottom: 5% !important;
+        }
+        .input-container {
+            width: 64% !important;
+        }
+        .button {
+            left: 32.5% !important;
+            width: 30% !important;
+        }
+    }
 </style>

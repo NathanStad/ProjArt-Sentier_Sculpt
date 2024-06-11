@@ -1,5 +1,5 @@
 <template>
-    <div id="page">
+    <div id="page" class="page">
         <div class="header">
             <a href="#creationSentier">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
@@ -98,22 +98,9 @@ export default {
     data() {
         return {
             etapes: JSON.parse(sessionStorage.getItem("etapes")) || [
-                {
-                    nom: "nom 1",
-                    description: "la description",
-                    coordonnees: {
-                        long: 6.6832837302582675,
-                        lat: 46.575054030719826,
-                    },
-                    photo: null,
-                    pointInteret: [
-                        { nom: "", photo: null },
-                        { nom: "", photo: null },
-                    ],
-                },
-                {
-                    nom: "nom 2",
-                    description: "la descr",
+            {
+                    nom: "Étape 1",
+                    description: "",
                     coordonnees: { long: null, lat: null },
                     photo: null,
                     pointInteret: [
@@ -122,12 +109,19 @@ export default {
                     ],
                 },
                 {
-                    nom: "nom 3",
-                    description: "la descr",
-                    coordonnees: {
-                        long: 6.6832837302582675,
-                        lat: 46.585054030719826,
-                    },
+                    nom: "Étape 2",
+                    description: "",
+                    coordonnees: { long: null, lat: null },
+                    photo: null,
+                    pointInteret: [
+                        { nom: "", photo: null },
+                        { nom: "", photo: null },
+                    ],
+                },
+                {
+                    nom: "Étape 3",
+                    description: "",
+                    coordonnees: { long: null, lat: null },
                     photo: null,
                     pointInteret: [
                         { nom: "", photo: null },
@@ -481,11 +475,14 @@ export default {
             const { longueurTotal, dureeTotal } =
                 await this.calculeDureeTotale();
             const payload = {
+                // ID Si exite
+                nom: sentierCreationData.nomSentier,
+                //
                 nom: sentierCreationData.nomSentier,
                 description: sentierCreationData.descriptionSentier,
                 duree: dureeTotal,
-                longueur: longueurTotal,
-                localisation: sentierCreationData.localisation,
+                longueur: longueurTotal / 1000,
+                localisation: sentierCreationData.lieu,
                 criteres: sentierCreationData.criteres,
                 motcles: sentierCreationData.motcles,
                 etapes: etapesData.map((etape, index) => ({
@@ -506,7 +503,7 @@ export default {
                           }))
                         : [],
                 })),
-                photo: sentierCreationData.photoSentierName,
+                photo: sentierCreationData.photoSentier,
                 theme_id: sentierCreationData.theme,
                 difficulte_id: sentierCreationData.difficulte,
                 archive: sentierCreationData.archive || 0,
@@ -582,6 +579,8 @@ export default {
                 ? `/update/sentier/${payload.id}`
                 : "/submit/sentier";
             console.log(JSON.stringify(payload.criteres));
+
+            // put pour update
             try {
                 const response = await axios.post(apiUrl, formData, {
                     headers: {
@@ -714,13 +713,15 @@ span {
     font-size: 20px;
     border: none;
     border-radius: 50px;
+    cursor: pointer;
+    z-index: 410;
 }
 
 #formulaire {
     display: flex;
     flex-direction: column;
     align-items: center;
-    min-height: 40vh;
+    min-height: 31vh;
     width: 100%;
     padding-bottom: 5%;
     position: relative;
@@ -740,6 +741,9 @@ span {
     height: 100%;
     gap: 5px;
     padding: 0px 20px;
+}
+.stepContainer:nth-of-type(5){
+margin-bottom: 10%;
 }
 .stepContainer .prec-etape,
 .stepContainer .prec-etape span,
@@ -790,6 +794,7 @@ span {
 }
 .stepContainer .deleteEtape span {
     font-size: 1.6rem;
+    cursor: pointer;
 }
 .stepContainer .step {
     display: flex;
@@ -801,9 +806,10 @@ span {
     box-shadow: var(--box-shadow-light);
 }
 .add-step {
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     color: var(--color-text-secondary);
     padding: 15px 23px;
+    cursor: pointer;
 }
 #duree {
     position: absolute;
@@ -811,8 +817,51 @@ span {
     z-index: 3;
     color: var(--color-text-secondary);
     padding-bottom: 2px;
+    width: fit-content !important;
+    left: 0%;
 }
 form {
     width: 100%;
+}
+.dragHandle{
+    cursor: grab;
+}
+@media only screen and (min-width: 900px) {
+    .page{
+        display: grid;
+        grid-template-columns: 1fr 1fr ;
+        grid-template-rows: 1fr 3fr;
+        width: 100%;
+        height: 90vh;
+    }
+    #btnSuivant{
+        width: 50%;
+    }
+    .header{
+        grid-column: 1/2;
+        grid-row: 1/2;
+    }
+    #formulaire{
+        grid-column: 1/2;
+        grid-row: 2/3;
+        margin-left: 15%;
+    }
+    #partieInferieur{
+        grid-column: 2/3;
+        grid-row: 1/3;
+        height: 100%;
+    }
+    #mapCreationDuSentier{
+        width: 103%;
+        left: 0;
+        height: 115%;
+        transform: translate(2%,-5%);
+    }
+    #recenterDiv{
+        right: -3%;
+    }
+    #formulaire > div{
+        gap: 40px;
+    }
 }
 </style>
