@@ -6,6 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
 
+     /**
+    * Run the migrations.
+    *
+    * Cette fonction crée la table 'users' avec les colonnes suivantes :
+    * - id : clé primaire auto-incrémentée
+    * - name : nom de l'utilisateur (string, longueur maximale de 50 caractères)
+    * - email : adresse email de l'utilisateur (string, longueur maximale de 255 caractères, unique)
+    * - email_verified_at : timestamp de vérification de l'email (nullable)
+    * - password : mot de passe de l'utilisateur (string)
+    * - role : rôle de l'utilisateur (string, longueur maximale de 50 caractères)
+    * - photo : photo de l'utilisateur (longText, nullable)
+    * - remember_token : token pour la fonctionnalité "Remember Me"
+    * - timestamps : colonnes 'created_at' et 'updated_at' pour les timestamps automatiques
+    *
+    * @return void
+    */
+
+
     public function up(): void {
         Schema::create('users', function (Blueprint $table) {
             $table->id();

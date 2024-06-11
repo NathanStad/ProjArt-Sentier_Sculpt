@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Critere extends Model
 {
+    /**
+     * Modèle représentant un critère.
+     * Les critères peuvent être associés à plusieurs sentiers pour définir des caractéristiques spécifiques.
+     */
     use HasFactory;
     
     protected $table = 'criteres';

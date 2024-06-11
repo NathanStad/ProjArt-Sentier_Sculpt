@@ -7,21 +7,17 @@ use Illuminate\Database\Seeder;
 use App\Models\Sentier;
 
 class SentierSeeder extends Seeder {
+
+    /**
+     * Exécute les enregistrements de la base de données pour les sentiers.
+     * Crée plusieurs sentiers prédéfinis, chacun avec des informations détaillées telles que le nom, la description, 
+     * la durée, la longueur, la localisation, le compteur, le statut d'archive, la photo, et les associations avec 
+     * un thème, un utilisateur et une difficulté.
+     *
+     * @return void
+     */
+
     public function run(): void {
-        // Sentier::create([
-        //     'nom' => 'Sentier Typique',
-        //     'description' => 'Un sentier typique pour les tests.',
-        //     'duree' => 120,
-        //     'longueur' => 10.5,
-        //     'point_depart' => 'Lausanne',
-        //     'point_arrive' => 'Vevey',
-        //     'photo' => 'https://example.com/sentier1',
-        //     'theme_id' => 1,
-        //     'user_id' => 1,
-        //     'difficulte_id' => 3
-        // ]);
-        
-        // Sentier::factory(20)->create();
 
         Sentier::create([
             'nom' => 'La ville qui dure',

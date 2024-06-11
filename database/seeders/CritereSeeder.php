@@ -8,6 +8,13 @@ use App\Models\Critere;
 
 class CritereSeeder extends Seeder {
 
+    /**
+     * Exécute les enregistrements de la base de données pour les critères.
+     * Crée plusieurs critères prédéfinis, chacun avec un nom et une icône correspondante.
+     *
+     * @return void
+     */
+
     public function run(): void
     {
 

@@ -8,9 +8,17 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Cette fonction crée la table 'criteres' avec les colonnes suivantes :
+     * - id : clé primaire auto-incrémentée
+     * - name : nom du critère (string, longueur maximale de 50 caractères)
+     * - icone : icône représentant le critère (longText, nullable)
+     * - timestamps : colonnes 'created_at' et 'updated_at' pour les timestamps automatiques
+     *
+     * @return void
      */
-    public function up(): void
-    {
+    
+    public function up(): void {
         Schema::create('criteres', function (Blueprint $table) {
             $table->id();
             $table->string('name', 50);

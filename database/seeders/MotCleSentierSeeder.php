@@ -8,22 +8,14 @@ use App\Models\Sentier;
 use App\Models\MotCle;
 
 class MotCleSentierSeeder extends Seeder {
+    /**
+     * Exécute les enregistrements de la base de données pour la table pivot motcle_sentier.
+     * Pour chaque sentier existant, attache aléatoirement trois mots-clés.
+     *
+     * @return void
+     */
+    
     public function run(): void {
-        // $sentier = Sentier::first();
-        // $theme = MotCle::first();
-
-        // if ($sentier && $theme) {
-        //     $sentier->motcles()->attach($theme->id);
-        // }
-        
-        // $sentiers = Sentier::all();
-        // $themes = MotCle::all();
-
-        // $sentiers->each(function ($sentier) use ($themes) {
-        //     $sentier->motcles()->attach(
-        //         $themes->random(rand(1, 3))->pluck('id')->toArray()
-        //     );
-        // }); 
 
         $sentiers = Sentier::all();
         $motCles = MotCle::all();

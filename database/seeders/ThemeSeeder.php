@@ -8,6 +8,13 @@ use App\Models\Theme;
 
 class ThemeSeeder extends Seeder {
 
+    /**
+     * Exécute les enregistrements de la base de données pour les thèmes.
+     * Crée plusieurs thèmes prédéfinis, chacun avec un nom spécifique et une icône correspondante.
+     *
+     * @return void
+     */
+
     public function run(): void
     {
         Theme::create([

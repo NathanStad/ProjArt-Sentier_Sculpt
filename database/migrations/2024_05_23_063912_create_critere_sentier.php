@@ -8,7 +8,16 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Cette fonction crée la table pivot 'critere_sentier' avec les colonnes suivantes :
+     * - id : clé primaire auto-incrémentée
+     * - sentier_id : référence étrangère vers la table 'sentiers' (foreignId)
+     * - critere_id : référence étrangère vers la table 'criteres' (foreignId)
+     * - timestamps : colonnes 'created_at' et 'updated_at' pour les timestamps automatiques
+     *
+     * @return void
      */
+    
     public function up(): void
     {
         Schema::create('critere_sentier', function (Blueprint $table) {

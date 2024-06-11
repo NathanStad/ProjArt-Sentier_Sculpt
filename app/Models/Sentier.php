@@ -11,6 +11,12 @@ use App\Models\Difficulte;
 
 class Sentier extends Model
 {
+    /**
+     * Modèle représentant un sentier.
+     * Les sentiers contiennent des informations détaillées et peuvent être associés à plusieurs étapes, 
+     * mots-clés, critères, commentaires, et être reliés à un thème, un utilisateur, et un niveau de difficulté.
+     */
+    
     use HasFactory;
     protected $table = 'sentiers';
 

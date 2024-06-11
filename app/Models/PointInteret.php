@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class PointInteret extends Model
 {
+    /**
+     * Modèle représentant un point d'intérêt.
+     * Les points d'intérêt peuvent être associés à plusieurs étapes.
+     */
     use HasFactory;
     protected $table = 'points_interet';
 

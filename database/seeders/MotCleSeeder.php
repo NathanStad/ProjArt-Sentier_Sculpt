@@ -8,6 +8,13 @@ use App\Models\MotCle;
 
 class MotCleSeeder extends Seeder {
 
+    /**
+     * Exécute les enregistrements de la base de données pour les mots-clés.
+     * Crée plusieurs mots-clés prédéfinis, chacun avec un nom spécifique.
+     *
+     * @return void
+     */
+
     public function run(): void {
         MotCle::create([
             'name' => 'Technologie',

@@ -9,6 +9,15 @@ use App\Models\Sentier;
 use Faker\Factory as Faker;
 
 class EtapeSeeder extends Seeder {
+
+    /**
+     * Exécute les enregistrements de la base de données pour les étapes.
+     * Crée plusieurs étapes prédéfinies pour trois sentiers spécifiques, chacune avec des informations détaillées 
+     * telles que le nom, la description, les coordonnées géographiques, l'ordre, la photo, la distance et la durée.
+     *
+     * @return void
+     */
+    
     public function run(): void
     {
         $sentier1 = Sentier::find(1);

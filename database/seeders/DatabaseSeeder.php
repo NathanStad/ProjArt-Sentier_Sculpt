@@ -8,6 +8,13 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder {
 
+    /**
+     * Exécute tous les seeder de la base de données.
+     * Appelle une série de seeder prédéfinis pour remplir la base de données avec des données initiales.
+     *
+     * @return void
+     */
+
     public function run(): void
     {
         $this->call([

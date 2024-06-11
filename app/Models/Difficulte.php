@@ -8,6 +8,10 @@ use App\Models\Sentier;
 
 class Difficulte extends Model
 {
+    /**
+     * Modèle représentant un niveau de difficulté.
+     * Chaque niveau de difficulté peut être associé à plusieurs sentiers.
+     */
     use HasFactory;
 
     protected $table = 'difficultes';
