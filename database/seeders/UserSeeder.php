@@ -17,30 +17,30 @@ class UserSeeder extends Seeder {
      *
      * @return void
      */
-
+    
     public function run(): void {
         User::create([
-            'name' => 'michaelscott',
-            'email' => 'michael.scott@dunder.com',
-            'password' => Hash::make('password'),
+            'name' => 'Agence ADNV',
+            'email' => 'contact@adnv.ch',
+            'password' => Hash::make('adnv1234'),
             'role' => 'institution',
-            'photo' => '/storage/users/michaelscott.jpg',
+            'photo' => '/storage/users/adnv.jpg',
         ]);
 
         User::create([
-            'name' => 'pamhalpert',
-            'email' => 'pam.halpert@dunder.com',
-            'password' => Hash::make('password'),
+            'name' => 'Pro Natura VD',
+            'email' => 'contact@pronatura.ch',
+            'password' => Hash::make('pronatura1234'),
             'role' => 'user',
-            'photo' => '/storage/users/jimhalpert.jpg',
+            'photo' => '/storage/users/natura.jpg',
         ]);
 
         User::create([
-            'name' => 'jimd',
-            'email' => 'jim.d@dunder.com',
-            'password' => Hash::make('password'),
+            'name' => 'Montreux Riviera',
+            'email' => 'contact@riviera.ch',
+            'password' => Hash::make('montreux1234'),
             'role' => 'user',
-            'photo' => '/storage/users/pambeesly.jpg',
+            'photo' => '/storage/users/riviera.jpg',
         ]);
     }
 }
