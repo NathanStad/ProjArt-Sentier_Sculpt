@@ -13,10 +13,7 @@
                 <template #item="{ element, index }">
                     <div class="stepContainer">
                         <div class="infoMap">
-                            <p
-                                v-if="index === etapes.length - 1"
-                                class="last-etape"
-                            >
+                            <p v-if="index === etapes.length - 1" class="last-etape">
                                 <span class="material-symbols-outlined">
                                     location_on
                                 </span>
@@ -38,14 +35,10 @@
                             </div>
                         </div>
                         <div class="deleteEtape">
-                            <span
-                                v-if="index !== 0 && index !== 1"
-                                class="step-emoji"
-                                @click="delEtape(element)"
-                                ><span class="material-symbols-outlined">
+                            <span v-if="index !== 0 && index !== 1" class="step-emoji" @click="delEtape(element)"><span
+                                    class="material-symbols-outlined">
                                     close
-                                </span></span
-                            >
+                                </span></span>
                         </div>
                     </div>
                 </template>
@@ -65,11 +58,7 @@
             </div>
         </div>
         <div id="btnSuivant">
-            <button
-                class="button"
-                :disabled="disable"
-                @click="terminerCreation"
-            >
+            <button class="button" :disabled="disable" @click="terminerCreation">
                 Terminer
             </button>
         </div>
@@ -98,7 +87,7 @@ export default {
     data() {
         return {
             etapes: JSON.parse(sessionStorage.getItem("etapes")) || [
-            {
+                {
                     nom: "Étape 1",
                     description: "",
                     coordonnees: { long: null, lat: null },
@@ -129,77 +118,22 @@ export default {
                     ],
                 },
             ],
-            oldIndex: "",
-            newIndex: "",
             duree: "",
             markers: [],
-            routeLayerId: "",
+            routeLayerId: `route-layer`,
             couleur: "#40680c",
             mapLoaded: false,
             disable: true,
             coordonnesRecenter: [6.700021, 46.602693],
             zoomRecenter: 8,
+            etapeOk: [],
+            mapLayer: null,
         };
     },
 
     methods: {
         loadMap(tour) {
-            if (map.getLayer(this.routeLayerId)) {
-                map.removeLayer(this.routeLayerId);
-                map.removeSource(this.routeLayerId);
-            }
-            if (tour.length > 1) {
-                fetch(
-                    "https://api.openrouteservice.org/v2/directions/foot-hiking/geojson",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization:
-                                "5b3ce3597851110001cf6248cbe7a7b654c74537a20bd21243c00b7a",
-                        },
-                        body: JSON.stringify({
-                            coordinates: tour.map((etape) => [
-                                etape.coordonnees.long,
-                                etape.coordonnees.lat,
-                            ]),
-                        }),
-                    }
-                )
-                    .then((response) => response.json())
-                    .then((responseData) => {
-                        const coordinates =
-                            responseData.features[0].geometry.coordinates;
-                        map.addLayer({
-                            id: this.routeLayerId,
-                            type: "line",
-                            source: {
-                                type: "geojson",
-                                data: {
-                                    type: "Feature",
-                                    geometry: {
-                                        type: "LineString",
-                                        coordinates: coordinates,
-                                    },
-                                },
-                            },
-                            layout: {
-                                "line-join": "round",
-                                "line-cap": "round",
-                            },
-                            paint: {
-                                "line-color": `${this.couleur}`,
-                                "line-width": 5,
-                            },
-                        });
-                    })
-                    .catch((error) => {
-                        console.error("Erreur lors de la requête:", error);
-                    });
-            }
-        },
-        afficheRoute(tour) {
-            this.routeLayerId = `route-layer-1`;
+            this.markers.forEach((marker) => marker.remove());
             const etapesInversees = tour.slice().reverse();
             etapesInversees.forEach((etape, index) => {
                 const coordinate = [
@@ -209,7 +143,6 @@ export default {
                 const marker = new maplibregl.Marker({ color: this.couleur })
                     .setLngLat(coordinate)
                     .addTo(map);
-                marker.getElement().setAttribute("data-id", etape.id);
                 this.markers.push(marker);
                 marker.setPopup(new maplibregl.Popup().setHTML(`${etape.nom}`));
                 const markerElement = marker._element;
@@ -218,7 +151,7 @@ export default {
                     svgElement.removeChild(svgElement.firstChild);
                 }
 
-                if (index !== 0) {
+                if (index !== etapesInversees.length - 1) {
                     if (svgElement) {
                         const circle = document.createElementNS(
                             "http://www.w3.org/2000/svg",
@@ -282,14 +215,69 @@ export default {
                 }
             });
 
-            if (this.mapLoaded) {
-                this.loadMap(tour);
+            if (tour.length > 1) {
+                if (map.getLayer(this.routeLayerId)) {
+                    map.removeLayer(this.routeLayerId);
+                    map.removeSource(this.routeLayerId);
+                }
+                fetch(
+                    "https://api.openrouteservice.org/v2/directions/foot-hiking/geojson",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization:
+                                "5b3ce3597851110001cf6248cbe7a7b654c74537a20bd21243c00b7a",
+                        },
+                        body: JSON.stringify({
+                            coordinates: tour.map((etape) => [
+                                etape.coordonnees.long,
+                                etape.coordonnees.lat,
+                            ]),
+                        }),
+                    }
+                )
+                    .then((response) => response.json())
+                    .then((responseData) => {
+                        const coordinates =
+                            responseData.features[0].geometry.coordinates;
+                        map.addLayer({
+                            id: this.routeLayerId,
+                            type: "line",
+                            source: {
+                                type: "geojson",
+                                data: {
+                                    type: "Feature",
+                                    geometry: {
+                                        type: "LineString",
+                                        coordinates: coordinates,
+                                    },
+                                },
+                            },
+                            layout: {
+                                "line-join": "round",
+                                "line-cap": "round",
+                            },
+                            paint: {
+                                "line-color": `${this.couleur}`,
+                                "line-width": 5,
+                            },
+                        });
+                        this.mapLayer = map.getLayer(this.routeLayerId);
+                    })
+                    .catch((error) => {
+                        console.error("Erreur lors de la requête:", error);
+                    });
             }
-
+        },
+        afficheRoute(tour) {
             map.on("load", () => {
                 this.mapLoaded = true;
                 this.loadMap(tour);
             });
+            if (this.mapLoaded) {
+                this.loadMap(tour);
+            }
         },
         calculerDistance(coord1, coord2) {
             const R = 6371e3; // Rayon de la Terre en mètres
@@ -301,9 +289,9 @@ export default {
             const a =
                 Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
                 Math.cos(φ1) *
-                    Math.cos(φ2) *
-                    Math.sin(Δλ / 2) *
-                    Math.sin(Δλ / 2);
+                Math.cos(φ2) *
+                Math.sin(Δλ / 2) *
+                Math.sin(Δλ / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
             const distance = R * c; // Distance en mètres
@@ -334,37 +322,6 @@ export default {
             const tempsSecondes = distance / ((vitesseMarche * 1000) / 3600); // Temps en secondes
             return tempsSecondes;
         },
-
-        showTours(tour) {
-            this.markers.forEach((marker) => marker.remove());
-            const etapeOk = [];
-            tour.forEach((etape, index) => {
-                if (
-                    etape.coordonnees.lat === null ||
-                    etape.coordonnees.long === null
-                ) {
-                    return;
-                } else {
-                    etapeOk.push(etape);
-                }
-            });
-            if (etapeOk[0]) {
-                map.setCenter([
-                    etapeOk[etapeOk.length - 1].coordonnees.long,
-                    etapeOk[etapeOk.length - 1].coordonnees.lat,
-                ]);
-                map.setZoom(12);
-                this.zoomRecenter = 12;
-                this.coordonnesRecenter = [
-                    etapeOk[etapeOk.length - 1].coordonnees.long,
-                    etapeOk[etapeOk.length - 1].coordonnees.lat,
-                ];
-                this.afficheRoute(etapeOk);
-            } else {
-                this.coordonnesRecenter = [6.700021, 46.602693];
-                this.zoomRecenter = 8.5;
-            }
-        },
         ajouteEtape() {
             this.etapes.push({
                 nom: "",
@@ -382,9 +339,15 @@ export default {
             window.location.hash = hash;
         },
         delEtape(etape) {
-            const index = this.etapes.indexOf(etape);
+            const index = this.etapeOk.indexOf(etape);
             if (index > -1) {
-                this.etapes.splice(index, 1);
+                console.log("index", index)
+                console.log(this.etapeOk);
+                this.etapeOk.splice(index, 1);
+            }
+            const indexEtapes = this.etapes.indexOf(etape);
+            if (indexEtapes > -1) {
+                this.etapes.splice(indexEtapes, 1);
             }
         },
         verifierCoordonneesCompletes() {
@@ -450,7 +413,6 @@ export default {
 
             return { longueurTotal, dureeTotal };
         },
-
         async terminerCreation() {
             if (!this.verifierCoordonneesCompletes()) {
                 console.error(
@@ -497,10 +459,10 @@ export default {
                     photo: etape.photo,
                     points_interet: etape.pointsInteret
                         ? etape.pointsInteret.map((poi) => ({
-                              id: poi.id,
-                              nom: poi.nom,
-                              photo: poi.photo || null,
-                          }))
+                            id: poi.id,
+                            nom: poi.nom,
+                            photo: poi.photo || null,
+                        }))
                         : [],
                 })),
                 photo: sentierCreationData.photoSentier,
@@ -618,11 +580,18 @@ export default {
             });
         },
         disabled() {
-            array.forEach((element) => {});
+            array.forEach((element) => { });
         },
+        updateEtapeOk() {
+            this.etapeOk = this.etapes.filter(
+                (etape) =>
+                    etape.coordonnees.lat !== null &&
+                    etape.coordonnees.long !== null
+            );
+        }
     },
     mounted() {
-        console.log(JSON.parse(sessionStorage.getItem("etapes")));
+        // console.log(JSON.parse(sessionStorage.getItem("etapes")));
         map = new maplibregl.Map({
             container: "mapCreationDuSentier",
             style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
@@ -638,19 +607,20 @@ export default {
                 })
             );
         });
-        this.showTours(this.etapes);
+        // this.showTours(this.etapes);
+        this.updateEtapeOk();
+        this.afficheRoute(this.etapeOk);
         this.calculeDureeTot();
         this.disable = !this.verifierCoordonneesCompletes();
-        console.log(this.etapes);
         sessionStorage.setItem("etapes", JSON.stringify(this.etapes));
     },
     watch: {
         etapes: {
             handler() {
-                this.loadMap(this.etapes);
+                this.updateEtapeOk();
+                this.loadMap(this.etapeOk);
                 sessionStorage.setItem("etapes", JSON.stringify(this.etapes));
                 this.calculeDureeTot();
-                console.log(this.etapes);
                 this.disable = !this.verifierCoordonneesCompletes();
             },
             deep: true,
@@ -663,6 +633,7 @@ export default {
 h1 {
     text-align: center;
 }
+
 span {
     color: var(--color-text-secondary);
 }
@@ -726,7 +697,8 @@ span {
     padding-bottom: 5%;
     position: relative;
 }
-#formulaire > div {
+
+#formulaire>div {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -734,6 +706,7 @@ span {
     gap: 15px;
     width: 100%;
 }
+
 .stepContainer {
     display: flex;
     align-items: center;
@@ -742,9 +715,11 @@ span {
     gap: 5px;
     padding: 0px 20px;
 }
-.stepContainer:nth-of-type(5){
-margin-bottom: 10%;
+
+.stepContainer:nth-of-type(5) {
+    margin-bottom: 10%;
 }
+
 .stepContainer .prec-etape,
 .stepContainer .prec-etape span,
 .stepContainer .last-etape span {
@@ -755,6 +730,7 @@ margin-bottom: 10%;
     align-items: center;
     justify-content: center;
 }
+
 .stepContainer .prec-etape::after,
 .stepContainer .prec-etape::before {
     content: "";
@@ -765,6 +741,7 @@ margin-bottom: 10%;
     position: absolute;
     border-radius: var(--border-radius-full);
 }
+
 .stepContainer .prec-etape span::before,
 .stepContainer .last-etape span::before {
     content: "";
@@ -775,27 +752,34 @@ margin-bottom: 10%;
     position: absolute;
     border-radius: var(--border-radius-full);
 }
+
 .stepContainer .last-etape span::before {
     width: 8px;
     height: 8px;
     top: 5px;
 }
+
 .stepContainer .prec-etape span::before {
     top: 4.5px;
 }
+
 .stepContainer .prec-etape::before {
     top: 30px;
 }
+
 .stepContainer .prec-etape::after {
     top: 45px;
 }
+
 .stepContainer .last-etape span {
     font-size: 1.6rem;
 }
+
 .stepContainer .deleteEtape span {
     font-size: 1.6rem;
     cursor: pointer;
 }
+
 .stepContainer .step {
     display: flex;
     justify-content: space-between;
@@ -805,12 +789,14 @@ margin-bottom: 10%;
     border-radius: var(--border-radius-small);
     box-shadow: var(--box-shadow-light);
 }
+
 .add-step {
     font-size: 1.3rem;
     color: var(--color-text-secondary);
     padding: 15px 23px;
     cursor: pointer;
 }
+
 #duree {
     position: absolute;
     bottom: 0;
@@ -820,47 +806,57 @@ margin-bottom: 10%;
     width: fit-content !important;
     left: 0%;
 }
+
 form {
     width: 100%;
 }
-.dragHandle{
+
+.dragHandle {
     cursor: grab;
 }
+
 @media only screen and (min-width: 900px) {
-    .page{
+    .page {
         display: grid;
-        grid-template-columns: 1fr 1fr ;
+        grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 3fr;
         width: 100%;
         height: 90vh;
     }
-    #btnSuivant{
+
+    #btnSuivant {
         width: 50%;
     }
-    .header{
+
+    .header {
         grid-column: 1/2;
         grid-row: 1/2;
     }
-    #formulaire{
+
+    #formulaire {
         grid-column: 1/2;
         grid-row: 2/3;
         margin-left: 15%;
     }
-    #partieInferieur{
+
+    #partieInferieur {
         grid-column: 2/3;
         grid-row: 1/3;
         height: 100%;
     }
-    #mapCreationDuSentier{
+
+    #mapCreationDuSentier {
         width: 103%;
         left: 0;
         height: 115%;
-        transform: translate(2%,-5%);
+        transform: translate(2%, -5%);
     }
-    #recenterDiv{
+
+    #recenterDiv {
         right: -3%;
     }
-    #formulaire > div{
+
+    #formulaire>div {
         gap: 40px;
     }
 }
