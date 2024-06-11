@@ -7,15 +7,15 @@ use Illuminate\Database\Seeder;
 use App\Models\PointInteret;
 
 class PointInteretSeeder extends Seeder {
+    
+    /**
+     * Exécute les enregistrements de la base de données pour les points d'intérêt.
+     * Crée plusieurs points d'intérêt prédéfinis, chacun avec un nom spécifique et une photo.
+     *
+     * @return void
+     */
 
     public function run(): void {
-        // PointInteret::create([
-        //     'nom' => 'Château de Chillon',
-        //     'photo' => 'https://example.com/poi1',
-        // ]);
-        
-        // PointInteret::factory(50)->create();
-
         PointInteret::create([
             'nom' => 'Château de Chillon',
             'photo' => '/storage/pois/photo1.jpg',

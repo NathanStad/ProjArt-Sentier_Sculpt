@@ -11,6 +11,15 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory {
 
+    /**
+     * Définition des valeurs par défaut pour le modèle User.
+     * Chaque utilisateur contient des informations telles que le nom, l'email, le mot de passe, 
+     * le rôle et une photo générés par Faker. Inclut également une méthode pour indiquer si l'email 
+     * de l'utilisateur est vérifié ou non.
+     *
+     * @return array
+     */
+
     protected static ?string $password;
 
     public function definition(): array

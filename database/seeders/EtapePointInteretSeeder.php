@@ -8,22 +8,15 @@ use App\Models\Etape;
 use App\Models\PointInteret;
 
 class EtapePointInteretSeeder extends Seeder {
+
+    /**
+     * Exécute les enregistrements de la base de données pour la table pivot etape_point_interet.
+     * Pour chaque étape existante, attache aléatoirement deux points d'intérêt.
+     *
+     * @return void
+     */
+    
     public function run(): void {
-        // $etape = Etape::first();
-        // $pointInteret = PointInteret::first();
-
-        // if ($etape && $pointInteret) {
-        //     $etape->pointsInteret()->attach($pointInteret->id);
-        // }
-        
-        // $etapes = Etape::all();
-        // $pointsInteret = PointInteret::all();
-
-        // $etapes->each(function ($etape) use ($pointsInteret) {
-        //     $etape->pointsInteret()->attach(
-        //         $pointsInteret->random(rand(1, 3))->pluck('id')->toArray()
-        //     );
-        // });
 
         $etapes = Etape::all();
         $pointsInteret = PointInteret::all();

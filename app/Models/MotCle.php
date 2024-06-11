@@ -9,6 +9,11 @@ use App\Models\Sentier;
 
 class MotCle extends Model
 {
+    /**
+     * Modèle représentant un mot-clé.
+     * Les mots-clés peuvent être associés à plusieurs sentiers pour les catégoriser.
+     */
+    
     use HasFactory;
     protected $table = 'mot-cles';
 

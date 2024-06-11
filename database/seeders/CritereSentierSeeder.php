@@ -9,6 +9,13 @@ use App\Models\Critere;
 
 class CritereSentierSeeder extends Seeder {
 
+    /**
+     * Exécute les enregistrements de la base de données pour la table pivot critere_sentier.
+     * Pour chaque sentier existant, attache aléatoirement trois critères.
+     *
+     * @return void
+     */
+
     public function run(): void {
         $sentiers = Sentier::all();
         $criteres = Critere::all();

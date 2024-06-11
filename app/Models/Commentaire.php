@@ -7,6 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Commentaire extends Model
 {
+    /**
+     * Modèle représentant un commentaire.
+     * Les commentaires sont associés à un sentier spécifique et contiennent l'email, le nom de l'auteur, 
+     * ainsi qu'un message.
+     */
+    
     use HasFactory;
 
     protected $table = 'commentaires';

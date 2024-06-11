@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Etape extends Model
 {
+    /**
+     * Modèle représentant une étape d'un sentier.
+     * Chaque étape est associée à un sentier et peut avoir plusieurs points d'intérêt.
+     */
     use HasFactory;
     protected $table = 'etapes';
 

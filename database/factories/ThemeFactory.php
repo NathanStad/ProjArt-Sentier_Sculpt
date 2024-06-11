@@ -6,6 +6,13 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ThemeFactory extends Factory {
 
+    /**
+     * Définition des valeurs par défaut pour le modèle Theme.
+     * Chaque thème contient un nom et une icône générés par Faker.
+     *
+     * @return array
+     */
+
     public function definition(): array
     {
         return [

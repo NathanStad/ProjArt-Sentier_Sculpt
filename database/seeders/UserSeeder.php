@@ -10,6 +10,14 @@ use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder {
 
+    /**
+     * Exécute les enregistrements de la base de données pour les utilisateurs.
+     * Crée plusieurs utilisateurs prédéfinis, chacun avec des informations détaillées telles que le nom, l'email, 
+     * le mot de passe, le rôle et la photo.
+     *
+     * @return void
+     */
+
     public function run(): void {
         User::create([
             'name' => 'michaelscott',
