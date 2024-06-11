@@ -10,6 +10,12 @@ use App\Models\Sentier;
 
 class User extends Authenticatable
 {
+    /**
+     * Modèle représentant un utilisateur.
+     * Les utilisateurs peuvent être associés à plusieurs sentiers et contiennent des informations 
+     * telles que le nom, l'email, le mot de passe, le rôle et la photo.
+     */
+    
     use HasFactory, Notifiable;
     protected $table = 'users';
 

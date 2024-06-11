@@ -161,7 +161,6 @@ export default {
                         console.log(`etape click: `, etape.nom);
                         window.location.hash = `step-${etape.id}`;
                     } else {
-                        console.log(etape.id);
                         this.$refs.etapeComponent.onSlideTo(etape.id);
                     }
                 });
@@ -362,19 +361,5 @@ section > div {
 }
 .swiper {
     overflow: visible !important;
-}
-@media only screen and (min-width: 900px) {
-    :root {
-        --swiper-navigation-sides-offset: 32%;
-        --swiper-navigation-size: 3rem;
-    }
-    #list-etapes .swiper-slide-next {
-        transform: translateX(-50%) !important;
-        opacity: 0.5;
-    }
-    #list-etapes .swiper-slide-prev{
-        transform: translateX(50%) !important;
-        opacity: 0.5;
-    }
 }
 </style>

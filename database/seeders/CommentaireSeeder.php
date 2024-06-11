@@ -9,6 +9,13 @@ Use App\Models\Sentier;
 
 class CommentaireSeeder extends Seeder {
 
+    /**
+     * Exécute les enregistrements de la base de données pour les commentaires.
+     * Pour chaque sentier existant, deux commentaires sont créés avec des valeurs d'exemple prédéfinies pour l'email, le nom et le message.
+     *
+     * @return void
+     */
+
     public function run(): void
     {
         $sentiers = Sentier::all();

@@ -8,7 +8,16 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Cette fonction crée la table pivot 'etape_point_interet' avec les colonnes suivantes :
+     * - id : clé primaire auto-incrémentée
+     * - etape_id : référence étrangère vers la table 'etapes' (foreignId)
+     * - point_interet_id : référence étrangère vers la table 'points_interet' (foreignId)
+     * - timestamps : colonnes 'created_at' et 'updated_at' pour les timestamps automatiques
+     *
+     * @return void
      */
+    
     public function up(): void
     {
         Schema::create('etape_point_interet', function (Blueprint $table) {

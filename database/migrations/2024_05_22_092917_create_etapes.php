@@ -8,7 +8,23 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Cette fonction crée la table 'etapes' avec les colonnes suivantes :
+     * - id : clé primaire auto-incrémentée
+     * - sentier_id : référence étrangère vers la table 'sentiers' (foreignId)
+     * - nom : nom de l'étape (string, longueur maximale de 100 caractères)
+     * - description : description de l'étape (longText)
+     * - latitude : latitude de l'étape (float)
+     * - longitude : longitude de l'étape (float)
+     * - ordre : ordre de l'étape (integer)
+     * - photo : photo de l'étape (longText, nullable)
+     * - distance : distance à partir du point précédent (float, valeur par défaut 0)
+     * - duree : durée estimée pour atteindre cette étape (integer, valeur par défaut 0)
+     * - timestamps : colonnes 'created_at' et 'updated_at' pour les timestamps automatiques
+     *
+     * @return void
      */
+    
     public function up(): void
     {
         Schema::create('etapes', function (Blueprint $table) {

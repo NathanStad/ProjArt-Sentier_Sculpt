@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Theme extends Model
 {
+    /**
+     * Modèle représentant un thème.
+     * Chaque thème peut être associé à plusieurs sentiers.
+     */
+    
     use HasFactory;
 
     protected $table = 'themes';
