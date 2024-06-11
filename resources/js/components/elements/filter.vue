@@ -1,7 +1,7 @@
 <template>
   <div id="filter">
     <div class="header">
-      <span @click="callParentMethod" class="material-symbols-outlined">arrow_back_ios</span>
+      <span @click="callComeBack" class="material-symbols-outlined">arrow_back_ios</span>
       <h1>Filtre</h1>
       <div @click="resetFilters">Réinitialiser</div>
     </div>
@@ -41,7 +41,7 @@
           v-model="difficulte"
           type="checkbox"
           name="difficulte[]"
-          value="facile"
+          value="1"
         />
         <span class="material-symbols-outlined">bolt</span>
         <p>Facile</p>
@@ -51,7 +51,7 @@
           v-model="difficulte"
           type="checkbox"
           name="difficulte[]"
-          value="moyen"
+          value="2"
         />
         <div>
           <span class="material-symbols-outlined">bolt</span>
@@ -64,7 +64,7 @@
           v-model="difficulte"
           type="checkbox"
           name="difficulte[]"
-          value="difficile"
+          value="3"
         />
         <div>
           <span class="material-symbols-outlined">bolt</span>
@@ -73,6 +73,10 @@
         </div>
         <p>Difficile</p>
       </label>
+    </div>
+    <div id="buttons">
+      <a @click="callParentMethod" class="button">Enregristrer</a>
+      <a @click="callComeBack" class="annuler">Annuler</a>
     </div>
   </div>
 </template>
@@ -89,6 +93,13 @@ const props = defineProps({
 });
 
 function callParentMethod() {
+  props.closeFilter();
+}
+
+function callComeBack() {
+  selectedCriteres.value = [];
+  selectedMotCles.value = [];
+  difficulte.value = [];
   props.closeFilter();
 }
 
@@ -195,10 +206,42 @@ label {
 #difficulte input:checked + div > span {
   color: var(--secondary);
 }
+#buttons{
+  height: 15vh;
+  padding-top: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.button, .annuler{
+  position: relative;
+  top: 0;
+  left: 0;
+  transform: none;
+  text-align: center;
+  padding: 4%;
+  margin: 0;
+}
 @media only screen and (min-width: 900px) {
   #filter {
     padding: 0% 20%;
 
   }
+  #buttons{
+  flex-direction: row-reverse;
+  justify-content: start;
+  gap: 20px;
+}
+  #buttons .button{
+  width: 20%;
+}
+  #buttons .annuler{
+  margin-bottom: 20px;
+}
+.button, .annuler{
+
+  padding: 2%;
+}
 }
 </style>

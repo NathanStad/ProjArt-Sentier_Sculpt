@@ -161,7 +161,7 @@ header {
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 3fr;
         position: relative;
-        min-height: 90vh
+        height: 90vh
     }
     #connect {
         padding: 0 18%;

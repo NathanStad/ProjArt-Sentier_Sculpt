@@ -17,7 +17,7 @@
                 :key="etape.id"
                 @click="chargerEtape(etape)"
             >
-                <div class="slide-content">
+                <div class="slide-content click">
                     <div class="etape">
                         <div class="etapePhoto">
                             <img :src="etape.photo" alt="" />

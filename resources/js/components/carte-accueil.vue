@@ -97,8 +97,10 @@ const filteredSentiers = computed(() => {
         }
 
         // Filter by difficulty
+        console.log(selectedFilters.value);
+        console.log(sentier.difficulte);
         if (selectedFilters.value.difficulte.length > 0) {
-            const matchesDifficulty = selectedFilters.value.difficulte.includes(sentier.difficulte.id);
+            const matchesDifficulty = selectedFilters.value.difficulte.includes(`${sentier.difficulte.graduation}`);
             matches = matches || matchesDifficulty;
         }
 
@@ -110,10 +112,10 @@ const filteredSentiers = computed(() => {
 
         // If no filters are selected, we want to match all sentiers
         if (
-            searchQuery.value.trim() === "" ||
+            searchQuery.value.trim() === "" &&
             selectedFilters.value.selectedCriteres.length === 0 &&
             selectedFilters.value.selectedMotCles.length === 0 &&
-            selectedFilters.value.difficulte.length === 0 ||
+            selectedFilters.value.difficulte.length === 0 &&
             selectedFilters.value.theme === null
         ) {
             matches = true;
@@ -358,5 +360,13 @@ watchEffect(() => {
     .recherche[type="text"] + .search-icone{
         left:18.5%;
     }
+}
+</style>
+<style>
+@media only screen and (min-width: 900px) {
+
+#carte-accueil #recenterDiv{
+    right: 0.5% !important;
+}
 }
 </style>

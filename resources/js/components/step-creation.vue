@@ -320,7 +320,7 @@ const handleSubmit = () => {
 
 .container {
     height: 100%;
-    width: 90%;
+    width: 100%;
     margin: auto;
 }
 
@@ -458,6 +458,9 @@ p {
     border: 1px solid var(--color-text-secondary);
     overflow: hidden;
 }
+.addPhotoPoi span{
+    color: var(--color-text-secondary);
+}
 textarea {
     box-shadow: var(--box-shadow-light);
 }
@@ -482,7 +485,7 @@ textarea {
         grid-template-rows: fit-content fit-content fit-content;
         gap: 40px;
         position: relative;
-        min-height: 75vh;
+        min-height: 65vh;
 
     }
     .input-container:nth-of-type(1){
@@ -509,8 +512,10 @@ textarea {
         position: absolute;
         width:30%;
         right: 0;
-        bottom: -7%;
+        bottom: -15%;
     }
-
+    }
+.editIcon{
+    color: white;
 }
 </style>

@@ -112,9 +112,9 @@ function updateCurrentPath() {
 }
 
 window.addEventListener("hashchange", updateCurrentPath);
-const toggleInfoSupp = () =>{
-  infoSupp.value = !infoSupp.value
-}
+const toggleInfoSupp = () => {
+    infoSupp.value = !infoSupp.value;
+};
 const currentView = computed(() => {
     return routes[currentPath.value].component;
 });
@@ -217,9 +217,9 @@ section {
 p {
     margin: 0;
 }
-*:disabled{
-  opacity: 0.3;
-  cursor: not-allowed;
+*:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
 }
 .link {
     color: var(--color-text-secondary);
@@ -242,11 +242,11 @@ h1 {
     position: relative;
     margin-bottom: var(--margin-large);
 }
-.header a span{
+.header a span {
     color: var(--color-text-secondary);
     cursor: pointer;
 }
-.header span:first-child{
+.header span:first-child {
     color: var(--color-text-secondary);
     cursor: pointer;
 }
@@ -378,46 +378,49 @@ textarea {
     z-index: 20;
     border-radius: 20px 0 0 20px;
 }
-#infoSupp span{
+#infoSupp span {
     font-size: 1.3rem;
+}
+.click {
+    cursor: pointer;
 }
 
 @media only screen and (min-width: 900px) {
-  :root{
-    --border-radius-small: 12px;
-    --border-radius-medium: 20px;
-    --border-radius-large: 30px;
-    --border-radius-full: 100px;
-    /* Espacement */
-    --margin-small: 10px;
-    --margin-medium: 20px;
-    --margin-large: 30px;
+    :root {
+        --border-radius-small: 12px;
+        --border-radius-medium: 20px;
+        --border-radius-large: 30px;
+        --border-radius-full: 100px;
+        /* Espacement */
+        --margin-small: 10px;
+        --margin-medium: 20px;
+        --margin-large: 30px;
 
-    --padding-small: 5px;
-    --padding-medium: 10px;
-    --padding-large: 20px;
+        --padding-small: 5px;
+        --padding-medium: 10px;
+        --padding-large: 20px;
 
-    /* Largeurs et hauteurs */
-    --width-full: 100%;
-    --height-full: 100%;
-    --width-85: 80%;
-    --width-fit: fit-content;
-    --height-15vh: 15vh;
-    --height-100vh: 100vh;
+        /* Largeurs et hauteurs */
+        --width-full: 100%;
+        --height-full: 100%;
+        --width-85: 80%;
+        --width-fit: fit-content;
+        --height-15vh: 15vh;
+        --height-100vh: 100vh;
 
-    font-size: 16px;
-  }
+        font-size: 16px;
+    }
 
-  header{
-margin-bottom: 2% ;
-justify-content: flex-start;
-padding: 0 18%;
-  }
-  footer{
-    height: 8vh;
-  }
-  .header{
-    padding: 0 18%;
-  }
+    header {
+        margin-bottom: 2%;
+        justify-content: flex-start;
+        padding: 0 18%;
+    }
+    footer {
+        height: 8vh;
+    }
+    .header {
+        padding: 0 18%;
+    }
 }
 </style>

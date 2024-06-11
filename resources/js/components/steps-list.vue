@@ -1,7 +1,7 @@
 <template>
     <div id="list-etapes">
         <div class="header">
-            <a @click.prevent="goBack">
+            <a :href="`#sentier-${hash+1}`">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
         </div>
@@ -9,7 +9,7 @@
         <div id="overlayEtape">
             <EtapeComponent
                 ref="etapeComponent"
-                v-if="sentiers && sentiers[hash]"
+                v-if="sentiers"
                 :etapes="sentiers[hash]"
                 @active-slide-key-change="handleActiveSlideKeyChange"
             ></EtapeComponent>
@@ -256,6 +256,7 @@ export default {
             });
         },
         changeDePoint(id) {
+            console.log(this.hash);
             const etape = this.sentiers[this.hash].etapes.find(
                 (etape) => etape.id === id
             );
@@ -343,6 +344,9 @@ section > div {
     z-index: 2;
     left: 8%;
     top: 5%;
+}
+.header span{
+    color: var(--primary) !important;
 }
 @media only screen and (min-width: 900px) {
 }

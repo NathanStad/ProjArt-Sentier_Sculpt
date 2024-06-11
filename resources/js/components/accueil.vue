@@ -29,7 +29,7 @@
             <div id="theme">
                 <div :class="{theme:true, 'current': themeCurrent == null}" @click="filterByTheme(null)">
                     <div>
-                        <span class="material-symbols-outlined">
+                        <span class="material-symbols-outlined click">
                             footprint
                         </span>
                     </div>
@@ -38,7 +38,7 @@
                 <div
                     v-for="theme in themes"
                     :key="theme.id"
-                    :class="{theme:true, 'current': themeCurrent == theme.id}"
+                    :class="{theme:true,click:true, 'current': themeCurrent == theme.id}"
                     @click="filterByTheme(theme.id)"
                 >
                     <div v-html="theme.icone"></div>
@@ -195,8 +195,10 @@ const filteredSentiers = computed(() => {
         }
 
         // Filter by difficulty
+        console.log(selectedFilters.value);
+        console.log(sentier.difficulte);
         if (selectedFilters.value.difficulte.length > 0) {
-            const matchesDifficulty = selectedFilters.value.difficulte.includes(sentier.difficulte.id);
+            const matchesDifficulty = selectedFilters.value.difficulte.includes(`${sentier.difficulte.graduation}`);
             matches = matches || matchesDifficulty;
         }
 
@@ -258,7 +260,7 @@ onMounted(async () => {
     background: white;
     z-index: var(--z-index-medium);
     width: 100vw;
-    min-height: var(--height-100vh);
+    min-height: 100%;
     top: 0%;
     padding: calc(var(--padding-large) * 2) var(--padding-small);
     left: 0%;
@@ -390,6 +392,7 @@ onMounted(async () => {
     flex-direction: column;
     justify-content: space-around;
     height: 100%;
+    gap: 7px;
 }
 .affichage > div:nth-of-type(1) > div {
     display: flex;
@@ -481,13 +484,23 @@ onMounted(async () => {
     width: 100%;
     margin-bottom: 5% !important;
 }
-#lesPlusVues,
 #sentiers-accueil{
     padding: 0 18%;
 width: 100%;
 display: grid;
+gap: 30px;
 grid-template-columns: 1fr 1fr 1fr 1fr ;
 }
+#lesPlusVues{
+    padding: 0 18%;
+width: 100%;
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+}
+#lesPlusVues a{
+    width: 100%;
+}
+
 h3{
     padding: 0 18%;
 }
@@ -505,7 +518,9 @@ h3{
 </style>
 <style scoped>
 @media (min-width: 900px) {
-
+    #filtre{
+        position: fixed;
+    }
   .header {
     position: absolute !important;
     left: 40%;

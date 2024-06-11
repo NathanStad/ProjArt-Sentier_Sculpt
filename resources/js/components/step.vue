@@ -211,7 +211,7 @@ h3 {
     opacity: 0.7;
 }
 @media only screen and (min-width: 900px) {
-    #etape{
+    #etape {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
@@ -232,21 +232,21 @@ h3 {
     h3 {
         padding: 0;
     }
-    #etape > div:nth-of-type(3){
+    #etape > div:nth-of-type(3) {
         grid-column: 1/2;
         padding-left: 36%;
-        }
-        #etape > div:nth-of-type(4){
-            grid-column: 2/3;
-            padding-right: 36%;
     }
-    #poi > div{
+    #etape > div:nth-of-type(4) {
+        grid-column: 2/3;
+        padding-right: 36%;
+    }
+    #poi > div {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
-    .poi-element{
+    .poi-element {
         width: 100%;
-        height:270px;
+        height: 270px;
     }
 }
 </style>

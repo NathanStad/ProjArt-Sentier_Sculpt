@@ -19,7 +19,7 @@
             :key="sentier.id"
             class="sentier"
         >
-            <div @click="reload">
+            <div>
                 <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
             </div>
             <div>
@@ -40,10 +40,10 @@
             </div>
         </a>
         <p v-if="filteredSentiers.length < 1 && sentiers.length >= 1" id="non">
-            Pas de favoris trouvé
+            Pas de sentier trouvé
         </p>
         <p v-if="sentiers.length < 1" id="non">
-            Vous n'avez actuelement pas de favoris
+            Vous n'avez actuellement pas de favoris
         </p>
     </div>
     <footer><Footer></Footer></footer>

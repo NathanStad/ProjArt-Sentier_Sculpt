@@ -13,10 +13,7 @@
                 <template #item="{ element, index }">
                     <div class="stepContainer">
                         <div class="infoMap">
-                            <p
-                                v-if="index === etapes.length - 1"
-                                class="last-etape"
-                            >
+                            <p v-if="index === 0" class="last-etape">
                                 <span class="material-symbols-outlined">
                                     location_on
                                 </span>
@@ -54,8 +51,11 @@
                 + Ajouter une étape
             </div>
             <div id="duree">
-                Durée actuelle : {{ Math.floor(duree / 3600) }} h
-                {{ Math.floor((duree % 3600) / 60) }} min
+                Durée actuelle :
+                <span v-if="1 >= Math.floor(duree / 3600)"
+                    >{{ Math.floor(duree / 3600) }} h
+                </span>
+                <span>{{ Math.floor((duree % 3600) / 60) }} min</span>
             </div>
         </div>
         <div id="partieInferieur">
@@ -98,7 +98,7 @@ export default {
     data() {
         return {
             etapes: JSON.parse(sessionStorage.getItem("etapes")) || [
-            {
+                {
                     nom: "Étape 1",
                     description: "",
                     coordonnees: { long: null, lat: null },
@@ -474,9 +474,10 @@ export default {
 
             const { longueurTotal, dureeTotal } =
                 await this.calculeDureeTotale();
+            console.log(sentierCreationData);
             const payload = {
                 // ID Si exite
-                nom: sentierCreationData.nomSentier,
+                id: sentierCreationData.idSentier,
                 //
                 nom: sentierCreationData.nomSentier,
                 description: sentierCreationData.descriptionSentier,
@@ -529,14 +530,11 @@ export default {
             formData.append("longueur", payload.longueur);
             formData.append("localisation", payload.localisation);
 
-            // Erreur 
-
             formData.append("criteres", JSON.stringify(payload.criteres));
             formData.append("motcles", JSON.stringify(payload.motcles));
 
-            //
-
             payload.etapes.forEach((etape, index) => {
+                let distance = parseFloat(etape.distance);
                 if (etape.id) {
                     formData.append(`etapes[${index}][id]`, etape.id);
                 }
@@ -548,7 +546,10 @@ export default {
                 formData.append(`etapes[${index}][latitude]`, etape.latitude);
                 formData.append(`etapes[${index}][longitude]`, etape.longitude);
                 formData.append(`etapes[${index}][duree]`, etape.duree);
-                formData.append(`etapes[${index}][distance]`, etape.distance);
+                formData.append(
+                    `etapes[${index}][distance]`,
+                    distance.toFixed(1)
+                );
                 formData.append(`etapes[${index}][ordre]`, etape.ordre);
                 formData.append(`etapes[${index}][photo]`, etape.photo);
                 etape.points_interet.forEach((poi, poiIndex) => {
@@ -570,29 +571,43 @@ export default {
             });
 
             formData.append("photo", payload.photo);
-            formData.append("user_id", localStorage.getItem('userId'));
+            formData.append("user_id", localStorage.getItem("userId"));
             formData.append("theme_id", payload.theme_id);
             formData.append("difficulte_id", payload.difficulte_id);
             formData.append("archive", payload.archive);
 
+            console.log(payload.id);
+
             const apiUrl = sessionStorage.getItem("update")
                 ? `/update/sentier/${payload.id}`
                 : "/submit/sentier";
+
             console.log(JSON.stringify(payload.criteres));
 
-            // put pour update
             try {
-                const response = await axios.post(apiUrl, formData, {
+                const method = sessionStorage.getItem("update")
+                    ? "put"
+                    : "post";
+                const response = await axios({
+                    method: method,
+                    url: apiUrl,
+                    data: formData,
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
                 });
+
                 console.log("Sentier traité avec succès:", response.data);
+
+                // Nettoyage du sessionStorage après traitement réussi
                 sessionStorage.removeItem("sentierCreation");
                 sessionStorage.removeItem("etapes");
-                if (!sessionStorage.getItem("update"))
+                if (!sessionStorage.getItem("update")) {
                     sessionStorage.removeItem("update");
-                window.location.hash = `account`;
+                }
+
+                // Redirection après succès
+                // window.location.hash = `account`;
             } catch (error) {
                 if (error.response && error.response.data) {
                     console.error(
@@ -742,8 +757,8 @@ span {
     gap: 5px;
     padding: 0px 20px;
 }
-.stepContainer:nth-of-type(5){
-margin-bottom: 10%;
+.stepContainer:nth-of-type(5) {
+    margin-bottom: 10%;
 }
 .stepContainer .prec-etape,
 .stepContainer .prec-etape span,
@@ -784,10 +799,10 @@ margin-bottom: 10%;
     top: 4.5px;
 }
 .stepContainer .prec-etape::before {
-    top: 30px;
+    bottom: 30px;
 }
 .stepContainer .prec-etape::after {
-    top: 45px;
+    bottom: 45px;
 }
 .stepContainer .last-etape span {
     font-size: 1.6rem;
@@ -812,6 +827,7 @@ margin-bottom: 10%;
     cursor: pointer;
 }
 #duree {
+    flex-direction: row !important;
     position: absolute;
     bottom: 0;
     z-index: 3;
@@ -819,49 +835,67 @@ margin-bottom: 10%;
     padding-bottom: 2px;
     width: fit-content !important;
     left: 0%;
+    gap: 10% !important;
+}
+#duree span {
+    display: contents;
 }
 form {
     width: 100%;
 }
-.dragHandle{
+.dragHandle {
     cursor: grab;
 }
 @media only screen and (min-width: 900px) {
-    .page{
+    .page {
         display: grid;
-        grid-template-columns: 1fr 1fr ;
+        grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 3fr;
         width: 100%;
         height: 90vh;
     }
-    #btnSuivant{
-        width: 50%;
+    #btnSuivant {
+        width: 20%;
+        left: 20%;
+        bottom: 5%;
     }
-    .header{
+    .header {
         grid-column: 1/2;
         grid-row: 1/2;
     }
-    #formulaire{
+    #formulaire {
         grid-column: 1/2;
         grid-row: 2/3;
         margin-left: 15%;
     }
-    #partieInferieur{
+    #partieInferieur {
         grid-column: 2/3;
         grid-row: 1/3;
         height: 100%;
     }
-    #mapCreationDuSentier{
+    #mapCreationDuSentier {
         width: 103%;
         left: 0;
         height: 115%;
-        transform: translate(2%,-5%);
+        transform: translate(2%, -5%);
     }
-    #recenterDiv{
+    #recenterDiv {
         right: -3%;
     }
-    #formulaire > div{
+    #formulaire > div {
         gap: 40px;
+    }
+    .stepContainer .prec-etape span::before {
+        top: 6px;
+    }
+    .stepContainer .prec-etape::before {
+        bottom: 40px;
+    }
+    .stepContainer .prec-etape::after {
+        bottom: 60px;
+    }
+    #duree{
+        bottom: 30%;
     }
 }
 </style>

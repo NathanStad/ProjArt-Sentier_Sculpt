@@ -3,7 +3,6 @@
         <p>Loading...</p>
     </div>
     <div v-else id="compte">
-
         <div class="header">
             <a @click.prevent="goBack">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
@@ -17,7 +16,7 @@
             <img :src="user.photo" :alt="user.name" />
 
             <label for="photo" id="photoProfil"
-                ><span class="material-symbols-outlined">
+                ><span class="material-symbols-outlined click">
                     add_a_photo
                 </span></label
             >
@@ -42,13 +41,13 @@
             </div>
         </div>
 
-        <a @click="newSentier" class="boutton">Ajouter un sentier</a>
+        <a @click="newSentier" class="boutton click">Ajouter un sentier</a>
         <!-- les sentiers -->
         <div id="vos-santiers">
             <!-- Ajouter un sentier -->
 
             <!-- Choix de si archivé ou non -->
-            <div id="button-archive">
+            <div id="button-archive" class="click">
                 <span
                     @click="showContent('on')"
                     :class="{ actived: archive === 'on' }"
@@ -60,7 +59,7 @@
                     >Mes sentiers archivés</span
                 >
             </div>
-
+            <div id="sentiers">
             <!-- Sentier non-archivé -->
             <div
                 v-for="sentier in userSentier"
@@ -77,7 +76,7 @@
                 <!-- Bouton de management -->
 
                 <span
-                    class="material-symbols-outlined menuSentierButton"
+                    class="material-symbols-outlined menuSentierButton click"
                     @click="showManagement(sentier.id)"
                 >
                     more_horiz
@@ -128,67 +127,68 @@
             >
                 Vous n'avez pas publié de sentier
             </p>
-
-            <!-- Sentier archivé -->
-            <div
-                v-for="sentier in userSentierArchive"
-                :key="sentier.id"
-                :class="{
-                    sentierItem: true,
-                    content: true,
-                    active: archive === 'off',
-                }"
-            >
-                <a :href="`#sentier-${sentier.id}`">
-                    <img :src="sentier.photo" :alt="sentier.nom" />
-                </a>
-                <!-- Bouton de management -->
-
-                <span
-                    class="material-symbols-outlined menuSentierButton"
-                    @click="showManagement(sentier.id)"
-                >
-                    more_horiz
-                </span>
-
-                <span
+                <div
+                    v-for="sentier in userSentierArchive"
+                    :key="sentier.id"
                     :class="{
-                        menuSentier: true,
+                        sentierItem: true,
                         content: true,
-                        active: buttonSentier === sentier.id,
+                        active: archive === 'off',
                     }"
                 >
-                    <div @click="moveToArchive(sentier, 0)">
-                        <span class="material-symbols-outlined">
-                            inventory_2
-                        </span>
-                        Désarchiver le sentier
-                    </div>
-                    <div @click="editSentier(sentier)">
-                        <span class="material-symbols-outlined"> edit </span
-                        >Modifer le sentier
-                    </div>
-                    <div @click="deleteSentier(sentier)">
-                        <span class="material-symbols-outlined"> delete </span
-                        >Supprimer le sentier
-                    </div>
-                </span>
-                <!-- Contenu -->
-                <div class="affichage">
-                    <div>
-                        <p>{{ sentier.nom }}</p>
-                        <div>
+                    <a :href="`#sentier-${sentier.id}`">
+                        <img :src="sentier.photo" :alt="sentier.nom" />
+                    </a>
+                    <!-- Bouton de management -->
+
+                    <span
+                        class="material-symbols-outlined menuSentierButton"
+                        @click="showManagement(sentier.id)"
+                    >
+                        more_horiz
+                    </span>
+
+                    <span
+                        :class="{
+                            menuSentier: true,
+                            content: true,
+                            active: buttonSentier === sentier.id,
+                        }"
+                    >
+                        <div @click="moveToArchive(sentier, 0)">
                             <span class="material-symbols-outlined">
-                                location_on
+                                inventory_2
                             </span>
-                            <p>
-                                {{ sentier.localisation }}
-                            </p>
+                            Désarchiver le sentier
                         </div>
+                        <div @click="editSentier(sentier)">
+                            <span class="material-symbols-outlined"> edit </span
+                            >Modifer le sentier
+                        </div>
+                        <div @click="deleteSentier(sentier)">
+                            <span class="material-symbols-outlined">
+                                delete </span
+                            >Supprimer le sentier
+                        </div>
+                    </span>
+                    <!-- Contenu -->
+                    <div class="affichage">
+                        <div>
+                            <p>{{ sentier.nom }}</p>
+                            <div>
+                                <span class="material-symbols-outlined">
+                                    location_on
+                                </span>
+                                <p>
+                                    {{ sentier.localisation }}
+                                </p>
+                            </div>
+                        </div>
+                        <div v-html="sentier.theme.icone"></div>
                     </div>
-                    <div v-html="sentier.theme.icone"></div>
                 </div>
             </div>
+            <!-- Sentier archivé -->
 
             <p
                 v-if="userSentierArchive.length < 1"
@@ -252,7 +252,7 @@ const fetchStep = async (id) => {
             return response.data;
         } catch (error) {
             console.error("Error fetching sentiers:", error);
-            return error
+            return error;
         }
     }
 };
@@ -315,10 +315,10 @@ const newSentier = () => {
 // Envoie pour la modifiction de l'objet
 
 const editSentier = async (sentier) => {
-    let etapeData = []
+    let etapeData = [];
     for (let index = 0; index < sentier.etapes.length; index++) {
-        let value = await fetchStep(sentier.etapes[index].id)      
-        etapeData.push(value)  
+        let value = await fetchStep(sentier.etapes[index].id);
+        etapeData.push(value);
     }
     console.log(etapeData);
     if (
@@ -329,6 +329,7 @@ const editSentier = async (sentier) => {
         sessionStorage.removeItem("etapes");
     }
     let seniterData = {
+        idSentier: sentier.id,
         nomSentier: sentier.nom,
         descriptionSentier: sentier.description,
         lieu: sentier.localisation,
@@ -345,7 +346,7 @@ const editSentier = async (sentier) => {
         seniterData.motcles.push(motcle.id);
     });
     for (let index = 0; index < etapeData.length; index++) {
-        etapeData[index].coordonnees = {}
+        etapeData[index].coordonnees = {};
         etapeData[index].coordonnees.long = etapeData[index].longitude;
         etapeData[index].coordonnees.lat = etapeData[index].latitude;
         etapeData[index].coordonnees.lat = etapeData[index].latitude;
@@ -428,7 +429,7 @@ if (!localStorage.getItem("userId")) {
 
 <style>
 /* Utilisateur */
-#compte{
+#compte {
     width: 100%;
 }
 #user {
@@ -524,7 +525,7 @@ if (!localStorage.getItem("userId")) {
     box-shadow: var(--box-shadow-light);
     text-decoration: none;
     position: relative;
-    margin-bottom:10% ;
+    margin-bottom: 10%;
 }
 
 .sentierItem img {
@@ -605,54 +606,55 @@ if (!localStorage.getItem("userId")) {
 #photoProfil span {
     font-size: 1.3rem;
 }
-#logout{
+#logout {
     cursor: pointer;
     color: var(--color-text-secondary);
 }
 @media only screen and (min-width: 900px) {
-    #compte{
+    #compte {
         display: grid;
         grid-template-columns: 1fr 2fr;
         grid-template-rows: 1fr 3fr 1fr;
-        min-height: 90vh;
+        height: 90vh;
         padding: 0 5%;
     }
-    .header{
+    #compte .header {
         grid-column: 1/2;
         grid-row: 1/2;
     }
-    #user{
+    #user {
         grid-column: 1/2;
         grid-row: 2/3;
         flex-direction: column;
         height: 100%;
         justify-content: center;
+        border-bottom: none;
     }
-    #user img{
+    #user img {
         width: 50%;
         height: auto;
-        border-radius:200px ;
+        border-radius: 200px;
     }
-    #user h3{
+    #user h3 {
         padding: 0;
         margin: 0;
         font-size: 2rem;
         text-align: center;
     }
-    #photoProfil{
+    #photoProfil {
         top: 55%;
         left: 30%;
     }
-    #photoProfil span{
+    #photoProfil span {
         font-size: 2.3rem;
     }
-    #user h4{
+    #user h4 {
         padding: 0;
         margin-top: 5%;
         font-size: 1.3rem;
         text-align: center;
     }
-    .boutton{
+    .boutton {
         grid-column: 1/2;
         grid-row: 3/4;
         display: flex;
@@ -663,19 +665,21 @@ if (!localStorage.getItem("userId")) {
         top: 50%;
         transform: translateY(-50%);
     }
-    #vos-santiers{
+    #vos-santiers {
         grid-column: 2/3;
         grid-row: 1/4;
         margin-bottom: 0;
         display: grid;
-        grid-template-columns: 1fr 1fr ;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 6fr;
         align-items: unset;
-        gap: 30px;
-        padding: 0 5%;
-        }
-        #button-archive{
+        border-left: 1px solid var(--color-text-secondary);
+        padding: 0 2.5%;
+        margin: 0 2.5%;
+        height: 100%;
+    }
+    #button-archive {
         margin: 0 18% !important;
-        grid-column: 1/3;
         height: 30%;
         width: 70%;
         margin: 0;
@@ -683,13 +687,23 @@ if (!localStorage.getItem("userId")) {
         top: 30%;
         transform: translateY(-50%);
     }
-    #button-archive span{
+    #button-archive span {
         display: flex;
         align-items: center;
         justify-content: center;
     }
-  .login .cls-1 {
+    #sentiers{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        height: 100%;
+        overflow: overlay;
+    }
+    .login .cls-1 {
         fill: white;
-      }
+    }
+    .sentierItem{
+        margin-bottom: 0;
+    }
 }
 </style>

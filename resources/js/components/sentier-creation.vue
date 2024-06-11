@@ -206,6 +206,7 @@ import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 
 // Define reactive state
+const idSentier = ref("");
 const nomSentier = ref("");
 const descriptionSentier = ref("");
 const lieu = ref("");
@@ -230,6 +231,7 @@ const errors = ref({
 // Si ça vient pour une mise à jour
 if (sessionStorage.getItem("sentierCreation")) {
     const data = JSON.parse(sessionStorage.getItem("sentierCreation"));
+    idSentier.value = data.idSentier;
     nomSentier.value = data.nomSentier;
     descriptionSentier.value = data.descriptionSentier;
     lieu.value = data.lieu;
@@ -302,6 +304,7 @@ const submitData = async () => {
     if (isValidForm()) {
         try {
             const formDataToSave = {
+                idSentier: idSentier.value,
                 nomSentier: nomSentier.value,
                 descriptionSentier: descriptionSentier.value,
                 lieu: lieu.value,

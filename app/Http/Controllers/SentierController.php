@@ -103,30 +103,32 @@ class SentierController extends Controller
             }
     }
 
-    public function update(SentierUpdateRequest $request, $id)
-    {            $sentier = Sentier::find($id);
+    public function update(Request $request, $id)
+{
+    try {
+        // Trouver le sentier
+        $sentier = Sentier::find($id);
+        if (!$sentier) {
+            return response()->json(['message' => 'Sentier not found'], 404);
+        }
 
-            if (!$sentier) {
-                return response()->json(['message' => 'Sentier not found'], 404);
-            }
+        // Mettre à jour le sentier
+        $sentier->update([
+            'nom' => $request->nom,
+            'description' => $request->description,
+            'duree' => $request->duree,
+            'longueur' => $request->longueur,
+            'localisation' => $request->localisation,
+            'photo' => $request->photo,
+            'theme_id' => $request->theme_id,
+            'difficulte_id' => $request->difficulte_id,
+        ]);
 
-            $sentier->update([
-                'nom' => $request->nom,
-                'description' => $request->description,
-                'duree' => $request->duree,
-                'longueur' => $request->longueur,
-                'localisation' => $request->localisation,
-                'photo' => $request->photo,
-                'theme_id' => $request->theme_id,
-                'difficulte_id' => $request->difficulte_id,
-                'archive' => $request->archive ?? 0,
-            ]);
-
-            // Mettre à jour les étapes
-            $existingEtapes = $sentier->etapes->keyBy('id');
-            foreach ($request->etapes as $etapeData) {
-                if (isset($etapeData['id']) && $existingEtapes->has($etapeData['id'])) {
-                    $etape = $existingEtapes->get($etapeData['id']);
+        // Mettre à jour ou créer les étapes
+        foreach ($request->etapes as $etapeData) {
+            if (isset($etapeData['id'])) {
+                $etape = Etape::find($etapeData['id']);
+                if ($etape) {
                     $etape->update([
                         'nom' => $etapeData['nom'],
                         'description' => $etapeData['description'],
@@ -137,58 +139,69 @@ class SentierController extends Controller
                         'ordre' => $etapeData['ordre'],
                         'photo' => $etapeData['photo'],
                     ]);
-                } else {
-                    $etape = Etape::create([
-                        'sentier_id' => $sentier->id,
-                        'nom' => $etapeData['nom'],
-                        'description' => $etapeData['description'],
-                        'latitude' => $etapeData['latitude'],
-                        'longitude' => $etapeData['longitude'],
-                        'distance' => $etapeData['distance'],
-                        'duree' => $etapeData['duree'],
-                        'ordre' => $etapeData['ordre'],
-                        'photo' => $etapeData['photo'],
-                    ]);
                 }
+            } else {
+                $etape = Etape::create([
+                    'sentier_id' => $sentier->id,
+                    'nom' => $etapeData['nom'],
+                    'description' => $etapeData['description'],
+                    'latitude' => $etapeData['latitude'],
+                    'longitude' => $etapeData['longitude'],
+                    'distance' => $etapeData['distance'],
+                    'duree' => $etapeData['duree'],
+                    'ordre' => $etapeData['ordre'],
+                    'photo' => $etapeData['photo'],
+                ]);
+            }
 
-                // Mettre à jour les points d'intérêt
-                if (isset($etapeData['points_interet'])) {
-                    $existingPointsInteret = $etape->pointsInteret->keyBy('id');
-                    foreach ($etapeData['points_interet'] as $poiData) {
-                        if (isset($poiData['id']) && $existingPointsInteret->has($poiData['id'])) {
-                            $pointInteret = $existingPointsInteret->get($poiData['id']);
-                            $pointInteret->update([
-                                'nom' => $poiData['nom'],
-                                'photo' => $poiData['photo'] ?? $pointInteret->photo,
-                            ]);
-                        } else {
-                            $pointInteret = PointInteret::create([
+            // Mettre à jour ou créer les points d'intérêt
+            if (isset($etapeData['points_interet'])) {
+                foreach ($etapeData['points_interet'] as $poiData) {
+                    if (isset($poiData['id'])) {
+                        $poi = PointInteret::find($poiData['id']);
+                        if ($poi) {
+                            $poi->update([
                                 'nom' => $poiData['nom'],
                                 'photo' => $poiData['photo'] ?? null,
                             ]);
-
-                            $etape->pointsInteret()->attach($pointInteret->id);
                         }
+                    } else {
+                        $poi = PointInteret::create([
+                            'nom' => $poiData['nom'],
+                            'photo' => $poiData['photo'] ?? null,
+                        ]);
+
+                        $etape->pointsInteret()->attach($poi->id);
                     }
                 }
             }
+        }
 
-            // Mettre à jour les critères
-            if ($request->has('criteres')) {
-                $criteresIds = CritereController::transformToArray($request->criteres);
-                $criteres = Critere::whereIn('id', $criteresIds)->get();
-                $sentier->criteres()->sync($criteres);
-            }
+        // Mettre à jour les critères
+        if ($request->has('criteres')) {
+            $criteresIds = CritereController::transformToArray($request->criteres);
+            $criteres = Critere::whereIn('id', $criteresIds)->get();
+            $sentier->criteres()->sync($criteres);
+        }
 
-            // Mettre à jour les mots-clés
-            if ($request->has('motcles')) {
-                $motclesIds = MotClesController::transformToArray($request->motcles);
-                $motcles = MotCle::whereIn('id', $motclesIds)->get();
-                $sentier->motcles()->sync($motcles);
-            }
+        // Mettre à jour les mots-clés
+        if ($request->has('motcles')) {
+            $motclesIds = MotClesController::transformToArray($request->motcles);
+            $motcles = MotCle::whereIn('id', $motclesIds)->get();
+            $sentier->motcles()->sync($motcles);
+        }
 
-            return response()->json($sentier, 200);
+        return response()->json($sentier, 200);
+    } catch (\Exception $e) {
+        // Renvoyer une réponse avec les détails de l'erreur
+        return response()->json([
+            'message' => 'Une erreur est survenue lors de la mise à jour du sentier.',
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ], 500);
     }
+}
+
 
     public function destroy($id)
     {

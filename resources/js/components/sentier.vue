@@ -4,7 +4,7 @@
     </div>
     <div v-else id="sentier">
         <div class="header">
-            <a @click.prevent="goBack">
+            <a href="#">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
             <h1>
@@ -431,7 +431,7 @@ h1 span {
     align-content: center;
     align-items: center;
     justify-content: center;
-    color: var(--primary);
+    color: var(--primary) !important;
 }
 #sentier {
     min-height: 90vh;
@@ -600,7 +600,7 @@ h1 span {
 ul {
     list-style-type: none;
     max-height: 50vh;
-    overflow: hidden scroll;
+    overflow: hidden overlay;
     margin-bottom: 10%;
 }
 li {

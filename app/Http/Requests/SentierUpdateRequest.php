@@ -20,11 +20,19 @@ class SentierUpdateRequest extends FormRequest {
             'photo' => 'nullable|string',
             'theme_id' => 'required|exists:themes,id',
             'difficulte_id' => 'required|exists:difficultes,id',
-            'archive' => 'sometimes|boolean',
-            'criteres' => 'sometimes|array',
+            'criteres' => 'required|string',
             'criteres.*' => 'exists:criteres,id',
-            'motcles' => 'sometimes|array',
+            'motcles' => 'required|string',
             'motcles.*' => 'exists:mot_cles,id',
+            'etapes' => 'required|array',
+            'etapes.*.nom' => 'required|string',
+            'etapes.*.description' => 'required|string',
+            'etapes.*.latitude' => 'required|numeric',
+            'etapes.*.longitude' => 'required|numeric',
+            'etapes.*.distance' => 'required|numeric',
+            'etapes.*.duree' => 'required|numeric',
+            'etapes.*.ordre' => 'required|integer',
+            'etapes.*.photo' => 'nullable|string',
         ];
     }
 }
