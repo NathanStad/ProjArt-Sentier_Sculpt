@@ -47,11 +47,8 @@
                 + Ajouter une étape
             </div>
             <div id="duree">
-                Durée actuelle :
-                <span v-if="1 >= Math.floor(duree / 3600)"
-                    >{{ Math.floor(duree / 3600) }} h
-                </span>
-                <span>{{ Math.floor((duree % 3600) / 60) }} min</span>
+                Durée actuelle : {{ Math.floor(duree / 3600) }} h
+                {{ Math.floor((duree % 3600) / 60) }} min
             </div>
         </div>
         <div id="partieInferieur">
@@ -401,23 +398,11 @@ export default {
                     etapes[i].distanceToNext = distance;
                     etapes[i].durationToNext = duration;
 
-                    longueurTotal += distance /1000;
+                    longueurTotal += distance;
                     dureeTotal += duration;
                 }
                 etapes[i].ordre = i + 1;
             }
-            console.log(etapes);
-            let postLongueurTotal = longueurTotal;
-            let postDureeTotal = dureeTotal;
-
-            for (let index = 0; index < etapes.length - 1; index++) {
-                const element = etapes[index];
-                element.distanceToNext =
-                    (postLongueurTotal - element.distanceToNext) / 1000;
-                element.durationToNext =
-                    postDureeTotal - element.durationToNext;
-            }
-            console.log(etapes);
 
             // La dernière étape a une distance et une durée de 0
             etapes[etapes.length - 1].distanceToNext = 0;
@@ -451,14 +436,6 @@ export default {
 
             const { longueurTotal, dureeTotal } =
                 await this.calculeDureeTotale();
-            console.log("envoie");
-            const sentierCreationData = JSON.parse(
-                sessionStorage.getItem("sentierCreation")
-            );
-            const etapesData = JSON.parse(sessionStorage.getItem("etapes"));
-
-            console.log(sentierCreationData);
-            console.log(etapesData);
             const payload = {
                 // ID Si exite
                 nom: sentierCreationData.nomSentier,
@@ -493,7 +470,20 @@ export default {
                 difficulte_id: sentierCreationData.difficulte,
                 archive: sentierCreationData.archive || 0,
             };
+            // Conversion de la durée en entier
+            payload.duree = parseInt(payload.duree);
 
+            // Conversion des critères en tableau
+            payload.criteres = Array.isArray(payload.criteres)
+                ? payload.criteres
+                : [payload.criteres];
+
+            // Conversion des mots-clés en tableau
+            payload.motcles = Array.isArray(payload.motcles)
+                ? payload.motcles
+                : [payload.motcles];
+
+            console.log(payload);
             const formData = new FormData();
             formData.append("nom", payload.nom);
             formData.append("description", payload.description);
@@ -550,34 +540,20 @@ export default {
             const apiUrl = sessionStorage.getItem("update")
                 ? `/update/sentier/${payload.id}`
                 : "/submit/sentier";
+            console.log(JSON.stringify(payload.criteres));
 
-            console.log(formData.get("etapes[1][duree]"));
-
+            // put pour update
             try {
-                const method = sessionStorage.getItem("update")
-                    ? "patch"
-                    : "post";
-                formData.append("_method", method);
-
-                const response = await axios({
-                    method: "post",
-                    url: apiUrl,
-                    data: formData,
+                const response = await axios.post(apiUrl, formData, {
                     headers: {
                         "Content-Type": "multipart/form-data",
                     },
                 });
-
                 console.log("Sentier traité avec succès:", response.data);
-
-                // Nettoyage du sessionStorage après traitement réussi
                 sessionStorage.removeItem("sentierCreation");
                 sessionStorage.removeItem("etapes");
-                if (!sessionStorage.getItem("update")) {
+                if (!sessionStorage.getItem("update"))
                     sessionStorage.removeItem("update");
-                }
-
-                // Redirection après succès
                 window.location.hash = `account`;
             } catch (error) {
                 if (error.response && error.response.data) {
