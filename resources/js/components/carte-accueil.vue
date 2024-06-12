@@ -1,11 +1,6 @@
 <template>
     <div class="header">
-        <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Rechercher par lieu et nom"
-            class="recherche"
-        />
+        <input type="text" v-model="searchQuery" placeholder="Rechercher par lieu et nom" class="recherche" />
         <span class="material-symbols-outlined search-icone"> search </span>
         <!-- Bouton Filtre -->
         <div @click="toggleFiltre()" id="buttonFiltre">
@@ -15,24 +10,17 @@
 
     <!-- Conteneur du filtre -->
     <div id="filtre" :class="{ visible: filtreVisible === true }">
-        <Filtre
-            @updateFilters="updateFilters"
-            :closeFilter="toggleFiltre"
-        ></Filtre>
+        <Filtre @updateFilters="updateFilters" :closeFilter="toggleFiltre"></Filtre>
     </div>
     <div id="carte-accueil">
         <div id="mapCarteAccueil"></div>
         <div id="recenterDiv">
             <RecentrerBtnComponent @recenter="recenter" />
         </div>
-        <!-- <div v-if="sentiers.length > 0">
-            <p v-for="sentier in sentiers" :key="sentier.id">{{ sentier }}</p>
-        </div>
-        <div v-else>
-            <p>No sentiers available</p>
-        </div> -->
     </div>
-    <footer><Footer></Footer></footer>
+    <footer>
+        <Footer></Footer>
+    </footer>
 </template>
 
 <script setup>
@@ -47,7 +35,7 @@ import Filtre from "@/components/elements/filter.vue";
 
 let map;
 const sentiers = ref([]);
-const coordonnesRecenter = ref([6.700021, 46.602693]);
+const coordonnesRecenter = ref([6.600021, 46.602693]);
 const searchQuery = ref(""); // Variable pour la barre de recherche
 const selectedFilters = ref({
     selectedCriteres: [],
@@ -77,7 +65,7 @@ const filteredSentiers = computed(() => {
         // Filter by search query
         if (searchQuery.value.trim() !== "") {
             matches = matches || (
-                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
                 sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase())
             );
         }
@@ -300,7 +288,7 @@ const recenter = () => {
     console.log("recenter");
     map.flyTo({
         center: coordonnesRecenter.value,
-        zoom: 8.5,
+        zoom: 8.3,
         curve: 1,
         easing(t) {
             return t;
@@ -312,8 +300,8 @@ onMounted(() => {
     map = new maplibregl.Map({
         container: "mapCarteAccueil",
         style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
-        center: [6.700021, 46.602693],
-        zoom: 8.5,
+        center: coordonnesRecenter.value,
+        zoom: 8.3,
     });
 
     map.on("load", () => {
@@ -329,7 +317,6 @@ onMounted(() => {
 });
 
 watchEffect(() => {
-  console.log(filteredSentiers.value);
     showTours(filteredSentiers.value);
 });
 </script>
@@ -342,31 +329,36 @@ watchEffect(() => {
     left: 0;
     top: 0;
 }
+
 .header span {
     top: 8px;
 }
+
 #recenter {
     padding: 5px 10px;
 }
+
 .recherche {
     top: 5% !important;
     width: 80%;
 }
+
 #buttonFiltre {
     top: 5% !important;
     right: 5%;
 }
+
 @media only screen and (min-width: 900px) {
-    .recherche[type="text"] + .search-icone{
-        left:18.5%;
+    .recherche[type="text"]+.search-icone {
+        left: 18.5%;
     }
 }
 </style>
 <style>
 @media only screen and (min-width: 900px) {
 
-#carte-accueil #recenterDiv{
-    right: 0.5% !important;
-}
+    #carte-accueil #recenterDiv {
+        right: 0.5% !important;
+    }
 }
 </style>
