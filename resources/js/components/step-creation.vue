@@ -179,6 +179,13 @@ onMounted(() => {
     const etapesData = sessionStorage.getItem("etapes");
     if (etapesData) {
         etapes.value = JSON.parse(etapesData)[index];
+        if (!etapes.value.pointInteret[0] && !etapes.value.pointInteret[1]) {
+            for (let index = 0; index < 1; index++) {
+                etapes.value.pointInteret[index].nom = ''
+                etapes.value.pointInteret[index].photo = ''
+            }
+        }
+        etapes.value = JSON.parse(etapesData)[index];
         noEtape.value = index + 1;
         console.log(etapes.value);
     } else {
