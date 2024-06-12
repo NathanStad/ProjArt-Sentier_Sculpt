@@ -13,7 +13,7 @@
             @slideTo="onSlideTo"
         >
             <swiper-slide
-                v-for="etape in etapes.etapes"
+                v-for="etape in etapes"
                 :key="etape.id"
                 @click="chargerEtape(etape)"
             >
@@ -58,67 +58,51 @@
     </span>
 </template>
 
-<script>
-// Import Swiper Vue.js components
+<script setup>
+import { ref, watch } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
-
-// Import Swiper styles
 import "swiper/css";
-
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-
-// import required modules
 import { Pagination, Navigation } from "swiper/modules";
 
-export default {
-    data() {
-        return {
-            activeSlideKey: null,
-            swiper: null,
-        };
+const props = defineProps({
+    etapes: {
+        type: Object,
+        required: true,
     },
-    components: {
-        Swiper,
-        SwiperSlide,
-    },
-    setup() {
-        return {
-            modules: [Pagination, Navigation],
-        };
-    },
-    name: "EtapeComponent",
-    props: {
-        etapes: {
-            type: Object,
-            required: true,
-        },
-    },
-    watch: {
-        activeSlideKey() {
-            this.$emit("active-slide-key-change", this.activeSlideKey);
-        },
-    },
-    methods: {
-        onSwiperReady(swiper) {
-            this.swiper = swiper;
-        },
-        onSlideChange(swiper) {
-            const activeIndex = swiper.activeIndex;
-            this.activeSlideKey = this.etapes.etapes[activeIndex].id;
-        },
-        chargerEtape(etape) {
-            console.log("etape click: ", etape.nom);
-            window.location.hash = `step-${etape.id}`;
-        },
-        onSlideTo(id) {
-            const slideIndex = this.etapes.etapes.findIndex(
-                (etape) => etape.id === id
-            );
-            this.swiper.slideTo(slideIndex);
-        },
-    },
+});
+console.log(props);
+const emit = defineEmits(['active-slide-key-change']);
+
+const swiperRef = ref(null);
+const activeSlideKey = ref(null);
+const modules = [Pagination, Navigation];
+
+const onSwiperReady = (swiper) => {
+    swiperRef.value = swiper;
 };
+
+const onSlideChange = (swiper) => {
+    const activeIndex = swiper.activeIndex;
+    activeSlideKey.value = props.etapes[activeIndex].id;
+};
+
+const chargerEtape = (etape) => {
+    console.log("etape click: ", etape.nom);
+    window.location.hash = `step-${etape.id}`;
+};
+
+const onSlideTo = (id) => {
+    const slideIndex = props.etapes.findIndex(
+        (etape) => etape.id === id
+    );
+    swiperRef.value.slideTo(slideIndex);
+};
+
+watch(activeSlideKey, (newVal) => {
+    emit("active-slide-key-change", newVal);
+});
 </script>
 
 <style>
