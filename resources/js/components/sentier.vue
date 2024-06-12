@@ -601,7 +601,6 @@ h1 span {
 }
 ul {
     list-style-type: none;
-    border: 1px solid var(--color-text-secondary);
     border-radius: 20px ;
     max-height: 50vh;
     overflow: hidden overlay;
