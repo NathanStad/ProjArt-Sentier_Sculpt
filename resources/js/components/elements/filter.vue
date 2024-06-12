@@ -236,7 +236,7 @@ label {
   #buttons .button{
   width: 20%;
 }
-  #buttons .annuler{
+  #buttons{
   margin-bottom: 20px;
 }
 .button, .annuler{

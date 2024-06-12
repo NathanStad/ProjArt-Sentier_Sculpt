@@ -14,20 +14,26 @@
             />
             <span class="material-symbols-outlined search-icone"> search </span>
             <!-- Bouton Filtre -->
-            <div @click="toggleFiltre()" id="buttonFiltre">
+            <div @click="toggleFiltre()" id="buttonFiltre" :class="{filterActive: filterActived == true}">
                 <span class="material-symbols-outlined"> tune </span>
             </div>
         </div>
 
         <!-- Conteneur du filtre -->
         <div id="filtre" :class="{ visible: filtreVisible === true }">
-            <Filtre @updateFilters="updateFilters" :closeFilter="toggleFiltre"></Filtre>
+            <Filtre
+                @updateFilters="updateFilters"
+                :closeFilter="toggleFiltre"
+            ></Filtre>
         </div>
 
         <!-- Thèmes -->
         <div id="theme-parent">
             <div id="theme">
-                <div :class="{theme:true, 'current': themeCurrent == null}" @click="filterByTheme(null)">
+                <div
+                    :class="{ theme: true, current: themeCurrent == null }"
+                    @click="filterByTheme(null)"
+                >
                     <div>
                         <span class="material-symbols-outlined click">
                             footprint
@@ -38,7 +44,11 @@
                 <div
                     v-for="theme in themes"
                     :key="theme.id"
-                    :class="{theme:true,click:true, 'current': themeCurrent == theme.id}"
+                    :class="{
+                        theme: true,
+                        click: true,
+                        current: themeCurrent == theme.id,
+                    }"
                     @click="filterByTheme(theme.id)"
                 >
                     <div v-html="theme.icone"></div>
@@ -76,7 +86,9 @@
                         <div v-html="sentier.theme.icone"></div>
                     </div>
                 </a>
-                <p v-if="filteredSentiers < 1">Aucun sentier actuellement disponible pour ce thème</p>
+                <p v-if="filteredSentiers < 1">
+                    Aucun sentier actuellement disponible pour ce thème
+                </p>
             </div>
         </div>
 
@@ -101,7 +113,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watchEffect  } from "vue";
 import axios from "axios";
 import Filtre from "@/components/elements/filter.vue";
 import buttonFavoris from "@/components/elements/buttonFavorite.vue";
@@ -115,7 +127,8 @@ const sentiersPref = ref([]);
 const filtreVisible = ref(false);
 const searchQuery = ref("");
 const isLoading = ref(true);
-const themeCurrent = ref(null)
+const themeCurrent = ref(null);
+const filterActived = ref(false);
 
 const selectedFilters = ref({
     selectedCriteres: [],
@@ -123,7 +136,11 @@ const selectedFilters = ref({
     difficulte: [],
     theme: null,
 });
-
+watchEffect(() => {
+    filterActived.value = selectedFilters.value.selectedCriteres.length > 0 ||
+                          selectedFilters.value.selectedMotCles.length > 0 ||
+                          selectedFilters.value.difficulte.length > 0;
+});
 // Function to fetch theme data
 const fetchTheme = async () => {
     try {
@@ -170,42 +187,53 @@ const filterByTheme = (themeId) => {
 
 const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
-        let matches = false;
+        let matches = true; // Initialise matches à true pour tous les sentiers
 
         // Filter by search query
         if (searchQuery.value.trim() !== "") {
-            matches = matches || (
-                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-                sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase())
-            );
+            matches =
+                matches &&
+                (sentier.nom
+                    .toLowerCase()
+                    .includes(searchQuery.value.toLowerCase()) ||
+                    sentier.localisation
+                        .toLowerCase()
+                        .includes(searchQuery.value.toLowerCase()));
         }
 
         // Filter by selected critere
         if (selectedFilters.value.selectedCriteres.length > 0) {
-            const critereIds = sentier.criteres.map(critere => critere.id);
-            const matchesSelectedCriteres = selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere));
-            matches = matches || matchesSelectedCriteres;
+            const critereIds = sentier.criteres.map((critere) => critere.id);
+            const matchesSelectedCriteres =
+                selectedFilters.value.selectedCriteres.every((critere) =>
+                    critereIds.includes(critere)
+                );
+            matches = matches && matchesSelectedCriteres;
         }
 
         // Filter by selected mot cle
         if (selectedFilters.value.selectedMotCles.length > 0) {
-            const motCleIds = sentier.motcles.map(motcle => motcle.id);
-            const matchesSelectedMotCles = selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle));
-            matches = matches || matchesSelectedMotCles;
+            const motCleIds = sentier.motcles.map((motcle) => motcle.id);
+            const matchesSelectedMotCles =
+                selectedFilters.value.selectedMotCles.every((motcle) =>
+                    motCleIds.includes(motcle)
+                );
+            matches = matches && matchesSelectedMotCles;
         }
 
         // Filter by difficulty
-        console.log(selectedFilters.value);
-        console.log(sentier.difficulte);
         if (selectedFilters.value.difficulte.length > 0) {
-            const matchesDifficulty = selectedFilters.value.difficulte.includes(`${sentier.difficulte.graduation}`);
-            matches = matches || matchesDifficulty;
+            const matchesDifficulty = selectedFilters.value.difficulte.includes(
+                `${sentier.difficulte.graduation}`
+            );
+            matches = matches && matchesDifficulty;
         }
 
         // Filter by theme
         if (selectedFilters.value.theme !== null) {
-            const matchesTheme = sentier.theme_id === selectedFilters.value.theme;
-            matches = matches || matchesTheme;
+            const matchesTheme =
+                sentier.theme_id === selectedFilters.value.theme;
+            matches = matches && matchesTheme;
         }
 
         // If no filters are selected, we want to match all sentiers
@@ -214,7 +242,7 @@ const filteredSentiers = computed(() => {
             selectedFilters.value.selectedCriteres.length === 0 &&
             selectedFilters.value.selectedMotCles.length === 0 &&
             selectedFilters.value.difficulte.length === 0 &&
-            selectedFilters.value.theme === null
+            themeCurrent.value === null
         ) {
             matches = true;
         }
@@ -222,8 +250,6 @@ const filteredSentiers = computed(() => {
         return matches;
     });
 });
-
-
 
 // Fetch data when the component is mounted
 onMounted(async () => {
@@ -247,7 +273,7 @@ onMounted(async () => {
     width: fit-content;
     height: fit-content;
     z-index: 5;
-    font-size: 1.5rem ;
+    font-size: 1.5rem;
     left: 10px;
     color: var(--color-text-secondary);
 }
@@ -286,6 +312,16 @@ onMounted(async () => {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
 }
+#sentiers-parent,
+#lesPlusVues-parent {
+    width: 100vw;
+    overflow-y: scroll; /* Add the ability to scroll */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    position: relative;
+    left: -10%;
+    padding-left: 10%;
+}
 
 #theme-parent::-webkit-scrollbar,
 #lesPlusVues-parent::-webkit-scrollbar,
@@ -297,16 +333,12 @@ onMounted(async () => {
     position: relative;
     left: -10%;
 }
-.current{
-    border-bottom: 1px solid var(--primary) ;
+.current {
+    border-bottom: 1px solid var(--primary);
 }
 .current span,
-.current p
-{
-    color: var(--primary);
-}
-.theme div {
-    margin-right: var(--margin-small);
+.current p {
+    color: var(--primary) !important;
 }
 
 #theme {
@@ -320,12 +352,14 @@ onMounted(async () => {
 
 #theme span {
     font-size: var(--font-size-small);
+    color: var(--color-text-secondary);
 }
 
 #theme p {
     font-size: 0.8rem;
     font-weight: 500;
     text-align: center;
+    color: var(--color-text-secondary);
 }
 
 #theme .theme {
@@ -430,7 +464,7 @@ onMounted(async () => {
     height: var(--height-15vh);
     display: flex;
     align-items: center;
-    margin-bottom: 10%;
+    margin-bottom: 15%;
 }
 
 #lesPlusVues {
@@ -465,68 +499,82 @@ onMounted(async () => {
 #lesPlusVues a div {
     margin-left: var(--margin-medium);
 }
-
+.filterActive span::after{
+    content: '';
+    position: relative;
+}
+.filterActive span::after{
+    content: '';
+    display: block;
+    width: 15px;
+    height: 15px;
+    background: var(--secondary);
+    border-radius: var(--border-radius-full);
+    position: absolute;
+    top: -2%;
+    right: 0%;
+}
 @media (min-width: 900px) {
-  #theme-parent{
-    left: -2%;
-    width: 100vw;
-  }
-#theme{
-  width: 100vw;
-  padding: 0 18%;
-  justify-content: space-between;
-}
-#theme span{
-    font-size: var(--font-size-large);
-}
-#lesPlusVues-parent,
-#sentiers-parent{
-    width: 100%;
-    margin-bottom: 5% !important;
-}
-#sentiers-accueil{
-    padding: 0 18%;
-width: 100%;
-display: grid;
-gap: 30px;
-grid-template-columns: 1fr 1fr 1fr 1fr ;
-}
-#lesPlusVues{
-    padding: 0 18%;
-width: 100%;
-display: grid;
-grid-template-columns: 1fr 1fr 1fr;
-}
-#lesPlusVues a{
-    width: 100%;
-}
+    #theme-parent {
+        left: -2%;
+        width: 100vw;
+    }
+    #theme {
+        width: 100vw;
+        padding: 0 18%;
+        justify-content: space-between;
+    }
+    #theme span {
+        font-size: var(--font-size-large);
+    }
+    #lesPlusVues-parent,
+    #sentiers-parent {
+        width: 100%;
+        margin-bottom: 5% !important;
+    }
+    #sentiers-accueil {
+        padding: 0 18%;
+        width: 100%;
+        display: grid;
+        gap: 30px;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    #lesPlusVues {
+        padding: 0 18%;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    #lesPlusVues a {
+        width: 100%;
+    }
 
-h3{
-    padding: 0 18%;
-}
-.header input{
-    width: 90% !important;
-  }
-  #sentiers-accueil > a{
-    width: 100%;
-  }
-  .sentier-nom{
-    font-size: 0.9rem;
-    width: 85%;
-  }
+    h3 {
+        padding: 0 18%;
+    }
+    .header input {
+        width: 90% !important;
+    }
+    #sentiers-accueil > a {
+        width: 100%;
+    }
+    .sentier-nom {
+        font-size: 0.9rem;
+        width: 85%;
+    }
 }
 </style>
 <style scoped>
 @media (min-width: 900px) {
-    #filtre{
-        position: fixed;
+    #filtre {
+        position: absolute;
     }
-  .header {
-    position: absolute !important;
-    left: 40%;
-    width: 40%;
-    top: 4%;
-    padding: 0;
-  }
+    .header {
+        position: absolute !important;
+        left: 40%;
+        width: 40%;
+        top: 4%;
+        padding: 0;
+    }
 }
 </style>

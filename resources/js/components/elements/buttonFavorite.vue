@@ -1,48 +1,64 @@
 <template>
-    <span :class="{'material-symbols-outlined':true, full: isFavorite === true}" @click.stop.prevent="toggleFavorite">
+    <span :class="{ 'material-symbols-outlined': true, full: isFavorite === true }"
+        @click.stop.prevent="toggleFavorite">
         favorite
     </span>
 </template>
 
 <script setup>
-import { ref, defineProps } from "vue";
+import { ref, defineProps, onMounted, onUnmounted, watch } from "vue";
+
 const isFavorite = ref(false);
-const favoris = ref([]);
 
 const props = defineProps({
     sentierId: {
-        type: String,
+        type: Number,
         required: true,
     },
 });
 
-let tableau = localStorage.getItem("favoris");
-if (tableau) {
-    favoris.value = JSON.parse(tableau);
-} else {
-    favoris.value = [];
-}
+onMounted(() => {
+    // Récupérer l'état du sentier favori lors de la première montée du composant
+    const tableau = sessionStorage.getItem("favoris");
+    if (tableau) {
+        const favoris = JSON.parse(tableau);
+        isFavorite.value = favoris.includes(props.sentierId);
+    }
 
-isFavorite.value = favoris.value.includes(props.sentierId);
+    // Écouter l'événement personnalisé pour mettre à jour l'état de favori
+    window.addEventListener("favorisUpdated", handleFavorisUpdated);
+});
+
+onUnmounted(() => {
+    // Nettoyer l'écouteur d'événement lors du démontage du composant
+    window.removeEventListener("favorisUpdated", handleFavorisUpdated);
+});
 
 const toggleFavorite = () => {
     isFavorite.value = !isFavorite.value;
-    if (isFavorite.value) {
-        favoris.value.push(props.sentierId);
-    } else {
-        const index = favoris.value.indexOf(props.sentierId);
-        if (index > -1) {
-            favoris.value.splice(index, 1);
-        }
+    const favoris = JSON.parse(sessionStorage.getItem("favoris") || "[]");
+    const index = favoris.indexOf(props.sentierId);
+    if (isFavorite.value && index === -1) {
+        favoris.push(props.sentierId);
+    } else if (!isFavorite.value && index !== -1) {
+        favoris.splice(index, 1);
     }
-    localStorage.setItem("favoris", JSON.stringify(favoris.value));
+    sessionStorage.setItem("favoris", JSON.stringify(favoris));
+    // Émettre l'événement personnalisé pour informer les autres composants de la mise à jour
+    window.dispatchEvent(new Event("favorisUpdated"));
+};
+
+const handleFavorisUpdated = () => {
+    // Mettre à jour l'état de favori lorsque l'événement est déclenché
+    const favoris = JSON.parse(sessionStorage.getItem("favoris") || "[]");
+    isFavorite.value = favoris.includes(props.sentierId);
 };
 </script>
-
 <style scoped>
-span{
+span {
     font-size: 2rem;
 }
+
 .favorite {
     cursor: pointer;
 }
@@ -52,10 +68,10 @@ span{
 }
 
 .material-symbols-outlined.full {
-  font-variation-settings:
-  'FILL' 1,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24
 }
 </style>
