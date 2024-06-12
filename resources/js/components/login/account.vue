@@ -89,17 +89,17 @@
                         active: buttonSentier === sentier.id,
                     }"
                 >
-                    <div @click="moveToArchive(sentier, 1)">
+                    <div @click="moveToArchive(sentier, 1)" class="click">
                         <span class="material-symbols-outlined">
                             inventory_2
                         </span>
                         Archiver le sentier
                     </div>
-                    <div @click="editSentier(sentier)">
+                    <div @click="editSentier(sentier)" class="click">
                         <span class="material-symbols-outlined"> edit </span
                         >Modifier le sentier
                     </div>
-                    <div @click="deleteSentier(sentier)">
+                    <div @click="deleteSentier(sentier)" class="click">
                         <span class="material-symbols-outlined"> delete </span
                         >Supprimer le sentier
                     </div>
@@ -155,17 +155,17 @@
                             active: buttonSentier === sentier.id,
                         }"
                     >
-                        <div @click="moveToArchive(sentier, 0)">
+                        <div @click="moveToArchive(sentier, 0)" class="click">
                             <span class="material-symbols-outlined">
                                 inventory_2
                             </span>
                             Désarchiver le sentier
                         </div>
-                        <div @click="editSentier(sentier)">
+                        <div @click="editSentier(sentier)" class="click">
                             <span class="material-symbols-outlined"> edit </span
                             >Modifer le sentier
                         </div>
-                        <div @click="deleteSentier(sentier)">
+                        <div @click="deleteSentier(sentier)" class="click">
                             <span class="material-symbols-outlined">
                                 delete </span
                             >Supprimer le sentier
@@ -529,9 +529,8 @@ if (!localStorage.getItem("userId")) {
 }
 
 .sentierItem img {
-    width: 105%;
-    transform: translate(-2.5%);
-    height: 200px;
+    width: 100%;
+    height: 100%;
 }
 
 .menuSentierButton {
@@ -689,7 +688,7 @@ if (!localStorage.getItem("userId")) {
         width: 70%;
         margin: 0;
         position: relative;
-        top: 30%;
+        top: 50%;
         transform: translateY(-50%);
     }
     #button-archive span {
@@ -698,9 +697,10 @@ if (!localStorage.getItem("userId")) {
         justify-content: center;
     }
     #sentiers{
+        padding: 5%;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 30px;
+        column-gap: 30px;
         height: 95%;
         overflow: overlay;
     }

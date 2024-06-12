@@ -57,7 +57,7 @@ import Footer from "@/components/elements/footer.vue";
 
 const isLoading = ref(true);
 const sentiers = ref([]);
-const favoris = ref(JSON.parse(sessionStorage.getItem("favoris")));
+const favoris = ref(JSON.parse(sessionStorage.getItem("favoris")) || []);
 
 const searchQuery = ref("");
 

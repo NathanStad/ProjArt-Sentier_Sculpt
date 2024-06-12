@@ -519,7 +519,7 @@ h3{
 <style scoped>
 @media (min-width: 900px) {
     #filtre{
-        position: fixed;
+        position: absolute;
     }
   .header {
     position: absolute !important;

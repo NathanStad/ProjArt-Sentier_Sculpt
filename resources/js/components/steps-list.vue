@@ -1,7 +1,7 @@
 <template>
     <div id="list-etapes">
         <div class="header">
-            <a :href="`#sentier-${hash+1}`">
+            <a :href="`#sentier-${hash + 1}`">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
         </div>
@@ -344,10 +344,17 @@ section > div {
     left: 8%;
     top: 5%;
 }
-.header span{
+.header span {
     color: var(--primary) !important;
 }
 @media only screen and (min-width: 900px) {
+    :root {
+        --swiper-navigation-sides-offset: 30%;
+        --swiper-navigation-size: 3rem;
+    }
+    #recenterDiv {
+        right: 0.5%;
+    }
 }
 </style>
 <style>
