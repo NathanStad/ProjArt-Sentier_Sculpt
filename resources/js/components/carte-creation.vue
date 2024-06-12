@@ -499,6 +499,7 @@ export default {
             formData.append("motcles", JSON.stringify(payload.motcles));
 
             payload.etapes.forEach((etape, index) => {
+                formData.append(`etapes[${index}][id]`, etape.id);
                 formData.append(`etapes[${index}][nom]`, etape.nom);
                 formData.append(
                     `etapes[${index}][description]`,

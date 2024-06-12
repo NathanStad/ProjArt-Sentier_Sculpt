@@ -346,6 +346,7 @@ const editSentier = async (sentier) => {
         seniterData.motcles.push(motcle.id);
     });
     for (let index = 0; index < etapeData.length; index++) {
+        etapeData[index].pointInteret = etapeData[index].points_interet;
         etapeData[index].coordonnees = {};
         etapeData[index].coordonnees.long = etapeData[index].longitude;
         etapeData[index].coordonnees.lat = etapeData[index].latitude;
