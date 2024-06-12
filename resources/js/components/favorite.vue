@@ -231,7 +231,7 @@ input{
     }
     .recherche[type="text"] + .search-icone{
         left:50.5%;
-        top:92px
+        top:45%
     }
     #favorite{
         display: grid;

@@ -187,15 +187,15 @@
                         <div v-html="sentier.theme.icone"></div>
                     </div>
                 </div>
-            </div>
-            <!-- Sentier archivé -->
-
             <p
                 v-if="userSentierArchive.length < 1"
                 :class="{ content: true, active: archive === 'off' }"
             >
                 Vous n'avez pas de sentier dans l'archive
             </p>
+            </div>
+            <!-- Sentier archivé -->
+
         </div>
     </div>
     <ConfirmationModal
