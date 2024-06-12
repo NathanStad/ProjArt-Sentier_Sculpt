@@ -578,7 +578,7 @@ if (!localStorage.getItem("userId")) {
 }
 #vos-santiers .affichage {
     bottom: 0%;
-    height: 75px;
+    min-height: 75px;
     width: 105%;
     padding: var(--padding-medium) 40px;
 }
@@ -709,6 +709,9 @@ if (!localStorage.getItem("userId")) {
     }
     .sentierItem{
         margin-bottom: 0;
+    }
+    .affichage p{
+        width: 90%;
     }
 }
 </style>

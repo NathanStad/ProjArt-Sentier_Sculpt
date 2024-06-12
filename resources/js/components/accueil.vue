@@ -533,7 +533,7 @@ onMounted(async () => {
         margin-bottom: 5% !important;
     }
     #sentiers-accueil {
-        padding: 0 18%;
+        padding: 0 9% 0 18%;
         width: 100%;
         display: grid;
         gap: 30px;

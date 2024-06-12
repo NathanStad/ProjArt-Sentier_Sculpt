@@ -534,31 +534,31 @@ export default {
 
 
             try {
-                // const method = sessionStorage.getItem("update")
-                //     ? "patch"
-                //     : "post";
-                // formData.append("_method", method);
+                const method = sessionStorage.getItem("update")
+                    ? "patch"
+                    : "post";
+                formData.append("_method", method);
 
-                // const response = await axios({
-                //     method: "post",
-                //     url: apiUrl,
-                //     data: formData,
-                //     headers: {
-                //         "Content-Type": "multipart/form-data",
-                //     },
-                // });
+                const response = await axios({
+                    method: "post",
+                    url: apiUrl,
+                    data: formData,
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                });
 
-                // console.log("Sentier traité avec succès:", response.data);
+                console.log("Sentier traité avec succès:", response.data);
 
                 // // Nettoyage du sessionStorage après traitement réussi
-                // sessionStorage.removeItem("sentierCreation");
-                // sessionStorage.removeItem("etapes");
-                // if (!sessionStorage.getItem("update")) {
-                //     sessionStorage.removeItem("update");
-                // }
+                sessionStorage.removeItem("sentierCreation");
+                sessionStorage.removeItem("etapes");
+                if (!sessionStorage.getItem("update")) {
+                    sessionStorage.removeItem("update");
+                }
 
                 // // Redirection après succès
-                // window.location.hash = `account`;
+                window.location.hash = `account`;
             } catch (error) {
                 if (error.response && error.response.data) {
                     console.error(
