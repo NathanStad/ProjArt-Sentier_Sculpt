@@ -5,20 +5,10 @@
     <div v-else id="favorite">
         <div class="header">
             <h1>Favoris</h1>
-            <input
-                    type="text"
-                    v-model="searchQuery"
-                    placeholder="Recherche parmi les favoris"
-                    class="recherche"
-                />
+            <input type="text" v-model="searchQuery" placeholder="Recherche parmi les favoris" class="recherche" />
             <span class="material-symbols-outlined search-icone"> search </span>
         </div>
-        <a
-            :href="`#sentier-${sentier.id}`"
-            v-for="sentier in filteredSentiers"
-            :key="sentier.id"
-            class="sentier"
-        >
+        <a :href="`#sentier-${sentier.id}`" v-for="sentier in filteredSentiers" :key="sentier.id" class="sentier">
             <div @click="reload">
                 <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
             </div>
@@ -35,7 +25,7 @@
                         </span>
                         {{ sentier.localisation }}
                     </p>
-                    </div>
+                </div>
                 <a :href="`#steps-${sentier.id}`" class="button">Démarrer</a>
             </div>
         </a>
@@ -46,11 +36,15 @@
             Vous n'avez actuellement pas de favoris
         </p>
     </div>
-    <footer><Footer></Footer></footer>
+    <footer>
+        <Footer></Footer>
+    </footer>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
+
+
+import { ref, onMounted, computed, watch } from "vue";
 import buttonFavoris from "@/components/elements/buttonFavorite.vue";
 import axios from "axios";
 import Footer from "@/components/elements/footer.vue";
@@ -75,9 +69,17 @@ const fetchSentier = async (sentierId) => {
 favoris.value.forEach((sentierId) => {
     fetchSentier(sentierId);
 });
-const reload = () =>{
+
+const reload = () => {
+    console.log("je reload");
     location.reload();
 }
+
+const handleFavorisUpdated = () => {
+}
+
+window.addEventListener("favorisUpdated", handleFavorisUpdated);
+
 const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
         const query = searchQuery.value.toLowerCase();
@@ -98,6 +100,7 @@ h1 {
     text-align: center;
     padding-bottom: 10%;
 }
+
 .sentier {
     display: flex;
     position: relative;
@@ -110,67 +113,79 @@ h1 {
     text-decoration: none;
     margin-bottom: 10%;
 }
-input{
+
+input {
     padding: var(--padding-large) calc(var(--padding-medium) * 2.33) !important;
     position: relative;
     left: 50%;
     transform: translate(-50%);
     width: 100% !important;
-    margin-bottom:12%  !important;
+    margin-bottom: 12% !important;
 }
-.sentier > div:first-of-type {
+
+.sentier>div:first-of-type {
     position: absolute;
     right: 5%;
     top: 8%;
 }
-.sentier > div:first-of-type span {
+
+.sentier>div:first-of-type span {
     color: var(--primary);
 }
-.sentier > div:nth-of-type(2){
+
+.sentier>div:nth-of-type(2) {
     overflow: hidden;
     border-radius: var(--border-radius-small);
     position: relative;
     width: 40%;
-    margin-right:15px ;
+    margin-right: 15px;
 }
-.sentier > div:nth-of-type(2) img{
+
+.sentier>div:nth-of-type(2) img {
     width: 100%;
     height: 100%;
 }
-.sentier > div:nth-of-type(2) div{
+
+.sentier>div:nth-of-type(2) div {
     position: absolute;
     z-index: 3;
     bottom: 5%;
     right: 5%;
 }
-.sentier > div:nth-of-type(2) *{
+
+.sentier>div:nth-of-type(2) * {
     color: white !important;
 }
-.sentier > div:nth-of-type(3) > div{
+
+.sentier>div:nth-of-type(3)>div {
     display: flex;
     flex-direction: column;
-    justify-content: start ;
+    justify-content: start;
     gap: 5px;
     height: 50%;
     width: 125px;
 }
-.sentier > div:nth-of-type(3) > div > p:first-of-type{
+
+.sentier>div:nth-of-type(3)>div>p:first-of-type {
     font-size: 1rem;
     font-weight: 600;
 }
-.sentier > div:nth-of-type(3) > div > p:last-of-type{
+
+.sentier>div:nth-of-type(3)>div>p:last-of-type {
     display: flex;
     align-items: center;
     color: var(--color-text-secondary);
 }
-.sentier > div:nth-of-type(3) > div > p:last-of-type span{
+
+.sentier>div:nth-of-type(3)>div>p:last-of-type span {
     font-size: 1.5rem;
     color: var(--color-text-secondary);
 }
-.button{
+
+.button {
     padding: 15px 15px;
     background: var(--primary);
-    border-radius:var(--border-radius-small);
+    border-radius: var(--border-radius-small);
     text-decoration: none;
     color: white;
     right: -15%;
@@ -178,36 +193,40 @@ input{
     text-align: center;
     display: block;
     position: absolute;
-    left:auto;
+    left: auto;
     width: 40%;
 }
-.recherche{
+
+.recherche {
     padding: 10px 20px 10px 40px !important;
     z-index: 5;
     position: relative;
     margin-bottom: 0 !important;
 }
-.recherche[type="text"] + .search-icone {
+
+.recherche[type="text"]+.search-icone {
     display: block;
     position: absolute;
     width: fit-content;
     height: fit-content;
     z-index: 5;
-    font-size: 1.5rem ;
+    font-size: 1.5rem;
     top: 62%;
     left: 40px;
     color: var(--color-text-secondary);
 }
-.header{
+
+.header {
     flex-direction: column;
     position: sticky;
     top: 0px;
     background: white;
-    box-shadow: var(--box-shadow-light-bottom) ;
+    box-shadow: var(--box-shadow-light-bottom);
     width: 100vw;
     padding: 10%;
     transform: translate(-8%);
 }
+
 @media only screen and (min-width: 900px) {
 
     .header {
@@ -219,35 +238,42 @@ input{
         grid-column: 1/3;
     }
 
-    .header input{
+    .header input {
         left: 0;
         transform: none;
     }
-    h1{
-        padding-bottom:0
+
+    h1 {
+        padding-bottom: 0
     }
-    .recherche{
+
+    .recherche {
         width: 50% !important;
     }
     .recherche[type="text"] + .search-icone{
         left:50.5%;
         top:45%
     }
-    #favorite{
+
+    #favorite {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
-    .sentier{
-        height : 250px;
-        width:60%;
+
+    .sentier {
+        height: 250px;
+        width: 60%;
     }
-    .sentier:nth-child(even){
+
+    .sentier:nth-child(even) {
         margin-left: 32%;
     }
-    .sentier:nth-child(odd){
+
+    .sentier:nth-child(odd) {
         margin-right: 32%;
     }
-    #non{
+
+    #non {
         padding: 0 16.5%;
         width: 100%;
         grid-column: 1/3;
