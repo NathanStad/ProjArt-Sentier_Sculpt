@@ -8,7 +8,7 @@
             <input type="text" v-model="searchQuery" placeholder="Recherche parmi les favoris" class="recherche" />
             <span class="material-symbols-outlined search-icone"> search </span>
         </div>
-        <a :href="`#sentier-${sentier.id}`" v-for="sentier in filteredSentiers" :key="sentier.id" class="sentier">
+        <a :href="`#sentier-${sentier.id}`" v-for="sentier in filteredSentiers" :key="sentier.id" :class="{sentier:true, hidden: sentier.archive === 1}">
             <div @click="reload">
                 <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
             </div>
@@ -225,6 +225,9 @@ input {
     width: 100vw;
     padding: 10%;
     transform: translate(-8%);
+}
+.hidden{
+    display: none !important;
 }
 
 @media only screen and (min-width: 900px) {

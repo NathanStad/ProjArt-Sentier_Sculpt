@@ -347,6 +347,22 @@ const editSentier = async (sentier) => {
     });
     for (let index = 0; index < etapeData.length; index++) {
         etapeData[index].pointInteret = etapeData[index].points_interet;
+        if (!etapeData[index].points_interet[0]) {
+            for (let i = 0; i < 2; i++) {                
+            let base ={
+                nom : "",
+                photo : "",
+            }
+            etapeData[index].pointInteret.push(base)
+            }
+        }
+        if (!etapeData[index].points_interet[1]) {
+            let base ={
+                nom : "",
+                photo : ""}
+            etapeData[index].pointInteret.push(base)
+            
+        }
         etapeData[index].coordonnees = {};
         etapeData[index].coordonnees.long = etapeData[index].longitude;
         etapeData[index].coordonnees.lat = etapeData[index].latitude;

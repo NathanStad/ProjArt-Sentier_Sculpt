@@ -80,10 +80,10 @@
                         <p>Difficulté</p>
                         <p>
                             {{
-                                sentier.difficulte === 1
+                                sentier.difficulte.graduation === 1
                                     ? "Facile"
-                                    : sentier.difficulte === 2
-                                    ? "Normal"
+                                    : sentier.difficulte.graduation === 2
+                                    ? "Moyen"
                                     : "Difficile"
                             }}
                         </p>
@@ -341,6 +341,7 @@ const fetchSentier = async () => {
             sentier.value = response.data;
             etapes.value = response.data.etapes;
             commentaires.value = response.data.commentaires;
+            console.log(sentier.value);
             attributionColor();
         } catch (error) {
             console.error("Error fetching sentiers:", error);

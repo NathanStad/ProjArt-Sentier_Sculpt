@@ -187,53 +187,42 @@ const filterByTheme = (themeId) => {
 
 const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
-        let matches = true; // Initialise matches à true pour tous les sentiers
+        let matches = false;
 
         // Filter by search query
         if (searchQuery.value.trim() !== "") {
-            matches =
-                matches &&
-                (sentier.nom
-                    .toLowerCase()
-                    .includes(searchQuery.value.toLowerCase()) ||
-                    sentier.localisation
-                        .toLowerCase()
-                        .includes(searchQuery.value.toLowerCase()));
+            matches = matches || (
+                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
+                sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase())
+            );
         }
 
         // Filter by selected critere
         if (selectedFilters.value.selectedCriteres.length > 0) {
-            const critereIds = sentier.criteres.map((critere) => critere.id);
-            const matchesSelectedCriteres =
-                selectedFilters.value.selectedCriteres.every((critere) =>
-                    critereIds.includes(critere)
-                );
-            matches = matches && matchesSelectedCriteres;
+            const critereIds = sentier.criteres.map(critere => critere.id);
+            const matchesSelectedCriteres = selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere));
+            matches = matches || matchesSelectedCriteres;
         }
 
         // Filter by selected mot cle
         if (selectedFilters.value.selectedMotCles.length > 0) {
-            const motCleIds = sentier.motcles.map((motcle) => motcle.id);
-            const matchesSelectedMotCles =
-                selectedFilters.value.selectedMotCles.every((motcle) =>
-                    motCleIds.includes(motcle)
-                );
-            matches = matches && matchesSelectedMotCles;
+            const motCleIds = sentier.motcles.map(motcle => motcle.id);
+            const matchesSelectedMotCles = selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle));
+            matches = matches || matchesSelectedMotCles;
         }
 
         // Filter by difficulty
+        console.log(selectedFilters.value);
+        console.log(sentier.difficulte);
         if (selectedFilters.value.difficulte.length > 0) {
-            const matchesDifficulty = selectedFilters.value.difficulte.includes(
-                `${sentier.difficulte.graduation}`
-            );
-            matches = matches && matchesDifficulty;
+            const matchesDifficulty = selectedFilters.value.difficulte.includes(`${sentier.difficulte.graduation}`);
+            matches = matches || matchesDifficulty;
         }
 
         // Filter by theme
         if (selectedFilters.value.theme !== null) {
-            const matchesTheme =
-                sentier.theme_id === selectedFilters.value.theme;
-            matches = matches && matchesTheme;
+            const matchesTheme = sentier.theme_id === selectedFilters.value.theme;
+            matches = matches || matchesTheme;
         }
 
         // If no filters are selected, we want to match all sentiers
@@ -250,6 +239,7 @@ const filteredSentiers = computed(() => {
         return matches;
     });
 });
+
 
 // Fetch data when the component is mounted
 onMounted(async () => {
@@ -550,7 +540,7 @@ onMounted(async () => {
     }
 
     h3 {
-        padding: 0 18%;
+        padding: 0 16%;
     }
     .header input {
         width: 90% !important;
@@ -568,6 +558,7 @@ onMounted(async () => {
 @media (min-width: 900px) {
     #filtre {
         position: absolute;
+        height: 180%;
     }
     .header {
         position: absolute !important;

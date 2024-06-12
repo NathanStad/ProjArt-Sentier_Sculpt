@@ -185,6 +185,10 @@ onMounted(() => {
                 etapes.value.pointInteret[index].photo = ''
             }
         }
+        if (!etapes.value.pointInteret[1]) {
+                etapes.value.pointInteret[1].nom = ''
+                etapes.value.pointInteret[1].photo = ''
+        }
         etapes.value = JSON.parse(etapesData)[index];
         noEtape.value = index + 1;
         console.log(etapes.value);

@@ -85,5 +85,10 @@
     color: var(--primary);
     background-color: white;
   }
+  @media only screen and (min-width: 900px) {
+  .modal-content{
+    width: 20%;
+  }
+  }
   </style>
   

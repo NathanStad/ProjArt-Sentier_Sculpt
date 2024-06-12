@@ -408,10 +408,10 @@ export default {
                     const distance = route.properties.segments[0].distance; // distance en mètres
                     const duration = route.properties.segments[0].duration; // durée en secondes
 
-                    etapes[i].distanceToNext = distance;
+                    etapes[i].distanceToNext = distance /1000;
                     etapes[i].durationToNext = duration;
 
-                    longueurTotal += distance /1000;
+                    longueurTotal += distance;
                     dureeTotal += duration;
                     console.log(longueurTotal);
                     console.log(dureeTotal);
@@ -513,6 +513,10 @@ export default {
                 formData.append(`etapes[${index}][photo]`, etape.photo);
                 etape.points_interet.forEach((poi, poiIndex) => {
                     formData.append(
+                        `etapes[${index}][points_interet][${poiIndex}][id]`,
+                        poi.id
+                    );
+                    formData.append(
                         `etapes[${index}][points_interet][${poiIndex}][nom]`,
                         poi.nom
                     );
@@ -529,6 +533,8 @@ export default {
             formData.append("archive", payload.archive);
             formData.append("user_id", localStorage.getItem("userId"));
 
+            console.log(payload);
+
             const apiUrl = sessionStorage.getItem("update")
                 ? `/update/sentier/${payload.id}`
                 : "/submit/sentier";
@@ -536,24 +542,25 @@ export default {
 
             try {
                 const method = sessionStorage.getItem("update")
-                    ? "patch"
-                    : "post";
+                ? "patch"
+                : "post";
                 formData.append("_method", method);
-
+                
                 const response = await axios({
                     method: "post",
                     url: apiUrl,
                     data: formData,
                     headers: {
                         "Content-Type": "multipart/form-data",
-                    },
-                });
-
-                console.log("Sentier traité avec succès:", response.data);
+                        },
+                        });
+                        
+                        console.log('test');
 
                 // // Nettoyage du sessionStorage après traitement réussi
                 sessionStorage.removeItem("sentierCreation");
                 sessionStorage.removeItem("etapes");
+
                 if (!sessionStorage.getItem("update")) {
                     sessionStorage.removeItem("update");
                 }
