@@ -19,7 +19,7 @@
             :key="sentier.id"
             class="sentier"
         >
-            <div>
+            <div @click="reload">
                 <buttonFavoris :sentierId="sentier.id"></buttonFavoris>
             </div>
             <div>
@@ -57,7 +57,7 @@ import Footer from "@/components/elements/footer.vue";
 
 const isLoading = ref(true);
 const sentiers = ref([]);
-const favoris = ref(JSON.parse(localStorage.getItem("favoris")));
+const favoris = ref(JSON.parse(sessionStorage.getItem("favoris")));
 
 const searchQuery = ref("");
 
