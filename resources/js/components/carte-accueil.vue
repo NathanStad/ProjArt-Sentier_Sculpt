@@ -41,7 +41,6 @@ const selectedFilters = ref({
     selectedCriteres: [],
     selectedMotCles: [],
     difficulte: [],
-    theme: null,
 });
 const filtreVisible = ref(false); // Variable pour afficher ou masquer les filtres
 
@@ -60,12 +59,12 @@ const toggleFiltre = () => {
 // Filtres les sentiers en fonction des critères de recherche et des filtres sélectionnés
 const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
-        let matches = false;
+        let matches = true; // Initialise matches à true pour tous les sentiers
 
         // Filter by search query
         if (searchQuery.value.trim() !== "") {
-            matches = matches || (
-                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            matches = matches && (
+                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
                 sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase())
             );
         }
@@ -74,28 +73,20 @@ const filteredSentiers = computed(() => {
         if (selectedFilters.value.selectedCriteres.length > 0) {
             const critereIds = sentier.criteres.map(critere => critere.id);
             const matchesSelectedCriteres = selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere));
-            matches = matches || matchesSelectedCriteres;
+            matches = matches && matchesSelectedCriteres;
         }
 
         // Filter by selected mot cle
         if (selectedFilters.value.selectedMotCles.length > 0) {
             const motCleIds = sentier.motcles.map(motcle => motcle.id);
             const matchesSelectedMotCles = selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle));
-            matches = matches || matchesSelectedMotCles;
+            matches = matches && matchesSelectedMotCles;
         }
 
         // Filter by difficulty
-        console.log(selectedFilters.value);
-        console.log(sentier.difficulte);
         if (selectedFilters.value.difficulte.length > 0) {
             const matchesDifficulty = selectedFilters.value.difficulte.includes(`${sentier.difficulte.graduation}`);
-            matches = matches || matchesDifficulty;
-        }
-
-        // Filter by theme
-        if (selectedFilters.value.theme !== null) {
-            const matchesTheme = sentier.theme_id === selectedFilters.value.theme;
-            matches = matches || matchesTheme;
+            matches = matches && matchesDifficulty;
         }
 
         // If no filters are selected, we want to match all sentiers
@@ -103,8 +94,7 @@ const filteredSentiers = computed(() => {
             searchQuery.value.trim() === "" &&
             selectedFilters.value.selectedCriteres.length === 0 &&
             selectedFilters.value.selectedMotCles.length === 0 &&
-            selectedFilters.value.difficulte.length === 0 &&
-            selectedFilters.value.theme === null
+            selectedFilters.value.difficulte.length === 0
         ) {
             matches = true;
         }
@@ -112,6 +102,9 @@ const filteredSentiers = computed(() => {
         return matches;
     });
 });
+const updateFilters = (filters) => {
+    selectedFilters.value = filters;
+};
 const randomVert = () => {
     const green = Math.floor(Math.random() * 100) + 100;
     const red = Math.floor(Math.random() * 0);
@@ -267,8 +260,8 @@ const afficheRoute = (tour) => {
 const showTours = (tours) => {
     // Remove existing markers
     existingMarkers.forEach(marker => marker.remove());
+    console.log(existingMarkers);
     existingMarkers = []; // Clear the array
-
     // Remove existing layers
     existingLayers.forEach(layerId => {
         if (map.getLayer(layerId)) {

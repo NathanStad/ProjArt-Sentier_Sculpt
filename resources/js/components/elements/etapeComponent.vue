@@ -272,4 +272,5 @@ export default {
 /* .swiper-pagination {
     bottom: 95% !important;
 } */
+
 </style>

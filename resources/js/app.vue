@@ -171,7 +171,7 @@ const currentView = computed(() => {
 }
 body,
 html {
-    overflow: hidden scroll !important;
+    overflow: hidden visible !important;
     width: 100vw;
     margin: 0;
     min-height: 100vh;

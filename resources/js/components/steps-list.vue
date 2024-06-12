@@ -348,10 +348,6 @@ section > div {
     color: var(--primary) !important;
 }
 @media only screen and (min-width: 900px) {
-    :root {
-        --swiper-navigation-sides-offset: 30%;
-        --swiper-navigation-size: 3rem;
-    }
     #recenterDiv {
         right: 0.5%;
     }
@@ -369,4 +365,5 @@ section > div {
 .swiper {
     overflow: visible !important;
 }
+
 </style>
