@@ -16,7 +16,7 @@ const props = defineProps({
     },
 });
 
-let tableau = localStorage.getItem("favoris");
+let tableau = sessionStorage.getItem("favoris");
 if (tableau) {
     favoris.value = JSON.parse(tableau);
 } else {
@@ -35,7 +35,7 @@ const toggleFavorite = () => {
             favoris.value.splice(index, 1);
         }
     }
-    localStorage.setItem("favoris", JSON.stringify(favoris.value));
+    sessionStorage.setItem("favoris", JSON.stringify(favoris.value));
 };
 </script>
 

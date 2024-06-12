@@ -636,8 +636,8 @@ if (!localStorage.getItem("userId")) {
         border-bottom: none;
     }
     #user img {
-        width: 50%;
-        height: auto;
+        width: 300px;
+        height:300px;
         border-radius: 200px;
     }
     #user h3 {
@@ -648,7 +648,7 @@ if (!localStorage.getItem("userId")) {
     }
     #photoProfil {
         top: 55%;
-        left: 30%;
+        left: 25%;
     }
     #photoProfil span {
         font-size: 2.3rem;
@@ -701,7 +701,7 @@ if (!localStorage.getItem("userId")) {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 30px;
-        height: 100%;
+        height: 95%;
         overflow: overlay;
     }
     .login .cls-1 {

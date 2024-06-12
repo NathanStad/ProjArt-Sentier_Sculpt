@@ -52,7 +52,7 @@
             </div>
             <div id="duree">
                 Durée actuelle :
-                <span v-if="1 >= Math.floor(duree / 3600)"
+                <span v-if="1 <= Math.floor(duree / 3600)"
                     >{{ Math.floor(duree / 3600) }} h
                 </span>
                 <span>{{ Math.floor((duree % 3600) / 60) }} min</span>
@@ -411,26 +411,13 @@ export default {
                     etapes[i].distanceToNext = distance;
                     etapes[i].durationToNext = duration;
 
-                    longueurTotal += distance;
+                    longueurTotal += distance /1000;
                     dureeTotal += duration;
                     console.log(longueurTotal);
                     console.log(dureeTotal);
                 }
                 etapes[i].ordre = i + 1;
             }
-            console.log(etapes);
-            let postLongueurTotal = longueurTotal;
-            let postDureeTotal = dureeTotal;
-
-            for (let index = 0; index < etapes.length - 1; index++) {
-                const element = etapes[index];
-                element.distanceToNext =
-                    (postLongueurTotal - element.distanceToNext) / 1000;
-                element.durationToNext =
-                    postDureeTotal - element.durationToNext;
-            }
-            console.log(etapes);
-
             // La dernière étape a une distance et une durée de 0
             etapes[etapes.length - 1].distanceToNext = 0;
             etapes[etapes.length - 1].durationToNext = 0;
@@ -463,8 +450,6 @@ export default {
             );
             const etapesData = JSON.parse(sessionStorage.getItem("etapes"));
 
-            console.log(sentierCreationData);
-            console.log(etapesData);
             const payload = {
                 // ID Si exite
                 id: sentierCreationData.idSentier,
@@ -503,7 +488,7 @@ export default {
                 difficulte_id: sentierCreationData.difficulte,
                 archive: sentierCreationData.archive || 0,
             };
-
+            console.log(payload);
             const formData = new FormData();
             formData.append("nom", payload.nom);
             formData.append("description", payload.description);
@@ -547,34 +532,33 @@ export default {
                 ? `/update/sentier/${payload.id}`
                 : "/submit/sentier";
 
-            console.log(formData.get("etapes[1][duree]"));
 
             try {
-                const method = sessionStorage.getItem("update")
-                    ? "patch"
-                    : "post";
-                formData.append("_method", method);
+                // const method = sessionStorage.getItem("update")
+                //     ? "patch"
+                //     : "post";
+                // formData.append("_method", method);
 
-                const response = await axios({
-                    method: "post",
-                    url: apiUrl,
-                    data: formData,
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                });
+                // const response = await axios({
+                //     method: "post",
+                //     url: apiUrl,
+                //     data: formData,
+                //     headers: {
+                //         "Content-Type": "multipart/form-data",
+                //     },
+                // });
 
-                console.log("Sentier traité avec succès:", response.data);
+                // console.log("Sentier traité avec succès:", response.data);
 
-                // Nettoyage du sessionStorage après traitement réussi
-                sessionStorage.removeItem("sentierCreation");
-                sessionStorage.removeItem("etapes");
-                if (!sessionStorage.getItem("update")) {
-                    sessionStorage.removeItem("update");
-                }
+                // // Nettoyage du sessionStorage après traitement réussi
+                // sessionStorage.removeItem("sentierCreation");
+                // sessionStorage.removeItem("etapes");
+                // if (!sessionStorage.getItem("update")) {
+                //     sessionStorage.removeItem("update");
+                // }
 
-                // Redirection après succès
-                window.location.hash = `account`;
+                // // Redirection après succès
+                // window.location.hash = `account`;
             } catch (error) {
                 if (error.response && error.response.data) {
                     console.error(
