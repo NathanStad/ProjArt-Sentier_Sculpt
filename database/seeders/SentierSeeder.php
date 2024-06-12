@@ -22,8 +22,8 @@ class SentierSeeder extends Seeder {
         Sentier::create([
             'nom' => 'La ville qui dure',
             'description' => 'Un sentier typique pour les tests.',
-            'duree' => 7200,
-            'longueur' => 10.5,
+            'duree' => 3600,
+            'longueur' => 2,
             'localisation' => 'Yverdon',
             'compteur' => 0,
             'archive' => 0,
@@ -36,8 +36,8 @@ class SentierSeeder extends Seeder {
         Sentier::create([
             'nom' => 'La marche Olympique',
             'description' => 'Un sentier qui vous fait découvrir l\'histoire de la région.',
-            'duree' => 9000,
-            'longueur' => 12.0,
+            'duree' => 3600,
+            'longueur' => 3,
             'localisation' => 'Lausanne',
             'compteur' => 0,
             'archive' => 0,
@@ -50,8 +50,8 @@ class SentierSeeder extends Seeder {
         Sentier::create([
             'nom' => 'En pleine Nature',
             'description' => 'Un sentier qui traverse les plus beaux paysages naturels.',
-            'duree' => 10800,
-            'longueur' => 15.0,
+            'duree' => 3600,
+            'longueur' => 3,
             'localisation' => 'Le Sentier',
             'compteur' => 0,
             'archive' => 0,
