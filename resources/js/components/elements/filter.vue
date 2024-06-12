@@ -75,7 +75,7 @@
       </label>
     </div>
     <div id="buttons">
-      <a @click="callParentMethod" class="button">Enregristrer</a>
+      <a @click="callParentMethod" class="button">Enregistrer</a>
       <a @click="callComeBack" class="annuler">Annuler</a>
     </div>
   </div>

@@ -11,7 +11,7 @@
                 {{ sentier.nom }} <span v-html="sentier.theme.icone"></span>
             </h1>
             <div @click="copyUrlToClipboard">
-                <span class="material-symbols-outlined"> content_copy </span>
+                <span :class="{'material-symbols-outlined':true, clicked: clicked == true}"> content_copy </span>
             </div>
         </div>
         <!-- Sentier -->
@@ -293,6 +293,7 @@ const etapes = ref([]);
 const commentaires = ref([]);
 const currentContent = ref("step");
 const isLoading = ref(true);
+const clicked = ref(false);
 const showNotification = ref(false);
 function getRandomColor() {
     // Génère une valeur de couleur aléatoire pour la composante G (verte)
@@ -393,6 +394,7 @@ const submitComment = async () => {
 };
 // Copie dans le presse papier
 const copyUrlToClipboard = () => {
+    clicked.value = !clicked.value
     const url = window.location.href;
     navigator.clipboard
         .writeText(url)
@@ -599,9 +601,12 @@ h1 span {
 }
 ul {
     list-style-type: none;
+    border: 1px solid var(--color-text-secondary);
+    border-radius: 20px ;
     max-height: 50vh;
     overflow: hidden overlay;
     margin-bottom: 10%;
+    padding: 5%;
 }
 li {
     padding-bottom: 10%;
@@ -655,7 +660,7 @@ li > p {
 }
 #comms form > div > input:first-of-type,
 #comms form > div > textarea {
-    border-bottom: 1px var(--color-text-secondary) solid;
+    border-bottom: 1px #d6d6d6 solid;
 }
 #comms form > div button {
     background: none;
@@ -710,6 +715,9 @@ li > p {
 .notification p {
     color: var(--primary);
     font-weight: 600;
+}
+.clicked{
+    color: var(--primary) !important;
 }
 @media only screen and (min-width: 900px) {
     #seniter-sentier {

@@ -505,7 +505,7 @@ if (!localStorage.getItem("userId")) {
     padding: 0;
 }
 #button-archive span {
-    padding: 5px 15px;
+    padding: 10px 15px;
     width: 60%;
     border-radius: var(--border-radius-large);
 }
@@ -529,8 +529,9 @@ if (!localStorage.getItem("userId")) {
 }
 
 .sentierItem img {
-    width: 100%;
-    height: 200;
+    width: 105%;
+    transform: translate(-2.5%);
+    height: 200px;
 }
 
 .menuSentierButton {
@@ -578,7 +579,7 @@ if (!localStorage.getItem("userId")) {
 }
 #vos-santiers .affichage {
     bottom: 0%;
-    height: 90px;
+    height: 75px;
     width: 105%;
     padding: var(--padding-medium) 40px;
 }
@@ -609,6 +610,10 @@ if (!localStorage.getItem("userId")) {
 #logout {
     cursor: pointer;
     color: var(--color-text-secondary);
+}
+#sentier h1{
+    text-align: center;
+    font-size: 1.4rem ;
 }
 @media only screen and (min-width: 900px) {
     #compte {

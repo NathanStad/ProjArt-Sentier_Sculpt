@@ -33,7 +33,7 @@ Route::delete('/delete-sentier/{id}', [SentierController::class, 'destroy']);
 
 // Insertion de données
 Route::post('/submit/sentier', [SentierController::class, 'store']);
-Route::put('/update/sentier/{id}', [SentierController::class, 'update']);
+Route::patch('/update/sentier/{id}', [SentierController::class, 'update']);
 
 // Insertion de fichier
 Route::post('/submit-file-account', [UserController::class, 'uploadFile']);

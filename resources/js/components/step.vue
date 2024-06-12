@@ -183,6 +183,7 @@ h3 {
 .poi-element p {
     padding-top: 7px;
     font-weight: 700;
+    font-size: 0.8rem;
 }
 h3 {
     color: var(--primary);

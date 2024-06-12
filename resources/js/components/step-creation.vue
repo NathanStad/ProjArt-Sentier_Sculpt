@@ -275,10 +275,13 @@ const handleSubmit = () => {
     if (valid) {
         const index = parseInt(window.location.hash.split("-")[1]) - 1;
         const etapesData = sessionStorage.getItem("etapes");
+        console.log(etapes.value    );
         if (etapesData) {
             let etapesArray = JSON.parse(etapesData);
             etapesArray[index] = etapes.value;
+            console.log(etapesArray[index]);
             sessionStorage.setItem("etapes", JSON.stringify(etapesArray));
+            console.log(sessionStorage.getItem("etapes"));
             window.location.hash = `creationSteps`;
         } else {
             console.error("No 'etapes' data in sessionStorage.");

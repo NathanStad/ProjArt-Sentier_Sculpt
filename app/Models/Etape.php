@@ -14,7 +14,7 @@ class Etape extends Model
     use HasFactory;
     protected $table = 'etapes';
 
-    protected $fillable = ['sentier_id', 'nom', 'description', 'latitude', 'longitude', 'ordre', 'photo'];
+    protected $fillable = ['sentier_id', 'nom', 'description', 'latitude', 'longitude', 'distance', 'duree', 'ordre', 'photo'];
 
     public function sentier() {
         return $this->belongsTo(Sentier::class);

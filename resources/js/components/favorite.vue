@@ -194,7 +194,7 @@ input{
     height: fit-content;
     z-index: 5;
     font-size: 1.5rem ;
-    top: 93px;
+    top: 62%;
     left: 40px;
     color: var(--color-text-secondary);
 }

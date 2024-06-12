@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SentierUpdateRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Sentier;
 use App\Models\Etape;
 use App\Models\Critere;
 use App\Models\MotCle;
 use App\Models\PointInteret;
 use App\Http\Requests\SentierStoreRequest;
-use App\Http\Requests\SentierUpdateRequest;
 
 class SentierController extends Controller
 {
@@ -68,12 +67,15 @@ class SentierController extends Controller
                     // Ajouter les points d'intérêt
                     if (isset($etapeData['points_interet'])) {
                         foreach ($etapeData['points_interet'] as $poiData) {
-                            $pointInteret = PointInteret::create([
-                                'nom' => $poiData['nom'],
-                                'photo' => $poiData['photo'] ?? null,
-                            ]);
+                            // Vérifier si le nom est défini et non vide
+                            if (isset($poiData['nom']) && !empty($poiData['nom'])) {
+                                $pointInteret = PointInteret::create([
+                                    'nom' => $poiData['nom'],
+                                    'photo' => $poiData['photo'] ?? null,
+                                ]);
 
-                            $etape->pointsInteret()->attach($pointInteret->id);
+                                $etape->pointsInteret()->attach($pointInteret->id);
+                            }
                         }
                     }
                 }
@@ -103,16 +105,18 @@ class SentierController extends Controller
             }
     }
 
-    public function update(Request $request, $id)
+    public function update(SentierUpdateRequest $request, $id)
 {
+
     try {
-        // Trouver le sentier
+        // Find the sentier
         $sentier = Sentier::find($id);
         if (!$sentier) {
             return response()->json(['message' => 'Sentier not found'], 404);
         }
 
-        // Mettre à jour le sentier
+
+        // Update the sentier
         $sentier->update([
             'nom' => $request->nom,
             'description' => $request->description,
@@ -124,7 +128,8 @@ class SentierController extends Controller
             'difficulte_id' => $request->difficulte_id,
         ]);
 
-        // Mettre à jour ou créer les étapes
+
+        // Update or create the etapes
         foreach ($request->etapes as $etapeData) {
             if (isset($etapeData['id'])) {
                 $etape = Etape::find($etapeData['id']);
@@ -154,7 +159,7 @@ class SentierController extends Controller
                 ]);
             }
 
-            // Mettre à jour ou créer les points d'intérêt
+            // Update or create the points d'intérêt
             if (isset($etapeData['points_interet'])) {
                 foreach ($etapeData['points_interet'] as $poiData) {
                     if (isset($poiData['id'])) {
@@ -177,14 +182,14 @@ class SentierController extends Controller
             }
         }
 
-        // Mettre à jour les critères
+        // Update criteria
         if ($request->has('criteres')) {
             $criteresIds = CritereController::transformToArray($request->criteres);
             $criteres = Critere::whereIn('id', $criteresIds)->get();
             $sentier->criteres()->sync($criteres);
         }
 
-        // Mettre à jour les mots-clés
+        // Update keywords
         if ($request->has('motcles')) {
             $motclesIds = MotClesController::transformToArray($request->motcles);
             $motcles = MotCle::whereIn('id', $motclesIds)->get();
@@ -193,14 +198,15 @@ class SentierController extends Controller
 
         return response()->json($sentier, 200);
     } catch (\Exception $e) {
-        // Renvoyer une réponse avec les détails de l'erreur
+        // Return a response with error details
         return response()->json([
-            'message' => 'Une erreur est survenue lors de la mise à jour du sentier.',
+            'message' => 'An error occurred while updating the sentier.',
             'error' => $e->getMessage(),
             'trace' => $e->getTraceAsString()
         ], 500);
     }
 }
+
 
 
     public function destroy($id)

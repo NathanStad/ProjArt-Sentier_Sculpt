@@ -76,7 +76,7 @@
                         <div v-html="sentier.theme.icone"></div>
                     </div>
                 </a>
-                <p v-if="filteredSentiers < 1">Sentiers recherchés introuvables</p>
+                <p v-if="filteredSentiers < 1">Aucun sentier actuellement disponible pour ce thème</p>
             </div>
         </div>
 
