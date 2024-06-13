@@ -313,8 +313,8 @@ export default {
             let dureeTotal = 0;
             let coordonneesPrec = null;
 
-            for (let index = 0; index < this.etapes.length; index++) {
-                const etape = this.etapes[index];
+            for (let index = 0; index < this.etapeOk.length; index++) {
+                const etape = this.etapeOk[index];
                 if (coordonneesPrec !== null) {
                     longueurTotal += this.calculerDistance(
                         coordonneesPrec,

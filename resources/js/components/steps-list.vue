@@ -1,7 +1,7 @@
 <template>
     <div id="list-etapes">
         <div class="header">
-            <a :href="`#sentier-${hash.value + 1}`">
+            <a :href="`#sentier-${props.Id}`">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
         </div>

@@ -11,7 +11,14 @@
                 {{ sentier.nom }} <span v-html="sentier.theme.icone"></span>
             </h1>
             <div @click="copyUrlToClipboard">
-                <span :class="{'material-symbols-outlined':true, clicked: clicked == true}"> content_copy </span>
+                <span
+                    :class="{
+                        'material-symbols-outlined': true,
+                        clicked: clicked == true,
+                    }"
+                >
+                    content_copy
+                </span>
             </div>
         </div>
         <!-- Sentier -->
@@ -255,10 +262,9 @@
 import { ref, onMounted, defineProps, computed } from "vue";
 import axios from "axios";
 import buttonFavoris from "@/components/elements/buttonFavorite.vue";
-// import Swiper core and required modules
 import { Pagination, A11y } from "swiper/modules";
 
-// Import Swiper Vue.js components
+// Import Swiper Vue.js
 import { Swiper, SwiperSlide } from "swiper/vue";
 // Register components
 defineExpose({
@@ -286,7 +292,7 @@ const props = defineProps({
     },
 });
 
-// Data
+// État réactif
 const message = ref("");
 const sentier = ref({});
 const etapes = ref([]);
@@ -315,7 +321,7 @@ const attributionColor = () => {
     }
     console.log(commentaires.value);
 };
-// Methods
+// Methods permettant d'incrémenter le nombre de visiste de sentier pour l'affichage des sentiers les plus vues
 const incrementCompteur = () => {
     if (props.Id !== "") {
         axios
@@ -334,6 +340,7 @@ const incrementCompteur = () => {
     }
 };
 
+  // Fonction pour récupérer les sentiers depuis l'API
 const fetchSentier = async () => {
     if (props.Id !== "") {
         try {
@@ -353,6 +360,7 @@ const showContent = (content) => {
     currentContent.value = content;
 };
 
+// Convertisseurs de date
 const convertissorDate = (date) => {
     const dateInitiale = new Date(date);
     const jour = dateInitiale.getDate();
@@ -395,7 +403,7 @@ const submitComment = async () => {
 };
 // Copie dans le presse papier
 const copyUrlToClipboard = () => {
-    clicked.value = !clicked.value
+    clicked.value = !clicked.value;
     const url = window.location.href;
     navigator.clipboard
         .writeText(url)
@@ -602,7 +610,7 @@ h1 span {
 }
 ul {
     list-style-type: none;
-    border-radius: 20px ;
+    border-radius: 20px;
     max-height: 50vh;
     overflow: hidden overlay;
     margin-bottom: 10%;
@@ -716,7 +724,7 @@ li > p {
     color: var(--primary);
     font-weight: 600;
 }
-.clicked{
+.clicked {
     color: var(--primary) !important;
 }
 @media only screen and (min-width: 900px) {
@@ -733,12 +741,12 @@ li > p {
     .content {
         display: none;
     }
-    #step.active{
+    #step.active {
         display: grid;
         margin: 0 20%;
         grid-template-columns: 1fr 1fr;
     }
-    #comms ul{
+    #comms ul {
         display: grid;
         grid-template-columns: 1fr 1fr;
     }
@@ -753,10 +761,10 @@ li > p {
     #step a {
         height: 350px;
     }
-    #comms form > div > textarea{
+    #comms form > div > textarea {
         height: 10vh;
     }
-    .boutton-demarer{
+    .boutton-demarer {
         width: 30%;
     }
 }

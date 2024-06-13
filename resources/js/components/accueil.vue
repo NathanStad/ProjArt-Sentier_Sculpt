@@ -1,254 +1,244 @@
 <template>
     <div v-if="isLoading">
-        <p>Loading...</p>
+      <p>Loading...</p>
     </div>
     <div id="accueil" v-else>
-        <header><Header></Header></header>
-        <!-- Bar de recherche -->
-        <div class="header">
-            <input
-                type="text"
-                v-model="searchQuery"
-                placeholder="Rechercher par lieu et nom"
-                class="recherche"
-            />
-            <span class="material-symbols-outlined search-icone"> search </span>
-            <!-- Bouton Filtre -->
-            <div @click="toggleFiltre()" id="buttonFiltre" :class="{filterActive: filterActived == true}">
-                <span class="material-symbols-outlined"> tune </span>
+      <header>
+        <Header />
+      </header>
+      <!-- Barre de recherche -->
+      <div class="header">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Rechercher par lieu et nom"
+          class="recherche"
+        />
+        <span class="material-symbols-outlined search-icone">search</span>
+        <!-- Bouton de filtre -->
+        <div @click="toggleFiltre" id="buttonFiltre" :class="{ filterActive: filterActived }">
+          <span class="material-symbols-outlined">tune</span>
+        </div>
+      </div>
+  
+      <!-- Conteneur de filtre -->
+      <div id="filtre" :class="{ visible: filtreVisible }">
+        <Filtre @updateFilters="updateFilters" :closeFilter="toggleFiltre" />
+      </div>
+  
+      <!-- Thèmes -->
+      <div id="theme-parent">
+        <div id="theme">
+          <div
+            :class="{ theme: true, current: themeCurrent === null }"
+            @click="filterByTheme(null)"
+          >
+            <div>
+              <span class="material-symbols-outlined click">footprint</span>
             </div>
+            <p>Tout</p>
+          </div>
+          <div
+            v-for="theme in themes"
+            :key="theme.id"
+            :class="{ theme: true, click: true, current: themeCurrent === theme.id }"
+            @click="filterByTheme(theme.id)"
+          >
+            <div v-html="theme.icone"></div>
+            <p>{{ theme.name }}</p>
+          </div>
         </div>
-
-        <!-- Conteneur du filtre -->
-        <div id="filtre" :class="{ visible: filtreVisible === true }">
-            <Filtre
-                @updateFilters="updateFilters"
-                :closeFilter="toggleFiltre"
-            ></Filtre>
-        </div>
-
-        <!-- Thèmes -->
-        <div id="theme-parent">
-            <div id="theme">
-                <div
-                    :class="{ theme: true, current: themeCurrent == null }"
-                    @click="filterByTheme(null)"
-                >
-                    <div>
-                        <span class="material-symbols-outlined click">
-                            footprint
-                        </span>
-                    </div>
-                    <p>Tout</p>
+      </div>
+  
+      <!-- Sentiers de randonnée -->
+      <div id="sentiers-parent">
+        <div id="sentiers-accueil">
+          <a v-for="sentier in filteredSentiers" :key="sentier.id" :href="`#sentier-${sentier.id}`">
+            <div :style="{ 'background-image': `url(${sentier.photo})` }">
+              <buttonFavoris id="favoris" :sentierId="sentier.id" />
+            </div>
+            <div class="affichage">
+              <div>
+                <p class="sentier-nom">{{ sentier.nom }}</p>
+                <div>
+                  <span class="material-symbols-outlined">location_on</span>
+                  <p>{{ sentier.localisation }}</p>
                 </div>
-                <div
-                    v-for="theme in themes"
-                    :key="theme.id"
-                    :class="{
-                        theme: true,
-                        click: true,
-                        current: themeCurrent == theme.id,
-                    }"
-                    @click="filterByTheme(theme.id)"
-                >
-                    <div v-html="theme.icone"></div>
-                    <p>{{ theme.name }}</p>
-                </div>
+              </div>
+              <div v-html="sentier.theme.icone"></div>
             </div>
+          </a>
+          <p v-if="filteredSentiers.length < 1">
+            Aucun sentier actuellement disponible pour ce thème
+          </p>
         </div>
-
-        <!-- Sentiers  -->
-        <div id="sentiers-parent">
-            <div id="sentiers-accueil">
-                <a
-                    v-for="sentier in filteredSentiers"
-                    :key="sentier.id"
-                    :href="`#sentier-${sentier.id}`"
-                >
-                    <div
-                        :style="{ 'background-image': `url(${sentier.photo})` }"
-                    >
-                        <buttonFavoris
-                            id="favoris"
-                            :sentierId="sentier.id"
-                        ></buttonFavoris>
-                    </div>
-                    <div class="affichage">
-                        <div>
-                            <p class="sentier-nom">{{ sentier.nom }}</p>
-                            <div>
-                                <span class="material-symbols-outlined">
-                                    location_on
-                                </span>
-                                <p>{{ sentier.localisation }}</p>
-                            </div>
-                        </div>
-                        <div v-html="sentier.theme.icone"></div>
-                    </div>
-                </a>
-                <p v-if="filteredSentiers < 1">
-                    Aucun sentier actuellement disponible pour ce thème
-                </p>
+      </div>
+  
+      <!-- Sentiers préférés -->
+      <h3>Sentiers incontournables</h3>
+      <div id="lesPlusVues-parent">
+        <div id="lesPlusVues">
+          <a v-for="sentier in sentiersPref" :key="sentier.id" :href="`#sentier-${sentier.id}`">
+            <img :src="sentier.photo" :alt="sentier.nom" />
+            <div>
+              <p>{{ sentier.nom }}</p>
             </div>
+          </a>
         </div>
-
-        <!-- Destinations préférées -->
-        <h3>Sentiers incontournables</h3>
-        <div id="lesPlusVues-parent">
-            <div id="lesPlusVues">
-                <a
-                    v-for="sentier in sentiersPref"
-                    :key="sentier.id"
-                    :href="`#sentier-${sentier.id}`"
-                >
-                    <img :src="sentier.photo" :alt="sentier.nom" />
-                    <div>
-                        <p>{{ sentier.nom }}</p>
-                    </div>
-                </a>
-            </div>
-        </div>
+      </div>
     </div>
-    <footer><Footer></Footer></footer>
-</template>
-
-<script setup>
-import { ref, computed, onMounted, watchEffect  } from "vue";
-import axios from "axios";
-import Filtre from "@/components/elements/filter.vue";
-import buttonFavoris from "@/components/elements/buttonFavorite.vue";
-import Footer from "@/components/elements/footer.vue";
-import Header from "@/components/elements/header.vue";
-
-// Define reactive state
-const themes = ref([]);
-const sentiers = ref([]);
-const sentiersPref = ref([]);
-const filtreVisible = ref(false);
-const searchQuery = ref("");
-const isLoading = ref(true);
-const themeCurrent = ref(null);
-const filterActived = ref(false);
-
-const selectedFilters = ref({
+    <footer>
+      <Footer />
+    </footer>
+  </template>
+  
+  <script setup>
+  import { ref, computed, onMounted, watchEffect } from "vue";
+  import axios from "axios";
+  import Filtre from "@/components/elements/filter.vue";
+  import buttonFavoris from "@/components/elements/buttonFavorite.vue";
+  import Footer from "@/components/elements/footer.vue";
+  import Header from "@/components/elements/header.vue";
+  
+  // État réactif
+  const themes = ref([]);
+  const sentiers = ref([]);
+  const sentiersPref = ref([]);
+  const filtreVisible = ref(false);
+  const searchQuery = ref("");
+  const isLoading = ref(true);
+  const themeCurrent = ref(null);
+  const filterActived = ref(false);
+  
+  const selectedFilters = ref({
     selectedCriteres: [],
     selectedMotCles: [],
     difficulte: [],
     theme: null,
-});
-watchEffect(() => {
-    filterActived.value = selectedFilters.value.selectedCriteres.length > 0 ||
-                          selectedFilters.value.selectedMotCles.length > 0 ||
-                          selectedFilters.value.difficulte.length > 0;
-});
-// Function to fetch theme data
-const fetchTheme = async () => {
+  });
+  
+  // Mise à jour de l'état du filtre actif
+  watchEffect(() => {
+    filterActived.value =
+      selectedFilters.value.selectedCriteres.length > 0 ||
+      selectedFilters.value.selectedMotCles.length > 0 ||
+      selectedFilters.value.difficulte.length > 0;
+  });
+  
+  // Fonction pour récupérer les thèmes depuis l'API
+  const fetchTheme = async () => {
     try {
-        const response = await axios.get("/data-theme");
-        themes.value = response.data;
+      const response = await axios.get("/data-theme");
+      themes.value = response.data;
     } catch (error) {
-        console.error("Error fetching themes:", error);
+      console.error("Error fetching themes:", error);
     }
-};
-
-// Function to fetch sentier data, excluding archived ones
-const fetchSentiers = async () => {
+  };
+  
+  // Fonction pour récupérer les sentiers depuis l'API
+  const fetchSentiers = async () => {
     try {
-        const response = await axios.get("/data-sentiers");
-        sentiers.value = response.data.filter((item) => item.archive === 0);
+      const response = await axios.get("/data-sentiers");
+      sentiers.value = response.data.filter((item) => item.archive === 0);
     } catch (error) {
-        console.error("Error fetching sentiers:", error);
+      console.error("Error fetching sentiers:", error);
     }
-};
-
-// Function to fetch preferred sentier data
-const fetchSentiersPref = async () => {
+  };
+  
+  // Fonction pour récupérer les sentiers préférés depuis l'API
+  const fetchSentiersPref = async () => {
     try {
-        const response = await axios.get("/data-sentiers/prefere");
-        sentiersPref.value = response.data.filter((item) => item.archive === 0);
-        console.log(sentiersPref.value);
+      const response = await axios.get("/data-sentiers/prefere");
+      sentiersPref.value = response.data.filter((item) => item.archive === 0);
     } catch (error) {
-        console.error("Error fetching preferred sentiers:", error);
+      console.error("Error fetching preferred sentiers:", error);
     }
-};
-
-const updateFilters = (filters) => {
+  };
+  
+  // Fonction pour mettre à jour les filtres
+  const updateFilters = (filters) => {
     selectedFilters.value = filters;
-};
-
-const toggleFiltre = () => {
+  };
+  
+  // Fonction pour basculer la visibilité du filtre
+  const toggleFiltre = () => {
     filtreVisible.value = !filtreVisible.value;
-};
-
-const filterByTheme = (themeId) => {
+  };
+  
+  // Fonction pour filtrer les sentiers par thème
+  const filterByTheme = (themeId) => {
     selectedFilters.value.theme = themeId;
     themeCurrent.value = themeId;
-};
-
-const filteredSentiers = computed(() => {
+  };
+  
+  // Calcul des sentiers filtrés en additionant les filtres
+  const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
-        let matches = false;
-
-        // Filter by search query
-        if (searchQuery.value.trim() !== "") {
-            matches = matches || (
-                sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
-                sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase())
-            );
-        }
-
-        // Filter by selected critere
-        if (selectedFilters.value.selectedCriteres.length > 0) {
-            const critereIds = sentier.criteres.map(critere => critere.id);
-            const matchesSelectedCriteres = selectedFilters.value.selectedCriteres.every(critere => critereIds.includes(critere));
-            matches = matches || matchesSelectedCriteres;
-        }
-
-        // Filter by selected mot cle
-        if (selectedFilters.value.selectedMotCles.length > 0) {
-            const motCleIds = sentier.motcles.map(motcle => motcle.id);
-            const matchesSelectedMotCles = selectedFilters.value.selectedMotCles.every(motcle => motCleIds.includes(motcle));
-            matches = matches || matchesSelectedMotCles;
-        }
-
-        // Filter by difficulty
-        console.log(selectedFilters.value);
-        console.log(sentier.difficulte);
-        if (selectedFilters.value.difficulte.length > 0) {
-            const matchesDifficulty = selectedFilters.value.difficulte.includes(`${sentier.difficulte.graduation}`);
-            matches = matches || matchesDifficulty;
-        }
-
-        // Filter by theme
-        if (selectedFilters.value.theme !== null) {
-            const matchesTheme = sentier.theme_id === selectedFilters.value.theme;
-            matches = matches || matchesTheme;
-        }
-
-        // If no filters are selected, we want to match all sentiers
-        if (
-            searchQuery.value.trim() === "" &&
-            selectedFilters.value.selectedCriteres.length === 0 &&
-            selectedFilters.value.selectedMotCles.length === 0 &&
-            selectedFilters.value.difficulte.length === 0 &&
-            themeCurrent.value === null
-        ) {
-            matches = true;
-        }
-
-        return matches;
+      let matches = false;
+  
+      // Filtrage par barre de recherche
+      if (searchQuery.value.trim() !== "") {
+        matches =
+          matches ||
+          sentier.nom.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+          sentier.localisation.toLowerCase().includes(searchQuery.value.toLowerCase());
+      }
+  
+      // Filtrage par critères sélectionnés
+      if (selectedFilters.value.selectedCriteres.length > 0) {
+        const critereIds = sentier.criteres.map((critere) => critere.id);
+        const matchesSelectedCriteres = selectedFilters.value.selectedCriteres.every((critere) =>
+          critereIds.includes(critere)
+        );
+        matches = matches || matchesSelectedCriteres;
+      }
+  
+      // Filtrage par mots-clés sélectionnés
+      if (selectedFilters.value.selectedMotCles.length > 0) {
+        const motCleIds = sentier.motcles.map((motcle) => motcle.id);
+        const matchesSelectedMotCles = selectedFilters.value.selectedMotCles.every((motcle) =>
+          motCleIds.includes(motcle)
+        );
+        matches = matches || matchesSelectedMotCles;
+      }
+  
+      // Filtrage par difficulté
+      if (selectedFilters.value.difficulte.length > 0) {
+        const matchesDifficulty = selectedFilters.value.difficulte.includes(
+          `${sentier.difficulte.graduation}`
+        );
+        matches = matches || matchesDifficulty;
+      }
+  
+      // Filtrage par thème
+      if (selectedFilters.value.theme !== null) {
+        const matchesTheme = sentier.theme_id === selectedFilters.value.theme;
+        matches = matches || matchesTheme;
+      }
+  
+      // Affichage de tous les sentiers si aucun filtre n'est appliqué
+      if (
+        searchQuery.value.trim() === "" &&
+        selectedFilters.value.selectedCriteres.length === 0 &&
+        selectedFilters.value.selectedMotCles.length === 0 &&
+        selectedFilters.value.difficulte.length === 0 &&
+        themeCurrent.value === null
+      ) {
+        matches = true;
+      }
+  
+      return matches;
     });
-});
-
-
-// Fetch data when the component is mounted
-onMounted(async () => {
+  });
+  
+  // Appel des fonctions de récupération de données au montage du composant
+  onMounted(async () => {
     await fetchTheme();
     await fetchSentiers();
     await fetchSentiersPref();
     isLoading.value = false;
-});
-</script>
+  });
+  </script>
 
 <style>
 .recherche[type="text"] {
