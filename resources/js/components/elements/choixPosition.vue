@@ -15,66 +15,65 @@
 </template>
 
 <script>
-// Importation de MapLibre GL et de ses styles
 import maplibregl from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
-// Importation des composants personnalisés
 import RecentrerBtnComponent from './recentrerBtnComponent.vue';
-import ConfirmationModal from './ConfirmationModal.vue';
+import ConfirmationModal from './ConfirmationModal.vue'; // Import du composant ConfirmationModal
 
-let map; // Variable globale pour stocker l'instance de la carte
+let map;
 
 export default {
-    name: 'ChoixPosition', // Nom du composant
-    data() { // Données réactives du composant
+    name: 'ChoixPosition',
+    data() {
         return {
-            marker: null, // Marqueur actuel sur la carte
-            coordonnesRecenter: [6.700021, 46.602693], // Coordonnées pour recentrer la carte
-            zoomRecentrer: 8, // Zoom pour recentrer la carte
-            couleur: '#40680c', // Couleur du cercle autour du marqueur
-            showModal: false, // État pour afficher le modal de confirmation
-            element: "" // Stockage temporaire des coordonnées cliquées ou sélectionnées
+            marker: null,
+            coordonnesRecenter: [6.700021, 46.602693],
+            zoomRecentrer: 8,
+            couleur: '#40680c',
+            showModal: false,
+            element: ""
         }
     },
-    props: { // Propriétés passées au composant
-        updateCoordinates: Function, // Fonction pour mettre à jour les coordonnées
-        etapes: Array // Étapes de navigation ou d'autres données liées aux coordonnées
+    props: {
+        updateCoordinates: Function,
+        etapes: Array
     },
-    mounted() { // Méthode appelée après le montage du composant
-        // Initialisation de la carte MapLibre GL
+    mounted() {
         map = new maplibregl.Map({
-            container: "mapChoixPosition", // ID du conteneur HTML pour la carte
-            style: "URL du style de la carte", // URL du style JSON de la carte
-            center: this.coordonnesRecenter, // Coordonnées initiales du centre de la carte
-            zoom: this.zoomRecentrer, // Zoom initial de la carte
+            container: "mapChoixPosition",
+            style: "https://api.maptiler.com/maps/ch-swisstopo-lbm/style.json?key=UwLYJlrEYGDsXphBkCHS",
+            center: this.coordonnesRecenter,
+            zoom: this.zoomRecentrer,
         });
-        // Gestion des événements de chargement de la carte
         map.on("load", () => {
-            // Ajout du contrôle de navigation
-            map.addControl(new maplibregl.NavigationControl({showCompass: false, showZoom: true}));
-            // Logique pour placer un marqueur si des coordonnées sont fournies
+            map.addControl(
+                new maplibregl.NavigationControl({
+                    showCompass: false,
+                    showZoom: true,
+                })
+            );
             if (this.etapes.coordonnees.long && this.etapes.coordonnees.lat) {
-                // Création et ajout d'un marqueur à la carte
-                const marker = new maplibregl.Marker().setLngLat([this.etapes.coordonnees.long, this.etapes.coordonnees.lat]).addTo(map);
-                this.marker = marker; // Mise à jour de l'état interne pour référencer le marqueur
-                // Modification visuelle du marqueur
-                const markerElement = marker._element.querySelector('svg');
-                while (markerElement.firstChild) {
-                    markerElement.removeChild(markerElement.firstChild);
+                const marker = new maplibregl.Marker()
+                    .setLngLat([this.etapes.coordonnees.long, this.etapes.coordonnees.lat])
+                    .addTo(map);
+                this.marker = marker;
+                const markerElement = marker._element;
+                const svgElement = markerElement.querySelector('svg');
+                while (svgElement.firstChild) {
+                    svgElement.removeChild(svgElement.firstChild);
                 }
-                if (markerElement) {
+                if (svgElement) {
+                    console.log(svgElement);
                     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                     circle.setAttribute('cx', '12');
                     circle.setAttribute('cy', '27');
                     circle.setAttribute('r', '12');
                     circle.setAttribute('fill', this.couleur);
-                    markerElement.appendChild(circle);
+                    svgElement.appendChild(circle);
                 }
             }
         });
-        // Gestion des clics sur la carte
         map.on("click", (e) => {
-            // Logique pour gérer le clic sur la carte
             if (this.marker) {
                 this.showModal = true;
                 this.element = e
@@ -101,11 +100,11 @@ export default {
             this.updateCoordinates(e.lngLat);
         });
     },
-    methods: { // Méthodes du composant
-        enleverConfirmation() { // Fermeture du modal de confirmation
+    methods: {
+        enleverConfirmation() {
             this.showModal = false;
         },
-        recenter() { // Réinitialisation du centre de la carte
+        recenter() {
             map.flyTo({
                 center: this.coordonnesRecenter,
                 zoom: this.zoomRecentrer,
@@ -116,8 +115,6 @@ export default {
             });
         },
         handleConfirm() {
-            // Gestion de la confirmation pour remplacer le marqueur
-            // Logique pour remplacer le marqueur
             this.marker.remove();
             const marker = new maplibregl.Marker()
                 .setLngLat(this.element.lngLat)
@@ -140,14 +137,13 @@ export default {
             this.showModal = false;
         },
     },
-    components: { // Déclaration des composants utilisés
+    components: {
         RecentrerBtnComponent,
         ConfirmationModal // Ajout du composant ConfirmationModal
     },
-    watch: { // Observateurs pour réagir aux changements des propriétés ou des données
+    watch: {
         marker: {
             handler() {
-                // Mise à jour des coordonnées de centrage et du zoom basé sur le marqueur
                 this.coordonnesRecenter = [this.marker.getLngLat().lng, this.marker.getLngLat().lat];
                 this.zoomRecentrer = 12;
             },
@@ -155,7 +151,6 @@ export default {
         },
         etapes: {
             handler() {
-                // Logique pour réagir aux changements des étapes
                 console.log(this.etapes)
             },
             deep: true,

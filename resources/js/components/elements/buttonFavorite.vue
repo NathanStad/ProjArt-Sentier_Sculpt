@@ -34,7 +34,6 @@ onUnmounted(() => {
     window.removeEventListener("favorisUpdated", handleFavorisUpdated);
 });
 
-// Lors du click il est ajouté dans les favoris
 const toggleFavorite = () => {
     isFavorite.value = !isFavorite.value;
     const favoris = JSON.parse(sessionStorage.getItem("favoris") || "[]");

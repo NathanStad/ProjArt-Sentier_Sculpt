@@ -205,7 +205,7 @@
 import { ref, onMounted, watch } from "vue";
 import axios from "axios";
 
- // État réactif
+// Define reactive state
 const idSentier = ref("");
 const nomSentier = ref("");
 const descriptionSentier = ref("");
@@ -216,7 +216,7 @@ const selectedMotCles = ref([]);
 const difficulte = ref("");
 const photoSentier = ref(null);
 
-// Gestion des erreurs
+// State for error messages
 const errors = ref({
     nomSentier: "",
     descriptionSentier: "",
@@ -266,7 +266,7 @@ const handleFileUpload = async (e) => {
     }
 };
 
-// Fonction permettant de récupérer les données relatives au thème
+// Function to fetch theme data
 const fetchThemes = async () => {
     try {
         const response = await axios.get("/data-theme");
@@ -276,7 +276,7 @@ const fetchThemes = async () => {
     }
 };
 
-// Fonction permettant de récupérer les données relatives au critères
+// Function to fetch critere data
 const fetchCriteres = async () => {
     try {
         const response = await axios.get("/data-critere");
@@ -286,7 +286,7 @@ const fetchCriteres = async () => {
     }
 };
 
-// Fonction permettant de récupérer les données relatives au motclé
+// Function to fetch mot cle data
 const fetchMotCles = async () => {
     try {
         const response = await axios.get("/data-motcles");
@@ -296,9 +296,9 @@ const fetchMotCles = async () => {
     }
 };
 
-// Fonction permettant de gérer la soumission d'un formulaire
+// Function to handle form submission
 const submitData = async () => {
-    // Valider le formulaire avant de le soumettre
+    // Validate form before submitting
     validateForm();
 
     if (isValidForm()) {
@@ -321,7 +321,7 @@ const submitData = async () => {
             );
             console.log("Form data saved to sessionStorage:", formDataToSave);
 
-            // Redirection
+            // Redirect user
             window.location.hash = `creationSteps`;
         } catch (error) {
             console.error("Error submitting form:", error);
@@ -329,7 +329,7 @@ const submitData = async () => {
     }
 };
 
-// Valider le formulaire et définir les messages d'erreur
+// Validate the form and set error messages
 const validateForm = () => {
     errors.value.nomSentier = nomSentier.value
         ? ""

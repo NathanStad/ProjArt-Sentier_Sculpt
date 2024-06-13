@@ -8,41 +8,33 @@
 
 <script>
 import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import 'maplibre-gl/dist/maplibre-gl.css';
 import Sortable from "sortablejs";
 
 export default {
     mounted() {
-        // Le cycle de vie de Vue.js indique que ce bloc de code s'exécute lorsque le composant est monté dans le DOM.
         const map = new maplibregl.Map({
-            // Création d'une nouvelle instance de carte MapLibre GL.
-            container: "map", // L'élément HTML où la carte sera insérée.
-            // URL du style de carte à utiliser.
-            style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
-            center: [6.700021, 46.602693], // Coordonnées initiales centrées sur la carte.
-            zoom: 9.2, // Niveau de zoom initial.
+            container: "map",
+            style:
+                "https://api.maptiler.com/maps/ch-swisstopo-lbm/style.json?key=UwLYJlrEYGDsXphBkCHS",
+            center: [6.700021, 46.602693],
+            zoom: 9.2,
         });
 
         map.on("load", () => {
-            // Événement déclenché lorsque la carte est chargée.
             map.addControl(
                 new maplibregl.NavigationControl({
                     showCompass: false,
                     showZoom: false,
                 })
             );
-            // Initialisation d'un objet pour stocker les coordonnées des points ajoutés par l'utilisateur.
+
             const usrCreator = {
                 coordinates: [],
             };
 
             function addPoint(data) {
-                // Fonction pour ajouter un point à la carte.
                 map.on("click", (e) => {
-                    // Événement déclenché lorsqu'un utilisateur clique sur la carte.
-                    // Logique pour créer un marqueur et demander à l'utilisateur si il souhaite ajouter un point ici.
-                    // Si oui, ajoutez le point aux données et mettez à jour la forme de saisie.
-                    // Si non, supprimez simplement le div de confirmation.
                     const lngLat = e.lngLat;
                     const confirmationDiv = document.createElement("div");
                     confirmationDiv.style.position = "fixed";
@@ -61,29 +53,22 @@ export default {
 
                     document.body.appendChild(confirmationDiv);
 
-                    document
-                        .getElementById("confirmYes")
-                        .addEventListener("click", () => {
-                            document.body.removeChild(confirmationDiv);
-                            data.coordinates.push([lngLat.lng, lngLat.lat]);
-                            afficheRoute(data);
-                            updateCoordinateForm(data.coordinates);
-                        });
+                    document.getElementById("confirmYes").addEventListener("click", () => {
+                        document.body.removeChild(confirmationDiv);
+                        data.coordinates.push([lngLat.lng, lngLat.lat]);
+                        afficheRoute(data);
+                        updateCoordinateForm(data.coordinates);
+                    });
 
-                    document
-                        .getElementById("confirmNo")
-                        .addEventListener("click", () => {
-                            document.body.removeChild(confirmationDiv);
-                        });
+                    document.getElementById("confirmNo").addEventListener("click", () => {
+                        document.body.removeChild(confirmationDiv);
+                    });
 
                     console.log(usrCreator);
                 });
             }
 
             function updateCoordinateForm(coordinates) {
-                // Met à jour la forme de saisie avec les nouvelles coordonnées.
-                // Logique pour mettre à jour la forme de saisie avec les nouvelles coordonnées.
-                // Utilise Sortable.js pour permettre la réorganisation des points.
                 const form = document.getElementById("formContainer");
                 form.innerHTML = ""; // Clear existing inputs
                 coordinates.forEach((coordinate, index) => {
@@ -113,28 +98,20 @@ export default {
                     onEnd: function (evt) {
                         // Update data.coordinates based on new order
                         const newCoordinates = [];
-                        const coordinateInputs =
-                            document.querySelectorAll(".coordinate-input");
+                        const coordinateInputs = document.querySelectorAll(".coordinate-input");
                         coordinateInputs.forEach((input) => {
-                            const [lng, lat] = input.value
-                                .split(",")
-                                .map(Number);
+                            const [lng, lat] = input.value.split(",").map(Number);
                             newCoordinates.push([lng, lat]);
                         });
 
                         usrCreator.coordinates = newCoordinates;
-                        console.log(
-                            "Updated coordinates:",
-                            usrCreator.coordinates
-                        );
+                        console.log("Updated coordinates:", usrCreator.coordinates);
                         afficheRoute(usrCreator);
                     },
                 });
             }
 
             function afficheRoute(data) {
-                // Affiche la route basée sur les coordonnées fournies.
-                // Logique pour afficher les marqueurs et calculer la durée totale de la route.
                 document
                     .querySelectorAll(".maplibregl-marker")
                     .forEach((marker) => marker.remove());
@@ -184,14 +161,11 @@ export default {
                     )
                         .then((response) => response.json())
                         .then((responseData) => {
-                            const coordinates =
-                                responseData.features[0].geometry.coordinates;
-                            const duration =
-                                responseData.features[0].properties.segments.reduce(
-                                    (total, segment) =>
-                                        total + segment.duration,
-                                    0
-                                );
+                            const coordinates = responseData.features[0].geometry.coordinates;
+                            const duration = responseData.features[0].properties.segments.reduce(
+                                (total, segment) => total + segment.duration,
+                                0
+                            );
                             console.log("duration", duration / 60);
 
                             const routeId = `route-${data.coordinates[0][0]}-${data.coordinates[0][1]}`;
@@ -224,8 +198,7 @@ export default {
                                 },
                             });
 
-                            const durationElement =
-                                document.createElement("div");
+                            const durationElement = document.createElement("div");
                             durationElement.innerHTML = `<h3>Durée totale: ${(
                                 duration / 60
                             ).toFixed(2)} minutes</h3>`;
@@ -250,8 +223,6 @@ export default {
             let userCoordinates = [];
 
             function showUserLocation() {
-                // Affiche la localisation de l'utilisateur sur la carte.
-                // Logique pour obtenir la localisation de l'utilisateur et afficher un marqueur.
                 if ("geolocation" in navigator) {
                     console.log("La géolocalisation est disponible.");
 
@@ -293,8 +264,6 @@ export default {
             }
 
             function watchUserLocation() {
-                // Suivi en temps réel de la localisation de l'utilisateur.
-                // Logique pour surveiller la localisation de l'utilisateur et mettre à jour le marqueur en conséquence.
                 if ("geolocation" in navigator) {
                     navigator.geolocation.watchPosition(
                         (position) => {
@@ -306,10 +275,7 @@ export default {
                             userMarker.setLngLat(userCoordinates);
                         },
                         (error) => {
-                            console.error(
-                                "Erreur de suivi de géolocalisation:",
-                                error
-                            );
+                            console.error("Erreur de suivi de géolocalisation:", error);
                         }
                     );
                 } else {
@@ -318,7 +284,7 @@ export default {
                     );
                 }
             }
-            /* Définition des parcours */
+
             const tousLesTours = [
                 {
                     // Neuchâtel
@@ -351,19 +317,18 @@ export default {
             ];
 
             function showTours(tours) {
-                // Affiche les parcours spécifiés.
-                // Logique pour afficher les parcours sur la carte.
                 tours.forEach((tour) => {
                     afficheRoute(tour);
                 });
             }
-            // Appel des fonctions pour initialiser la carte, afficher la localisation de l'utilisateur, et ajouter un point.
+
             showUserLocation();
+            //showTours(tousLesTours);
 
             addPoint(usrCreator);
         });
-    },
-};
+    }
+}
 </script>
 
 <style scoped>
@@ -401,15 +366,15 @@ body {
     transition: 0.4s;
 }
 
-input:checked + .slider {
+input:checked+.slider {
     background-color: #2196f3;
 }
 
-input:focus + .slider {
+input:focus+.slider {
     box-shadow: 0 0 1px #2196f3;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
     -webkit-transform: translateX(13px);
     -ms-transform: translateX(13px);
     transform: translateX(13px);

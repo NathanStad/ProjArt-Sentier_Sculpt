@@ -1,7 +1,7 @@
 <template>
     <div id="list-etapes">
         <div class="header">
-            <a :href="`#sentier-${props.Id}`">
+            <a :href="`#sentier-${hash.value + 1}`">
                 <span class="material-symbols-outlined"> arrow_back_ios </span>
             </a>
         </div>
@@ -272,7 +272,7 @@ const handleActiveSlideKeyChange = (newVal) => {
 onMounted( async () => {
     map = new maplibregl.Map({
         container: "map",
-        style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
+        style: "https://api.maptiler.com/maps/ch-swisstopo-lbm/style.json?key=UwLYJlrEYGDsXphBkCHS",
         center: [6.700021, 46.602693],
         zoom: 9.2,
         maxZoom: 18,

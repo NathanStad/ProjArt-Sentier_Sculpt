@@ -49,15 +49,12 @@ import buttonFavoris from "@/components/elements/buttonFavorite.vue";
 import axios from "axios";
 import Footer from "@/components/elements/footer.vue";
 
-  // État réactif
 const isLoading = ref(true);
 const sentiers = ref([]);
 const favoris = ref(JSON.parse(sessionStorage.getItem("favoris")) || []);
 
 const searchQuery = ref("");
 
-
-  // Récupération des données
 const fetchSentier = async (sentierId) => {
     if (sentierId !== "") {
         try {
@@ -68,19 +65,21 @@ const fetchSentier = async (sentierId) => {
         }
     }
 };
-//  Préparation pour chaque favoris par id du sentier
+
 favoris.value.forEach((sentierId) => {
     fetchSentier(sentierId);
-    });
-    
-    //  Refraichissement lors de l'enlèvement d'un favoris
+});
+
 const reload = () => {
+    console.log("je reload");
     location.reload();
+}
+
+const handleFavorisUpdated = () => {
 }
 
 window.addEventListener("favorisUpdated", handleFavorisUpdated);
 
-// Filtrage des sentier
 const filteredSentiers = computed(() => {
     return sentiers.value.filter((sentier) => {
         const query = searchQuery.value.toLowerCase();

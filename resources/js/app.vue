@@ -1,9 +1,8 @@
 <template>
-    <!-- Appel de chaque page -->
     <section>
         <component :is="currentView" :Id="currentPathId" />
     </section>
-    <!-- Appel de  -->
+
     <div id="infoSupp" @click="toggleInfoSupp">
         <span class="material-symbols-outlined"> info </span>
         <p v-if="infoSupp">
@@ -17,8 +16,6 @@
 <script setup>
 import { ref, computed } from "vue";
 import axios from "axios";
-
-// Appel de toutes les pages à afficher
 import Accueil from "@/components/accueil.vue";
 import Carte from "@/components/carte-accueil.vue";
 import Sentier from "@/components/sentier.vue";
@@ -32,7 +29,6 @@ import EtapesCreation from "@/components/carte-creation.vue";
 import EtapeCreation from "@/components/step-creation.vue";
 import Favoris from "@/components/favorite.vue";
 
-// Gestions des routes (ici à ajouté les liens des pages pour ajouté de nouvelles pages)
 const routes = {
     "#": {
         component: Accueil,
@@ -88,7 +84,6 @@ const routes = {
     },
 };
 
-// Élément dynamique
 const currentPath = ref(window.location.hash);
 const infoSupp = ref(false);
 const currentPathId = ref();
@@ -98,7 +93,6 @@ updateCurrentPath();
 let favoris = [];
 localStorage.setItem("favoris", JSON.stringify(favoris));
 
-// Fonction permettant de faire la mise à jour de la route
 function updateCurrentPath() {
     const path = window.location.hash;
     const hashs = path.split("-");

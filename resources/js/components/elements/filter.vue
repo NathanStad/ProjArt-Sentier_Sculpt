@@ -82,81 +82,72 @@
 </template>
 
 <script setup>
-  // Importation des fonctions nécessaires de Vue et d'Axios
-  import { ref, onMounted, watch, defineEmits, defineProps } from 'vue';
-  import axios from 'axios';
+import { ref, onMounted, watch, defineEmits, defineProps } from 'vue';
+import axios from 'axios';
 
-  // Définition des propriétés reçues par le composant
-  const props = defineProps({
-    closeFilter: {
-      type: Function,
-      required: true
-    }
-  });
-
-  // Méthode pour fermer le filtre en appelant une méthode parente
-  function callParentMethod() {
-    props.closeFilter();
+const props = defineProps({
+  closeFilter: {
+    type: Function,
+    required: true
   }
+});
 
-  // Méthode pour réinitialiser les filtres et fermer le filtre
-  function callComeBack() {
-    selectedCriteres.value = [];
-    selectedMotCles.value = [];
-    difficulte.value = [];
-    props.closeFilter();
+function callParentMethod() {
+  props.closeFilter();
+}
+
+function callComeBack() {
+  selectedCriteres.value = [];
+  selectedMotCles.value = [];
+  difficulte.value = [];
+  props.closeFilter();
+}
+
+const criteres = ref([]);
+const motcles = ref([]);
+const selectedCriteres = ref([]);
+const selectedMotCles = ref([]);
+const difficulte = ref([]);
+
+const emit = defineEmits();
+
+const fetchCriteres = async () => {
+  try {
+    const response = await axios.get('/data-critere');
+    criteres.value = response.data;
+  } catch (error) {
+    console.error('Error fetching criteres:', error);
   }
+};
 
-  // Références pour stocker les données des critères, mots-clés sélectionnés et la difficulté
-  const criteres = ref([]);
-  const motcles = ref([]);
-  const selectedCriteres = ref([]);
-  const selectedMotCles = ref([]);
-  const difficulte = ref([]);
-
-  // Émission d'événements personnalisés
-  const emit = defineEmits();
-
-  // Récupération des critères et mots-clés depuis l'API
-  const fetchCriteres = async () => {
-    try {
-      const response = await axios.get('/data-critere');
-      criteres.value = response.data;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des critères:', error);
-    }
-  };
-
-  const fetchMotCles = async () => {
-    try {
-      const response = await axios.get('/data-motcles');
-      motcles.value = response.data;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des mots-clés:', error);
-    }
-  };
-
-  // Initialisation des appels API au montage du composant
-  onMounted(() => {
-    fetchCriteres();
-    fetchMotCles();
-  });
-
-  // Surveillance des changements dans les références pour émettre un événement personnalisé
-  watch([selectedCriteres, selectedMotCles, difficulte], () => {
-    emit('updateFilters', {
-      selectedCriteres: selectedCriteres.value,
-      selectedMotCles: selectedMotCles.value,
-      difficulte: difficulte.value
-    });
-  });
-
-  // Fonction pour réinitialiser tous les inputs à zéro
-  function resetFilters() {
-    selectedCriteres.value = [];
-    selectedMotCles.value = [];
-    difficulte.value = [];
+const fetchMotCles = async () => {
+  try {
+    const response = await axios.get('/data-motcles');
+    motcles.value = response.data;
+  } catch (error) {
+    console.error('Error fetching motcles:', error);
   }
+};
+
+onMounted(() => {
+  fetchCriteres();
+  fetchMotCles();
+});
+
+watch([selectedCriteres, selectedMotCles, difficulte], () => {
+  emit('updateFilters', {
+    selectedCriteres: selectedCriteres.value,
+    selectedMotCles: selectedMotCles.value,
+    difficulte: difficulte.value
+  });
+});
+
+// Fonction pour réinitialiser tous les inputs à zéro
+function resetFilters() {
+  selectedCriteres.value = [];
+  selectedMotCles.value = [];
+  difficulte.value = [];
+}
 </script>
 
 <style scoped>

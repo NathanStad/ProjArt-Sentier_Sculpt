@@ -313,8 +313,8 @@ export default {
             let dureeTotal = 0;
             let coordonneesPrec = null;
 
-            for (let index = 0; index < this.etapeOk.length; index++) {
-                const etape = this.etapeOk[index];
+            for (let index = 0; index < this.etapes.length; index++) {
+                const etape = this.etapes[index];
                 if (coordonneesPrec !== null) {
                     longueurTotal += this.calculerDistance(
                         coordonneesPrec,
@@ -606,7 +606,7 @@ export default {
         // console.log(JSON.parse(sessionStorage.getItem("etapes")));
         map = new maplibregl.Map({
             container: "mapCreationDuSentier",
-            style: "https://api.maptiler.com/maps/de2783ff-b0c6-4f3d-8d9a-4bd8d5051450/style.json?key=kzJF26jznLlv3rUUVUK7",
+            style: "https://api.maptiler.com/maps/ch-swisstopo-lbm/style.json?key=UwLYJlrEYGDsXphBkCHS",
             center: [6.700021, 46.602693],
             zoom: 9.2,
         });
