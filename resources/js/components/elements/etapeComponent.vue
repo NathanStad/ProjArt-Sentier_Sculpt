@@ -59,47 +59,53 @@
 </template>
 
 <script setup>
+// Importation des fonctionnalités nécessaires de Vue et Swiper
 import { ref, watch } from "vue";
 import { Swiper, SwiperSlide } from "swiper/vue";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { Pagination, Navigation } from "swiper/modules";
-
+// Définition des props attendues par ce composant
 const props = defineProps({
     etapes: {
         type: Object,
         required: true,
     },
 });
-console.log(props);
+// Émission d'événements personnalisés
 const emit = defineEmits(['active-slide-key-change']);
-
+// Référence vers l'instance Swiper
 const swiperRef = ref(null);
+// Clé de l'étape active
 const activeSlideKey = ref(null);
+// Modules Swiper utilisés
 const modules = [Pagination, Navigation];
-
+// Fonction appelée lorsque le swiper est prêt
 const onSwiperReady = (swiper) => {
     swiperRef.value = swiper;
 };
 
+// Fonction appelée lorsqu'une diapositive change
 const onSlideChange = (swiper) => {
     const activeIndex = swiper.activeIndex;
     activeSlideKey.value = props.etapes[activeIndex].id;
 };
 
+// Fonction chargée lorsqu'un utilisateur clique sur une étape
 const chargerEtape = (etape) => {
     console.log("etape click: ", etape.nom);
     window.location.hash = `step-${etape.id}`;
 };
 
+// Fonction permettant de naviguer vers une étape spécifique en cliquant sur son numéro
 const onSlideTo = (id) => {
     const slideIndex = props.etapes.findIndex(
         (etape) => etape.id === id
     );
     swiperRef.value.slideTo(slideIndex);
 };
-
+// Surveillance de la clé de l'étape active pour émettre un événement personnalisé
 watch(activeSlideKey, (newVal) => {
     emit("active-slide-key-change", newVal);
 });
